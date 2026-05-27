@@ -1,7 +1,10 @@
 {
   "permissions": {
     "allow": [
-      "Bash(open *)"
+      "Bash(open *)",
+      "Read(//Users/curtisorr/repos/Contractr/.omc/**)",
+      "Read(//Users/curtisorr/repos/Contractr/**)",
+      "Bash(xcodebuild -scheme Contractr -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -configuration Debug build)"
     ]
   }
 }
