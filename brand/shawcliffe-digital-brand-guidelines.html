@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shawcliffe Digital — Brand Guidelines</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:   #0F1E3C;
+      --blue:   #2B5BE0;
+      --blue-light: #4A78F0;
+      --white:  #FFFFFF;
+      --gray-50: #F8F9FC;
+      --gray-100: #EEF0F6;
+      --gray-300: #C4C9D9;
+      --gray-500: #737B96;
+      --gray-700: #3A4060;
+      --page-max: 960px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--gray-50);
+      color: var(--navy);
+      line-height: 1.6;
+    }
+
+    /* ── COVER ── */
+    .cover {
+      background: var(--navy);
+      color: var(--white);
+      padding: 80px 48px 72px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 16px;
+    }
+    .cover-eyebrow {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--blue-light);
+    }
+    .cover h1 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: clamp(36px, 6vw, 64px);
+      font-weight: 900;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+    }
+    .cover h1 span { color: var(--blue-light); }
+    .cover-sub {
+      font-size: 15px;
+      color: var(--gray-300);
+      max-width: 480px;
+      margin-top: 4px;
+    }
+    .cover-rule {
+      width: 56px;
+      height: 3px;
+      background: var(--blue);
+      margin-top: 8px;
+    }
+    .cover-version {
+      font-size: 12px;
+      color: var(--gray-500);
+      margin-top: 24px;
+    }
+
+    /* ── LAYOUT ── */
+    .page { max-width: var(--page-max); margin: 0 auto; padding: 0 32px; }
+
+    /* ── NAV PILLS ── */
+    .toc {
+      background: var(--white);
+      border-bottom: 1px solid var(--gray-100);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .toc-inner {
+      max-width: var(--page-max);
+      margin: 0 auto;
+      padding: 0 32px;
+      display: flex;
+      gap: 4px;
+      overflow-x: auto;
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    .toc-inner::-webkit-scrollbar { display: none; }
+    .toc-inner a {
+      display: block;
+      padding: 14px 16px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--gray-500);
+      text-decoration: none;
+      white-space: nowrap;
+      border-bottom: 2px solid transparent;
+      transition: color .2s, border-color .2s;
+    }
+    .toc-inner a:hover { color: var(--blue); border-bottom-color: var(--blue); }
+
+    /* ── SECTIONS ── */
+    section { padding: 72px 0; border-bottom: 1px solid var(--gray-100); }
+    section:last-child { border-bottom: none; }
+
+    .section-label {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--blue);
+      margin-bottom: 10px;
+    }
+    .section-title {
+      font-family: 'Montserrat', sans-serif;
+      font-size: clamp(24px, 3vw, 36px);
+      font-weight: 800;
+      color: var(--navy);
+      margin-bottom: 20px;
+      line-height: 1.15;
+    }
+    .section-body {
+      font-size: 15px;
+      color: var(--gray-700);
+      max-width: 640px;
+      line-height: 1.75;
+    }
+
+    /* ── COLORS ── */
+    .color-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 16px;
+      margin-top: 36px;
+    }
+    .color-card {
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,.07);
+    }
+    .color-swatch {
+      height: 120px;
+    }
+    .color-info {
+      background: var(--white);
+      padding: 16px;
+    }
+    .color-name {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 4px;
+    }
+    .color-hex {
+      font-size: 12px;
+      color: var(--gray-500);
+      font-family: 'Courier New', monospace;
+      letter-spacing: 0.05em;
+    }
+    .color-role {
+      font-size: 11px;
+      color: var(--gray-500);
+      margin-top: 6px;
+      line-height: 1.5;
+    }
+
+    /* ── TYPOGRAPHY ── */
+    .type-block {
+      background: var(--white);
+      border-radius: 12px;
+      padding: 32px 36px;
+      margin-top: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.05);
+      display: flex;
+      align-items: flex-start;
+      gap: 36px;
+      flex-wrap: wrap;
+    }
+    .type-meta { min-width: 160px; }
+    .type-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--blue);
+      margin-bottom: 6px;
+    }
+    .type-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--navy);
+    }
+    .type-detail {
+      font-size: 12px;
+      color: var(--gray-500);
+      margin-top: 4px;
+      line-height: 1.6;
+    }
+    .type-preview { flex: 1; min-width: 220px; }
+
+    .specimen-display {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 42px;
+      font-weight: 900;
+      color: var(--navy);
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+    }
+    .specimen-heading {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--navy);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .specimen-subheading {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--blue);
+    }
+    .specimen-body {
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      color: var(--gray-700);
+      line-height: 1.75;
+    }
+    .specimen-caption {
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--gray-500);
+      letter-spacing: 0.04em;
+    }
+
+    /* ── LOGO ── */
+    .logo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 16px;
+      margin-top: 36px;
+    }
+    .logo-card {
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,.07);
+    }
+    .logo-display {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 48px 32px;
+      min-height: 160px;
+    }
+    .logo-display .logo-mark {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+    /* SVG inline logo */
+    .logo-caption {
+      background: var(--white);
+      padding: 14px 20px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--gray-500);
+      letter-spacing: 0.05em;
+    }
+
+    /* ── SPACING ── */
+    .spacing-row {
+      display: flex;
+      align-items: flex-end;
+      gap: 24px;
+      margin-top: 36px;
+      flex-wrap: wrap;
+    }
+    .spacing-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+    .spacing-box {
+      background: var(--blue);
+      opacity: 0.15;
+      border: 2px solid var(--blue);
+      border-radius: 4px;
+    }
+    .spacing-val {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--navy);
+    }
+    .spacing-name {
+      font-size: 11px;
+      color: var(--gray-500);
+    }
+
+    /* ── VOICE ── */
+    .voice-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
+      margin-top: 36px;
+    }
+    .voice-card {
+      background: var(--white);
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.05);
+      border-top: 3px solid var(--blue);
+    }
+    .voice-card h4 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--navy);
+      margin-bottom: 10px;
+    }
+    .voice-card p {
+      font-size: 13px;
+      color: var(--gray-700);
+      line-height: 1.65;
+    }
+
+    /* ── DO/DON'T ── */
+    .donts-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 36px;
+    }
+    @media (max-width: 600px) { .donts-grid { grid-template-columns: 1fr; } }
+    .do-card, .dont-card {
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.05);
+    }
+    .do-card {
+      background: #F0F7F0;
+      border-left: 4px solid #3CB371;
+    }
+    .dont-card {
+      background: #FDF2F2;
+      border-left: 4px solid #E05252;
+    }
+    .do-card h4 { color: #2A7A3B; font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 800; margin-bottom: 10px; }
+    .dont-card h4 { color: #C0392B; font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 800; margin-bottom: 10px; }
+    .do-card ul, .dont-card ul { padding-left: 16px; }
+    .do-card li, .dont-card li { font-size: 13px; color: var(--gray-700); margin-bottom: 6px; line-height: 1.5; }
+
+    /* ── MOCKUP BUSINESS CARD ── */
+    .card-mockup {
+      background: var(--white);
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0,0,0,.12);
+      display: flex;
+      overflow: hidden;
+      max-width: 560px;
+      margin-top: 36px;
+    }
+    .card-left {
+      background: var(--white);
+      flex: 1;
+      padding: 28px 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      border-right: 1px solid var(--gray-100);
+    }
+    .card-right {
+      flex: 1;
+      padding: 28px 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 8px;
+    }
+    .card-company {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 900;
+      font-size: 18px;
+      color: var(--navy);
+      letter-spacing: 0.02em;
+    }
+    .card-sub {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      color: var(--blue);
+    }
+    .card-tagline {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 8px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      text-align: center;
+      color: var(--navy);
+      line-height: 1.6;
+    }
+    .card-tagline span { color: var(--blue); }
+    .card-name {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 16px;
+      font-weight: 900;
+      color: var(--navy);
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+    .card-title {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--blue);
+      letter-spacing: 0.12em;
+      margin-bottom: 4px;
+    }
+    .card-rule { width: 32px; height: 2px; background: var(--blue); margin-bottom: 4px; }
+    .card-contact {
+      font-size: 9px;
+      color: var(--gray-700);
+      line-height: 2;
+    }
+
+    /* ── FOOTER ── */
+    .footer {
+      background: var(--navy);
+      color: var(--gray-300);
+      text-align: center;
+      padding: 36px 32px;
+      font-size: 12px;
+    }
+    .footer strong { color: var(--white); }
+
+    /* Utility */
+    .mt-8 { margin-top: 8px; }
+    .mt-16 { margin-top: 16px; }
+    .mt-24 { margin-top: 24px; }
+    .mt-36 { margin-top: 36px; }
+    .inline-rule {
+      display: inline-block;
+      width: 40px;
+      height: 2px;
+      background: var(--blue);
+      vertical-align: middle;
+      margin: 0 10px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- COVER -->
+<div class="cover">
+  <div class="cover-eyebrow">Brand Identity System</div>
+  <h1>SHAWCLIFFE<br><span>DIGITAL</span></h1>
+  <p class="cover-sub">Brand Design Guidelines — defining how our visual identity looks, sounds, and behaves across every touchpoint.</p>
+  <div class="cover-rule"></div>
+  <p class="cover-version">Version 1.0 &nbsp;·&nbsp; May 2026</p>
+</div>
+
+<!-- NAV -->
+<nav class="toc">
+  <div class="toc-inner">
+    <a href="#brand-story">Brand Story</a>
+    <a href="#colors">Colors</a>
+    <a href="#typography">Typography</a>
+    <a href="#logo">Logo</a>
+    <a href="#spacing">Spacing</a>
+    <a href="#voice">Voice & Tone</a>
+    <a href="#usage">Do's & Don'ts</a>
+  </div>
+</nav>
+
+<!-- BRAND STORY -->
+<section id="brand-story">
+  <div class="page">
+    <div class="section-label">01 — Brand Story</div>
+    <h2 class="section-title">Who We Are</h2>
+    <p class="section-body">
+      Shawcliffe Digital builds custom branded apps for local contractors and owner-operators — real businesses that need real digital tools without the enterprise price tag. Our brand reflects that mission: authoritative and tech-forward, yet grounded and approachable. We're not a faceless software company; we're a local partner with deep expertise.
+    </p>
+    <p class="section-body mt-16">
+      Every design decision — from the bold geometry of our logo to the structured two-tone palette — communicates the same idea: <strong>professional technology, built for the people who build things.</strong>
+    </p>
+
+    <!-- Mini card mockup -->
+    <div class="card-mockup">
+      <div class="card-left">
+        <svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M22 4L36 12V20L22 28L8 20V12L22 4Z" fill="#2B5BE0"/>
+          <path d="M22 16L36 24V32L22 40L8 32V24L22 16Z" fill="#0F1E3C"/>
+        </svg>
+        <div class="card-company">SHAWCLIFFE</div>
+        <div style="display:flex;align-items:center;gap:4px;">
+          <span style="flex:1;height:1px;background:#2B5BE0;width:16px;display:inline-block;"></span>
+          <div class="card-sub">D I G I T A L</div>
+          <span style="flex:1;height:1px;background:#2B5BE0;width:16px;display:inline-block;"></span>
+        </div>
+        <div style="width:80%;height:1px;background:#EEF0F6;margin:4px 0;"></div>
+        <div class="card-tagline">CUSTOM BRANDED APPS FOR<br><span>LOCAL CONTRACTORS &<br>OWNER OPERATORS</span></div>
+      </div>
+      <div class="card-right">
+        <div class="card-name">Cassandra Orr</div>
+        <div class="card-title">CTO</div>
+        <div class="card-rule"></div>
+        <div class="card-contact">
+          📞 &nbsp;(289) 314-0591<br>
+          ✉️ &nbsp;cassandra@shawcliffedigital.com<br>
+          🌐 &nbsp;shawcliffedigital.com<br>
+          📍 &nbsp;Serving Local Businesses
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COLORS -->
+<section id="colors">
+  <div class="page">
+    <div class="section-label">02 — Color System</div>
+    <h2 class="section-title">Primary Palette</h2>
+    <p class="section-body">
+      The palette pairs a deep navy with a confident royal blue. Navy anchors the brand with authority and trust; blue drives energy and innovation. White provides breathing room. These three work in concert — never compete.
+    </p>
+
+    <div class="color-grid">
+      <div class="color-card">
+        <div class="color-swatch" style="background:#0F1E3C;"></div>
+        <div class="color-info">
+          <div class="color-name">Shawcliffe Navy</div>
+          <div class="color-hex">#0F1E3C</div>
+          <div class="color-role">Primary brand color. Wordmark, headlines, dark backgrounds, icon fills.</div>
+        </div>
+      </div>
+      <div class="color-card">
+        <div class="color-swatch" style="background:#2B5BE0;"></div>
+        <div class="color-info">
+          <div class="color-name">Shawcliffe Blue</div>
+          <div class="color-hex">#2B5BE0</div>
+          <div class="color-role">Accent & action color. Titles, links, dividers, CTAs, highlights.</div>
+        </div>
+      </div>
+      <div class="color-card">
+        <div class="color-swatch" style="background:#4A78F0;"></div>
+        <div class="color-info">
+          <div class="color-name">Blue Light</div>
+          <div class="color-hex">#4A78F0</div>
+          <div class="color-role">Hover states, tinted backgrounds, subtle highlights on dark surfaces.</div>
+        </div>
+      </div>
+      <div class="color-card">
+        <div class="color-swatch" style="background:#FFFFFF; border:1px solid #EEF0F6;"></div>
+        <div class="color-info">
+          <div class="color-name">Pure White</div>
+          <div class="color-hex">#FFFFFF</div>
+          <div class="color-role">Primary background. Keeps the brand clean and professional.</div>
+        </div>
+      </div>
+      <div class="color-card">
+        <div class="color-swatch" style="background:#F8F9FC;"></div>
+        <div class="color-info">
+          <div class="color-name">Off White</div>
+          <div class="color-hex">#F8F9FC</div>
+          <div class="color-role">Section backgrounds, cards, subtle contrast areas.</div>
+        </div>
+      </div>
+      <div class="color-card">
+        <div class="color-swatch" style="background:#3A4060;"></div>
+        <div class="color-info">
+          <div class="color-name">Slate</div>
+          <div class="color-hex">#3A4060</div>
+          <div class="color-role">Body text, secondary content, supporting copy.</div>
+        </div>
+      </div>
+    </div>
+
+    <p class="section-body mt-36" style="font-size:13px; color: var(--gray-500); border-left: 3px solid var(--blue); padding-left: 16px;">
+      <strong style="color:var(--navy);">Accessibility note:</strong> Navy (#0F1E3C) on White (#FFFFFF) achieves a contrast ratio of ~16:1. Blue (#2B5BE0) on White achieves ~4.9:1 — both meet WCAG AA standards for all text sizes.
+    </p>
+  </div>
+</section>
+
+<!-- TYPOGRAPHY -->
+<section id="typography">
+  <div class="page">
+    <div class="section-label">03 — Typography</div>
+    <h2 class="section-title">Type System</h2>
+    <p class="section-body">
+      Two typefaces form the complete system: <strong>Montserrat</strong> for all brand-forward, display, and heading uses, and <strong>Inter</strong> for body copy and UI text. Never substitute these with decorative or serif fonts.
+    </p>
+
+    <div class="type-block">
+      <div class="type-meta">
+        <div class="type-label">Display / Hero</div>
+        <div class="type-name">Montserrat</div>
+        <div class="type-detail">Weight: 900 Black<br>Case: UPPERCASE<br>Tracking: -0.02em<br>Use: Company name, hero headlines</div>
+      </div>
+      <div class="type-preview">
+        <div class="specimen-display">SHAWCLIFFE<br>DIGITAL</div>
+      </div>
+    </div>
+
+    <div class="type-block">
+      <div class="type-meta">
+        <div class="type-label">Section Heading</div>
+        <div class="type-name">Montserrat</div>
+        <div class="type-detail">Weight: 700 Bold<br>Case: UPPERCASE<br>Tracking: +0.08em<br>Use: H2, section titles, names</div>
+      </div>
+      <div class="type-preview">
+        <div class="specimen-heading">Custom Branded Apps</div>
+      </div>
+    </div>
+
+    <div class="type-block">
+      <div class="type-meta">
+        <div class="type-label">Eyebrow / Label</div>
+        <div class="type-name">Montserrat</div>
+        <div class="type-detail">Weight: 600 SemiBold<br>Case: UPPERCASE<br>Tracking: +0.18em<br>Color: Shawcliffe Blue<br>Use: Category labels, job titles</div>
+      </div>
+      <div class="type-preview">
+        <div class="specimen-subheading">Chief Technology Officer</div>
+      </div>
+    </div>
+
+    <div class="type-block">
+      <div class="type-meta">
+        <div class="type-label">Body Copy</div>
+        <div class="type-name">Inter</div>
+        <div class="type-detail">Weight: 400 Regular<br>Size: 15–16px<br>Line height: 1.75<br>Use: Paragraphs, descriptions, UI</div>
+      </div>
+      <div class="type-preview">
+        <div class="specimen-body">We build custom branded apps for local contractors and owner-operators — real tools for real businesses, delivered with expertise and care.</div>
+      </div>
+    </div>
+
+    <div class="type-block">
+      <div class="type-meta">
+        <div class="type-label">Caption / Meta</div>
+        <div class="type-name">Inter</div>
+        <div class="type-detail">Weight: 500 Medium<br>Size: 11–12px<br>Tracking: +0.04em<br>Use: Footnotes, timestamps, labels</div>
+      </div>
+      <div class="type-preview">
+        <div class="specimen-caption">shawcliffedigital.com &nbsp;·&nbsp; (289) 314-0591</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LOGO -->
+<section id="logo">
+  <div class="page">
+    <div class="section-label">04 — Logo & Mark</div>
+    <h2 class="section-title">Logo Usage</h2>
+    <p class="section-body">
+      The Shawcliffe Digital logo consists of a geometric "S" mark and a wordmark. The mark is constructed from angular, interlocking hexagonal facets — two-tone with blue above and navy below — evoking both a bold "S" and the building blocks of digital infrastructure.
+    </p>
+
+    <div class="logo-grid">
+
+      <div class="logo-card">
+        <div class="logo-display" style="background: #FFFFFF;">
+          <div style="text-align:center;">
+            <svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M26 4L42 13V22L26 31L10 22V13L26 4Z" fill="#2B5BE0"/>
+              <path d="M26 21L42 30V39L26 48L10 39V30L26 21Z" fill="#0F1E3C"/>
+            </svg>
+            <div style="font-family:'Montserrat',sans-serif;font-weight:900;font-size:18px;color:#0F1E3C;margin-top:10px;letter-spacing:0.02em;">SHAWCLIFFE</div>
+            <div style="display:flex;align-items:center;gap:6px;justify-content:center;margin-top:2px;">
+              <span style="width:20px;height:1.5px;background:#2B5BE0;display:inline-block;"></span>
+              <span style="font-family:'Montserrat',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.22em;color:#2B5BE0;">DIGITAL</span>
+              <span style="width:20px;height:1.5px;background:#2B5BE0;display:inline-block;"></span>
+            </div>
+          </div>
+        </div>
+        <div class="logo-caption">Primary — Light Background</div>
+      </div>
+
+      <div class="logo-card">
+        <div class="logo-display" style="background: #0F1E3C;">
+          <div style="text-align:center;">
+            <svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M26 4L42 13V22L26 31L10 22V13L26 4Z" fill="#2B5BE0"/>
+              <path d="M26 21L42 30V39L26 48L10 39V30L26 21Z" fill="#FFFFFF"/>
+            </svg>
+            <div style="font-family:'Montserrat',sans-serif;font-weight:900;font-size:18px;color:#FFFFFF;margin-top:10px;letter-spacing:0.02em;">SHAWCLIFFE</div>
+            <div style="display:flex;align-items:center;gap:6px;justify-content:center;margin-top:2px;">
+              <span style="width:20px;height:1.5px;background:#4A78F0;display:inline-block;"></span>
+              <span style="font-family:'Montserrat',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.22em;color:#4A78F0;">DIGITAL</span>
+              <span style="width:20px;height:1.5px;background:#4A78F0;display:inline-block;"></span>
+            </div>
+          </div>
+        </div>
+        <div class="logo-caption">Reversed — Dark Background</div>
+      </div>
+
+      <div class="logo-card">
+        <div class="logo-display" style="background: #F8F9FC;">
+          <svg width="72" height="72" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M26 4L42 13V22L26 31L10 22V13L26 4Z" fill="#2B5BE0"/>
+            <path d="M26 21L42 30V39L26 48L10 39V30L26 21Z" fill="#0F1E3C"/>
+          </svg>
+        </div>
+        <div class="logo-caption">Mark Only — Favicon / Avatar</div>
+      </div>
+
+      <div class="logo-card">
+        <div class="logo-display" style="background: #2B5BE0;">
+          <div style="font-family:'Montserrat',sans-serif;font-weight:900;font-size:18px;color:#FFFFFF;letter-spacing:0.04em;">SHAWCLIFFE<br>
+          <span style="font-size:11px;font-weight:600;letter-spacing:0.22em;color:rgba(255,255,255,0.75);">DIGITAL</span></div>
+        </div>
+        <div class="logo-caption">Wordmark Only — Blue Background</div>
+      </div>
+
+    </div>
+
+    <p class="section-body mt-24" style="font-size:13px; color: var(--gray-500); border-left: 3px solid var(--blue); padding-left: 16px;">
+      <strong style="color:var(--navy);">Clear space:</strong> Always maintain a minimum clear space equal to the height of the "S" mark on all sides of the logo. Never crowd the logo against other elements.
+    </p>
+  </div>
+</section>
+
+<!-- SPACING -->
+<section id="spacing">
+  <div class="page">
+    <div class="section-label">05 — Spacing & Layout</div>
+    <h2 class="section-title">The Grid</h2>
+    <p class="section-body">
+      Shawcliffe Digital layouts use an <strong>8px base unit</strong>. All spacing, padding, and margins should be multiples of 8. This creates visual harmony across every medium — print, web, and mobile.
+    </p>
+
+    <div class="spacing-row">
+      <div class="spacing-item">
+        <div class="spacing-box" style="width:8px;height:8px;"></div>
+        <div class="spacing-val">8px</div>
+        <div class="spacing-name">XS</div>
+      </div>
+      <div class="spacing-item">
+        <div class="spacing-box" style="width:16px;height:16px;"></div>
+        <div class="spacing-val">16px</div>
+        <div class="spacing-name">SM</div>
+      </div>
+      <div class="spacing-item">
+        <div class="spacing-box" style="width:24px;height:24px;"></div>
+        <div class="spacing-val">24px</div>
+        <div class="spacing-name">MD</div>
+      </div>
+      <div class="spacing-item">
+        <div class="spacing-box" style="width:32px;height:32px;"></div>
+        <div class="spacing-val">32px</div>
+        <div class="spacing-name">LG</div>
+      </div>
+      <div class="spacing-item">
+        <div class="spacing-box" style="width:48px;height:48px;"></div>
+        <div class="spacing-val">48px</div>
+        <div class="spacing-name">XL</div>
+      </div>
+      <div class="spacing-item">
+        <div class="spacing-box" style="width:64px;height:64px;"></div>
+        <div class="spacing-val">64px</div>
+        <div class="spacing-name">2XL</div>
+      </div>
+      <div class="spacing-item">
+        <div class="spacing-box" style="width:80px;height:80px;"></div>
+        <div class="spacing-val">80px</div>
+        <div class="spacing-name">3XL</div>
+      </div>
+    </div>
+
+    <p class="section-body mt-36">
+      <strong>Layout principle:</strong> Prefer two-column or split compositions — as seen on the business card — where a visual anchor (logo or image) occupies the left and contact or content sits right. Use thin horizontal or vertical rule lines (<code>1–2px</code> in Shawcliffe Blue or Light Gray) to divide sections rather than heavy borders or filled bars.
+    </p>
+  </div>
+</section>
+
+<!-- VOICE -->
+<section id="voice">
+  <div class="page">
+    <div class="section-label">06 — Voice & Tone</div>
+    <h2 class="section-title">How We Sound</h2>
+    <p class="section-body">
+      Shawcliffe Digital talks like a trusted expert — not a corporate vendor. Our clients are contractors and owner-operators who value clarity, confidence, and no nonsense. We earn trust through expertise, not jargon.
+    </p>
+
+    <div class="voice-grid">
+      <div class="voice-card">
+        <h4>Confident</h4>
+        <p>We know what we do and say it plainly. We lead with capability and results — no hedging, no over-qualifying.</p>
+      </div>
+      <div class="voice-card">
+        <h4>Practical</h4>
+        <p>We speak in terms of real outcomes for real businesses. Technical terms are explained, never flaunted.</p>
+      </div>
+      <div class="voice-card">
+        <h4>Approachable</h4>
+        <p>We're local, not faceless. Our tone is warm and human — peer-to-peer, never corporate-to-customer.</p>
+      </div>
+      <div class="voice-card">
+        <h4>Precise</h4>
+        <p>Fewer words, more impact. We respect our clients' time and get to the point with clean, structured language.</p>
+      </div>
+    </div>
+
+    <div style="margin-top:36px;">
+      <p class="section-body" style="font-size:13px; border-left: 3px solid var(--blue); padding-left:16px;">
+        <strong style="color:var(--navy);">Tagline reminder:</strong> "Custom Branded Apps for Local Contractors &amp; Owner Operators" — this is a positioning statement, not a marketing slogan. Keep it factual and use it in full when introducing the brand.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- DO / DON'T -->
+<section id="usage">
+  <div class="page">
+    <div class="section-label">07 — Do's & Don'ts</div>
+    <h2 class="section-title">Brand Usage Rules</h2>
+    <p class="section-body">
+      Consistency protects recognition. These rules keep every brand expression — from social posts to proposals — unmistakably Shawcliffe Digital.
+    </p>
+
+    <div class="donts-grid">
+      <div class="do-card">
+        <h4>✓ Do</h4>
+        <ul>
+          <li>Use Navy and Blue as the only primary brand colors</li>
+          <li>Use Montserrat in all-caps for headlines and display text</li>
+          <li>Maintain generous white space around all logo usages</li>
+          <li>Use thin blue or light gray rule lines as dividers</li>
+          <li>Keep layouts clean, structured, and two-tone</li>
+          <li>Use the full wordmark when introducing the brand</li>
+          <li>Keep photography realistic — real businesses, real people</li>
+        </ul>
+      </div>
+      <div class="dont-card">
+        <h4>✗ Don't</h4>
+        <ul>
+          <li>Stretch, rotate, or distort the logo mark</li>
+          <li>Use gradients or drop shadows on the primary logo</li>
+          <li>Place the logo on busy photographic backgrounds</li>
+          <li>Use more than two brand colors in a single layout</li>
+          <li>Use decorative, serif, or script fonts</li>
+          <li>Use the mark-only version where the full wordmark fits</li>
+          <li>Use neon, bright, or off-brand accent colors</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<div class="footer">
+  <strong>Shawcliffe Digital</strong> — Brand Guidelines v1.0<br>
+  <span style="margin-top:6px;display:block;">shawcliffedigital.com &nbsp;·&nbsp; cassandra@shawcliffedigital.com &nbsp;·&nbsp; (289) 314-0591</span>
+</div>
+
+</body>
+</html>

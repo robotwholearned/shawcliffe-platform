@@ -1089,13 +1089,17 @@
 </head>
 <body>
 
-<!-- LOGO SYMBOL -->
-<svg style="display:none">
-  <symbol id="sd-logo" viewBox="0 0 40 40">
-    <path d="M20 2L33 9.5V17L20 24.5L7 17V9.5Z" fill="#2563eb"/>
-    <path d="M20 15.5L33 23V30.5L20 38L7 30.5V23Z" fill="#0d1b2e" stroke="#2563eb" stroke-width="0.6"/>
-    <path d="M24.5 10.5L29 13.3V18.7L24.5 21.5L20 18.7V13.3Z" fill="#1a3356"/>
-    <path d="M15.5 19L20 21.8V27.2L15.5 30L11 27.2V21.8Z" fill="#2563eb" opacity="0.7"/>
+<!-- LOGO SYMBOLS -->
+<svg style="display:none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Light-bg version: original brand colors -->
+  <symbol id="sd-logo" viewBox="0 0 129 169">
+    <path d="M 67 32 L 24 59 L 24 96 L 60 118 L 66 118 L 66 105 L 38 87 L 38 66 L 65 49 L 93 65 L 108 58 Z" fill="#114AC4"/>
+    <path d="M 72 74 L 66 74 L 66 87 L 94 105 L 94 126 L 67 143 L 39 127 L 24 134 L 65 160 L 108 133 L 108 96 Z" fill="#040F23"/>
+  </symbol>
+  <!-- Dark-bg version: dark path → white so it reads on navy footer -->
+  <symbol id="sd-logo-inv" viewBox="0 0 129 169">
+    <path d="M 67 32 L 24 59 L 24 96 L 60 118 L 66 118 L 66 105 L 38 87 L 38 66 L 65 49 L 93 65 L 108 58 Z" fill="#114AC4"/>
+    <path d="M 72 74 L 66 74 L 66 87 L 94 105 L 94 126 L 67 143 L 39 127 L 24 134 L 65 160 L 108 133 L 108 96 Z" fill="#ffffff"/>
   </symbol>
 </svg>
 
@@ -1103,7 +1107,7 @@
 <nav>
   <div class="nav-inner">
     <a href="#" class="nav-brand">
-      <svg width="32" height="32" aria-hidden="true"><use href="#sd-logo"/></svg>
+      <svg width="31" height="40" aria-hidden="true"><use href="#sd-logo"/></svg>
       <div class="brand-words">
         <span class="w1">Shawcliffe</span>
         <span class="w2">Digital</span>
@@ -1567,7 +1571,7 @@
 <footer>
   <div class="footer-inner">
     <a href="#" class="nav-brand">
-      <svg width="28" height="28" aria-hidden="true"><use href="#sd-logo"/></svg>
+      <svg width="25" height="32" aria-hidden="true"><use href="#sd-logo-inv"/></svg>
       <div class="brand-words">
         <span class="w1" style="color:#fff;">Shawcliffe</span>
         <span class="w2">Digital</span>
