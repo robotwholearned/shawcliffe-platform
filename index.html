@@ -4,119 +4,98 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Shawcliffe Digital — Custom Branded Apps for Contractors</title>
-  <meta name="description" content="Your brand. Your app. Live in days — not months. Shawcliffe Digital builds custom iOS apps, Android apps, and booking websites for local contractors and owner operators." />
+  <meta name="description" content="Shawcliffe Digital builds custom branded iOS apps, Android apps, and booking websites for local contractors and owner operators." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Figtree:wght@400;500;600;700&family=Syne+Mono&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg-0:       #040d18;
-      --bg-1:       #070f1d;
-      --bg-2:       #0c1829;
-      --bg-3:       #132237;
-      --bg-4:       #1c3050;
-      --blue:       #2563eb;
-      --blue-lt:    #3b82f6;
-      --sky:        #38bdf8;
-      --amber:      #f59e0b;
-      --amber-lt:   #fbbf24;
-      --white:      #f0f6ff;
-      --gray-hi:    #c8d8ef;
-      --gray-mid:   #7a95b8;
-      --gray-lo:    #3d5475;
-      --border:     rgba(56, 189, 248, 0.1);
-      --border-hi:  rgba(56, 189, 248, 0.25);
+      --black:   #0d1b2e;
+      --blue:    #2563eb;
+      --blue-dk: #1a48c4;
+      --white:   #ffffff;
+      --off:     #f4f6f9;
+      --muted:   #4a5a70;
+      --border:  #d6dce8;
     }
 
     html { scroll-behavior: smooth; }
 
     body {
-      font-family: 'Figtree', system-ui, sans-serif;
-      background: var(--bg-0);
-      color: var(--white);
-      overflow-x: hidden;
+      font-family: 'Montserrat', sans-serif;
+      background: var(--white);
+      color: var(--black);
       line-height: 1.6;
+      overflow-x: hidden;
     }
 
-    /* ─── GRID TEXTURE ─── */
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image:
-        linear-gradient(rgba(37,99,235,0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(37,99,235,0.03) 1px, transparent 1px);
-      background-size: 60px 60px;
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    * { position: relative; z-index: 1; }
-
-    /* ─── NAV ─── */
+    /* ── NAV ── */
     nav {
       position: sticky;
       top: 0;
-      z-index: 200;
-      background: rgba(4, 13, 24, 0.88);
-      backdrop-filter: blur(16px);
+      z-index: 100;
+      background: rgba(255,255,255,0.96);
+      backdrop-filter: blur(10px);
       border-bottom: 1px solid var(--border);
     }
 
     .nav-inner {
       max-width: 1200px;
       margin: 0 auto;
-      padding: 0 1.5rem;
+      padding: 0 2rem;
+      height: 72px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      height: 72px;
-      gap: 1rem;
+      gap: 1.5rem;
     }
 
     .nav-brand {
       display: flex;
       align-items: center;
-      gap: 0.65rem;
+      gap: 0.7rem;
       text-decoration: none;
       flex-shrink: 0;
     }
 
-    .brand-text { display: flex; flex-direction: column; line-height: 1; }
-    .brand-text .b1 {
-      font-family: 'Syne', sans-serif;
-      font-weight: 800;
-      font-size: 1rem;
-      letter-spacing: 0.08em;
+    .brand-words { line-height: 1; }
+    .brand-words .w1 {
+      display: block;
+      font-size: 0.95rem;
+      font-weight: 900;
+      letter-spacing: 0.1em;
       text-transform: uppercase;
-      color: var(--white);
+      color: var(--black);
     }
-    .brand-text .b2 {
-      font-family: 'Syne Mono', monospace;
+    .brand-words .w2 {
+      display: block;
       font-size: 0.6rem;
-      letter-spacing: 0.22em;
-      color: var(--sky);
+      font-weight: 700;
+      letter-spacing: 0.28em;
       text-transform: uppercase;
+      color: var(--blue);
     }
 
     .nav-links {
       display: flex;
       align-items: center;
-      gap: 2rem;
+      gap: 2.5rem;
       list-style: none;
     }
 
     .nav-links a {
-      font-size: 0.875rem;
-      font-weight: 500;
-      color: var(--gray-mid);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
       text-decoration: none;
       transition: color 0.2s;
     }
 
-    .nav-links a:hover { color: var(--white); }
+    .nav-links a:hover { color: var(--black); }
 
     @media (max-width: 768px) { .nav-links { display: none; } }
 
@@ -124,25 +103,25 @@
       display: inline-flex;
       align-items: center;
       gap: 0.4rem;
-      background: var(--amber);
-      color: #07111f;
-      font-family: 'Figtree', sans-serif;
-      font-weight: 700;
-      font-size: 0.875rem;
-      padding: 0.55rem 1.25rem;
-      border-radius: 6px;
+      background: var(--blue);
+      color: var(--white);
+      font-size: 0.75rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.65rem 1.4rem;
+      border-radius: 4px;
       text-decoration: none;
-      white-space: nowrap;
-      transition: background 0.2s;
       flex-shrink: 0;
+      transition: background 0.2s;
     }
 
-    .nav-cta:hover { background: var(--amber-lt); }
+    .nav-cta:hover { background: var(--blue-dk); }
 
-    /* ─── HERO ─── */
+    /* ── HERO ── */
     .hero {
-      padding: 6rem 1.5rem 5rem;
-      overflow: hidden;
+      background: var(--black);
+      padding: 7rem 2rem 6rem;
     }
 
     .hero-inner {
@@ -150,482 +129,391 @@
       margin: 0 auto;
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 4rem;
+      gap: 5rem;
       align-items: center;
     }
 
     @media (max-width: 900px) {
-      .hero-inner { grid-template-columns: 1fr; }
+      .hero-inner { grid-template-columns: 1fr; gap: 3rem; }
       .hero-visual { display: none; }
     }
 
-    .hero-badge {
+    .hero-label {
       display: inline-flex;
       align-items: center;
       gap: 0.5rem;
-      background: rgba(37,99,235,0.12);
-      border: 1px solid rgba(37,99,235,0.3);
-      border-radius: 999px;
-      padding: 0.3rem 0.9rem;
-      font-family: 'Syne Mono', monospace;
-      font-size: 0.7rem;
-      letter-spacing: 0.12em;
-      color: var(--sky);
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
       text-transform: uppercase;
+      color: var(--blue);
       margin-bottom: 1.5rem;
     }
 
-    .badge-dot {
-      width: 6px;
-      height: 6px;
-      background: var(--sky);
-      border-radius: 50%;
-      animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.5; transform: scale(0.7); }
+    .hero-label::before {
+      content: '';
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: var(--blue);
     }
 
     .hero h1 {
-      font-family: 'Syne', sans-serif;
-      font-weight: 800;
-      font-size: clamp(2.4rem, 5vw, 3.6rem);
+      font-size: clamp(2.4rem, 5vw, 3.8rem);
+      font-weight: 900;
       line-height: 1.05;
       letter-spacing: -0.02em;
-      margin-bottom: 1.25rem;
+      color: var(--white);
+      margin-bottom: 1.5rem;
+      text-transform: uppercase;
     }
 
-    .hero h1 .hl {
-      background: linear-gradient(135deg, var(--sky) 0%, var(--blue-lt) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
+    .hero h1 .blue { color: var(--blue); }
 
     .hero p {
-      font-size: 1.1rem;
-      color: var(--gray-hi);
-      line-height: 1.7;
-      max-width: 480px;
-      margin-bottom: 2.25rem;
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: rgba(255,255,255,0.65);
+      line-height: 1.75;
+      max-width: 440px;
+      margin-bottom: 2.5rem;
     }
 
-    .hero-actions {
+    .hero-btns {
       display: flex;
       gap: 1rem;
       flex-wrap: wrap;
-      margin-bottom: 3rem;
     }
 
-    .btn-amber {
+    .btn-primary {
       display: inline-flex;
       align-items: center;
       gap: 0.5rem;
-      background: var(--amber);
-      color: #07111f;
-      font-weight: 700;
-      font-size: 1rem;
-      padding: 0.85rem 1.75rem;
-      border-radius: 8px;
+      background: var(--blue);
+      color: var(--white);
+      font-size: 0.75rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.9rem 1.75rem;
+      border-radius: 4px;
       text-decoration: none;
-      transition: background 0.2s, transform 0.15s;
+      transition: background 0.2s;
     }
 
-    .btn-amber:hover { background: var(--amber-lt); transform: translateY(-1px); }
+    .btn-primary:hover { background: var(--blue-dk); }
 
-    .btn-ghost {
+    .btn-outline-white {
       display: inline-flex;
       align-items: center;
       gap: 0.5rem;
-      border: 1px solid var(--border-hi);
-      color: var(--gray-hi);
-      font-weight: 600;
-      font-size: 1rem;
-      padding: 0.85rem 1.75rem;
-      border-radius: 8px;
+      border: 1.5px solid rgba(255,255,255,0.25);
+      color: rgba(255,255,255,0.8);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.9rem 1.75rem;
+      border-radius: 4px;
       text-decoration: none;
       transition: border-color 0.2s, color 0.2s;
     }
 
-    .btn-ghost:hover { border-color: var(--sky); color: var(--sky); }
+    .btn-outline-white:hover { border-color: var(--white); color: var(--white); }
 
-    .hero-stats {
-      display: flex;
-      gap: 2rem;
-      padding-top: 2rem;
-      border-top: 1px solid var(--border);
-    }
-
-    .hero-stat-num {
-      font-family: 'Syne', sans-serif;
-      font-size: 1.6rem;
-      font-weight: 800;
-      color: var(--white);
-      line-height: 1;
-    }
-
-    .hero-stat-label {
-      font-size: 0.75rem;
-      color: var(--gray-mid);
-      margin-top: 0.2rem;
-    }
-
-    /* ─── DEVICE MOCKUPS ─── */
+    /* ── HERO VISUAL ── */
     .hero-visual {
       display: flex;
-      align-items: center;
+      gap: 1.25rem;
+      align-items: flex-start;
       justify-content: center;
-      gap: 1.5rem;
     }
 
-    .phone-wrap {
-      position: relative;
-    }
-
-    .phone-wrap.main { transform: translateY(0); }
-    .phone-wrap.side { transform: translateY(2.5rem) scale(0.88); opacity: 0.7; }
-
-    .phone {
-      width: 160px;
-      background: var(--bg-2);
-      border-radius: 28px;
-      border: 1.5px solid var(--border-hi);
-      box-shadow: 0 20px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06);
+    .device-phone {
+      width: 155px;
+      background: #0a111e;
+      border-radius: 24px;
+      border: 1.5px solid rgba(255,255,255,0.1);
       overflow: hidden;
-      position: relative;
+      box-shadow: 0 24px 48px rgba(0,0,0,0.5);
     }
 
-    .phone.main { width: 180px; }
+    .device-phone.small {
+      width: 135px;
+      margin-top: 2.5rem;
+      opacity: 0.75;
+    }
 
     .phone-notch {
-      width: 60px;
       height: 10px;
-      background: var(--bg-0);
-      border-radius: 0 0 10px 10px;
-      margin: 0 auto;
-    }
-
-    .phone-screen {
-      padding: 8px 8px 12px;
-    }
-
-    .app-header {
-      background: linear-gradient(135deg, #1e3a6a, #2563eb);
-      border-radius: 10px;
-      padding: 10px;
-      margin-bottom: 8px;
-    }
-
-    .app-logo-row {
+      background: #060d18;
       display: flex;
-      align-items: center;
-      gap: 6px;
-      margin-bottom: 6px;
+      justify-content: center;
+      align-items: flex-end;
+      padding-bottom: 0;
     }
 
-    .app-logo-dot {
-      width: 20px;
-      height: 20px;
-      background: rgba(255,255,255,0.9);
-      border-radius: 5px;
+    .phone-notch-pill {
+      width: 45px;
+      height: 5px;
+      background: #0a111e;
+      border-radius: 0 0 5px 5px;
     }
 
-    .app-logo-text {
-      width: 50px;
-      height: 6px;
-      background: rgba(255,255,255,0.7);
-      border-radius: 3px;
-    }
+    .phone-body { padding: 8px; }
 
-    .app-cal-label {
-      font-family: 'Syne Mono', monospace;
-      font-size: 7px;
-      color: rgba(255,255,255,0.6);
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-    }
-
-    .app-cal-date {
-      font-family: 'Syne', sans-serif;
-      font-size: 18px;
-      font-weight: 800;
-      color: #fff;
-      line-height: 1;
-    }
-
-    .app-slot-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 4px;
-      margin-bottom: 6px;
-    }
-
-    .app-slot {
-      background: var(--bg-3);
-      border-radius: 6px;
-      padding: 6px 4px;
-      text-align: center;
-      border: 1px solid var(--border);
-    }
-
-    .app-slot.active {
-      background: rgba(37,99,235,0.2);
-      border-color: var(--blue-lt);
-    }
-
-    .app-slot-time {
-      font-size: 7px;
-      font-family: 'Syne Mono', monospace;
-      color: var(--gray-mid);
-    }
-
-    .app-slot.active .app-slot-time { color: var(--sky); }
-
-    .app-booking {
-      background: var(--bg-3);
+    .ph-topbar {
+      background: var(--blue);
       border-radius: 8px;
       padding: 8px;
-      border: 1px solid var(--border);
-      margin-bottom: 5px;
-    }
-
-    .app-booking-name {
-      width: 65%;
-      height: 5px;
-      background: var(--gray-lo);
-      border-radius: 3px;
-      margin-bottom: 4px;
-    }
-
-    .app-booking-time {
-      width: 40%;
-      height: 4px;
-      background: var(--bg-4);
-      border-radius: 3px;
-    }
-
-    .app-status {
-      display: inline-block;
-      width: 36px;
-      height: 12px;
-      background: rgba(245,158,11,0.25);
-      border: 1px solid var(--amber);
-      border-radius: 3px;
-    }
-
-    .app-nav {
-      display: flex;
-      justify-content: space-around;
-      padding: 8px 4px;
-      border-top: 1px solid var(--border);
-    }
-
-    .app-nav-item {
-      width: 20px;
-      height: 20px;
-      background: var(--bg-4);
-      border-radius: 5px;
-    }
-
-    .app-nav-item.active { background: rgba(37,99,235,0.3); }
-
-    /* Web mockup */
-    .web-mockup {
-      width: 260px;
-      background: var(--bg-2);
-      border-radius: 14px;
-      border: 1.5px solid var(--border-hi);
-      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
-      overflow: hidden;
-    }
-
-    .web-browser-bar {
-      background: var(--bg-1);
-      padding: 8px 10px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .browser-dots {
-      display: flex;
-      gap: 4px;
-    }
-
-    .browser-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-    }
-
-    .browser-dot:nth-child(1) { background: rgba(255,95,87,0.7); }
-    .browser-dot:nth-child(2) { background: rgba(255,189,46,0.7); }
-    .browser-dot:nth-child(3) { background: rgba(39,201,63,0.7); }
-
-    .browser-url {
-      flex: 1;
-      background: var(--bg-3);
-      border-radius: 4px;
-      height: 16px;
-      display: flex;
-      align-items: center;
-      padding: 0 6px;
-    }
-
-    .url-text {
-      font-family: 'Syne Mono', monospace;
-      font-size: 6px;
-      color: var(--gray-mid);
-    }
-
-    .web-booking-page {
-      padding: 10px;
-    }
-
-    .web-biz-header {
-      background: linear-gradient(135deg, var(--bg-4), var(--blue) 200%);
-      border-radius: 8px;
-      padding: 10px;
-      margin-bottom: 8px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .web-biz-logo {
-      width: 28px;
-      height: 28px;
-      background: rgba(255,255,255,0.15);
-      border-radius: 7px;
-    }
-
-    .web-biz-name {
-      flex: 1;
-    }
-
-    .web-biz-name-line {
-      width: 70%;
-      height: 6px;
-      background: rgba(255,255,255,0.7);
-      border-radius: 3px;
-      margin-bottom: 4px;
-    }
-
-    .web-biz-sub-line {
-      width: 50%;
-      height: 4px;
-      background: rgba(255,255,255,0.35);
-      border-radius: 3px;
-    }
-
-    .web-section-label {
-      font-family: 'Syne Mono', monospace;
-      font-size: 6px;
-      color: var(--gray-mid);
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
       margin-bottom: 6px;
     }
 
-    .web-service-cards {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 5px;
-      margin-bottom: 8px;
-    }
-
-    .web-service-card {
-      background: var(--bg-3);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 6px;
-    }
-
-    .web-service-card.selected {
-      border-color: var(--blue-lt);
-      background: rgba(37,99,235,0.1);
-    }
-
-    .web-svc-title {
-      width: 80%;
-      height: 5px;
-      background: var(--gray-lo);
-      border-radius: 2px;
+    .ph-bar-label {
+      font-size: 6px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.6);
       margin-bottom: 3px;
     }
 
-    .web-svc-price {
-      width: 40%;
-      height: 4px;
-      background: var(--bg-4);
-      border-radius: 2px;
+    .ph-bar-date {
+      font-size: 16px;
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: -0.02em;
+      line-height: 1;
     }
 
-    .web-svc-price.blue { background: rgba(37,99,235,0.4); }
+    .ph-slots {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4px;
+      margin-bottom: 6px;
+    }
 
-    .web-cta-btn {
-      background: var(--amber);
+    .ph-slot {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 6px;
+      padding: 5px 4px;
+      text-align: center;
+      font-size: 6.5px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: rgba(255,255,255,0.4);
+    }
+
+    .ph-slot.on {
+      background: rgba(37,99,235,0.2);
+      border-color: var(--blue);
+      color: #7eb3ff;
+    }
+
+    .ph-booking {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 6px;
+      padding: 7px;
+      margin-bottom: 5px;
+    }
+
+    .ph-booking-line {
+      height: 4px;
+      border-radius: 2px;
+      background: rgba(255,255,255,0.2);
+      margin-bottom: 3px;
+    }
+
+    .ph-booking-line.w60 { width: 60%; }
+    .ph-booking-line.w35 { width: 35%; opacity: 0.5; }
+
+    .ph-badge {
+      display: inline-block;
+      width: 32px;
+      height: 10px;
+      background: rgba(37,99,235,0.4);
+      border-radius: 3px;
+      border: 1px solid var(--blue);
+      margin-top: 2px;
+    }
+
+    .ph-nav {
+      display: flex;
+      justify-content: space-around;
+      padding: 7px 4px;
+      border-top: 1px solid rgba(255,255,255,0.07);
+      margin-top: 4px;
+    }
+
+    .ph-nav-dot {
+      width: 18px;
+      height: 18px;
+      border-radius: 4px;
+      background: rgba(255,255,255,0.08);
+    }
+
+    .ph-nav-dot.act { background: rgba(37,99,235,0.35); }
+
+    .device-web {
+      width: 220px;
+      background: #f4f6f9;
+      border-radius: 10px;
+      border: 1.5px solid rgba(255,255,255,0.15);
+      overflow: hidden;
+      box-shadow: 0 24px 48px rgba(0,0,0,0.4);
+    }
+
+    .web-chrome {
+      background: #ffffff;
+      padding: 7px 8px;
+      border-bottom: 1px solid #dde2ea;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .chrome-dots { display: flex; gap: 3px; }
+    .chrome-dot { width: 6px; height: 6px; border-radius: 50%; }
+    .chrome-dot:nth-child(1) { background: #ff6059; opacity: 0.8; }
+    .chrome-dot:nth-child(2) { background: #ffbd2e; opacity: 0.8; }
+    .chrome-dot:nth-child(3) { background: #27c840; opacity: 0.8; }
+
+    .chrome-bar {
+      flex: 1;
+      height: 14px;
+      background: #f0f2f5;
+      border-radius: 3px;
+      display: flex;
+      align-items: center;
+      padding: 0 5px;
+    }
+
+    .chrome-url { font-size: 5.5px; font-weight: 600; color: #7a8a9e; letter-spacing: 0.03em; }
+
+    .web-body { padding: 8px; }
+
+    .web-header-block {
+      background: var(--blue);
+      border-radius: 6px;
+      padding: 8px;
+      margin-bottom: 7px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .web-logo-sq {
+      width: 24px;
+      height: 24px;
+      background: rgba(255,255,255,0.2);
       border-radius: 5px;
-      height: 20px;
+      flex-shrink: 0;
+    }
+
+    .web-hd-lines { flex: 1; }
+    .web-hd-line1 { height: 5px; background: rgba(255,255,255,0.75); border-radius: 2px; margin-bottom: 3px; width: 80%; }
+    .web-hd-line2 { height: 3.5px; background: rgba(255,255,255,0.4); border-radius: 2px; width: 55%; }
+
+    .web-sec-label {
+      font-size: 5px;
+      font-weight: 800;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #7a8a9e;
+      margin-bottom: 5px;
+    }
+
+    .web-svcs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4px;
+      margin-bottom: 7px;
+    }
+
+    .web-svc {
+      background: #fff;
+      border: 1px solid #dde2ea;
+      border-radius: 5px;
+      padding: 5px;
+    }
+
+    .web-svc.sel { border-color: var(--blue); background: rgba(37,99,235,0.06); }
+
+    .web-svc-l1 { height: 4px; background: #c8d2df; border-radius: 2px; margin-bottom: 3px; width: 75%; }
+    .web-svc-l2 { height: 3px; background: #e4e8ef; border-radius: 2px; width: 45%; }
+    .web-svc.sel .web-svc-l2 { background: rgba(37,99,235,0.3); }
+
+    .web-btn {
+      background: var(--blue);
+      border-radius: 4px;
+      height: 18px;
       display: flex;
       align-items: center;
       justify-content: center;
     }
 
-    .web-cta-text {
-      font-family: 'Syne Mono', monospace;
-      font-size: 7px;
-      color: #07111f;
-      font-weight: bold;
-      letter-spacing: 0.05em;
+    .web-btn-text { font-size: 6px; font-weight: 800; letter-spacing: 0.1em; color: #fff; text-transform: uppercase; }
+
+    /* ── RULE / DIVIDER STRIPE ── */
+    .stripe {
+      height: 4px;
+      background: linear-width;
+      background: linear-gradient(90deg, var(--blue) 0%, #1a48c4 100%);
     }
 
-    /* ─── SECTION BASE ─── */
-    section { padding: 5rem 1.5rem; }
+    /* ── SECTION BASE ── */
+    section { padding: 5.5rem 2rem; }
 
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-    }
+    .container { max-width: 1200px; margin: 0 auto; }
 
     .eyebrow {
-      font-family: 'Syne Mono', monospace;
-      font-size: 0.68rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--sky);
-      display: block;
-      margin-bottom: 0.75rem;
-    }
-
-    .section-title {
-      font-family: 'Syne', sans-serif;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.65rem;
       font-weight: 800;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--blue);
+      margin-bottom: 1rem;
+    }
+
+    .eyebrow::before {
+      content: '';
+      display: block;
+      width: 20px;
+      height: 2px;
+      background: var(--blue);
+      flex-shrink: 0;
+    }
+
+    .section-h {
       font-size: clamp(1.8rem, 3.5vw, 2.6rem);
-      line-height: 1.1;
+      font-weight: 900;
       letter-spacing: -0.02em;
+      text-transform: uppercase;
+      line-height: 1.05;
       margin-bottom: 0.75rem;
+      color: var(--black);
     }
 
-    .section-sub {
-      font-size: 1.05rem;
-      color: var(--gray-hi);
-      max-width: 540px;
+    .section-p {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--muted);
+      max-width: 520px;
       margin-bottom: 3.5rem;
+      line-height: 1.75;
     }
 
-    /* ─── PROBLEM STRIP ─── */
-    .problem-strip {
-      background: var(--bg-1);
-      border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
-      padding: 2.5rem 1.5rem;
-    }
+    /* ── PROBLEM STRIP ── */
+    .problem-bg { background: var(--off); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
 
-    .problem-inner {
+    .problem-bg section { padding: 2.75rem 2rem; }
+
+    .problem-grid {
       max-width: 1200px;
       margin: 0 auto;
       display: grid;
@@ -640,217 +528,217 @@
     }
 
     .problem-x {
-      width: 22px;
-      height: 22px;
-      background: rgba(239,68,68,0.15);
-      border: 1px solid rgba(239,68,68,0.3);
+      width: 20px;
+      height: 20px;
+      background: #fff;
+      border: 1.5px solid #c8d2df;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
       margin-top: 2px;
-      font-size: 0.7rem;
-      color: #f87171;
+      font-size: 0.6rem;
+      color: #94a3b8;
     }
 
-    .problem-text { font-size: 0.9rem; color: var(--gray-hi); line-height: 1.5; }
-    .problem-text strong { color: var(--white); }
+    .problem-text { font-size: 0.82rem; font-weight: 500; color: var(--muted); line-height: 1.55; }
+    .problem-text strong { color: var(--black); font-weight: 700; }
 
-    /* ─── PRODUCT SURFACES ─── */
-    .surfaces-bg { background: var(--bg-1); }
+    /* ── SURFACES ── */
+    .surfaces-bg { background: var(--off); }
 
     .surfaces-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 1.5rem;
+      gap: 1.5px;
+      background: var(--border);
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
     }
 
     @media (max-width: 900px) { .surfaces-grid { grid-template-columns: 1fr; } }
 
     .surface-card {
-      background: var(--bg-2);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 2rem;
-      transition: border-color 0.25s, transform 0.25s;
-      overflow: hidden;
+      background: var(--white);
+      padding: 2.25rem;
     }
 
-    .surface-card:hover {
-      border-color: var(--border-hi);
-      transform: translateY(-4px);
-    }
-
-    .surface-number {
-      font-family: 'Syne', sans-serif;
-      font-size: 4rem;
-      font-weight: 800;
+    .surface-num {
+      font-size: 3.5rem;
+      font-weight: 900;
       line-height: 1;
-      color: var(--bg-4);
+      color: var(--off);
       margin-bottom: 1rem;
+      letter-spacing: -0.04em;
     }
 
     .surface-tag {
-      font-family: 'Syne Mono', monospace;
-      font-size: 0.65rem;
-      letter-spacing: 0.18em;
+      font-size: 0.6rem;
+      font-weight: 800;
+      letter-spacing: 0.2em;
       text-transform: uppercase;
-      color: var(--sky);
+      color: var(--blue);
       margin-bottom: 0.5rem;
     }
 
     .surface-title {
-      font-family: 'Syne', sans-serif;
-      font-weight: 800;
-      font-size: 1.3rem;
+      font-size: 1.15rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
       margin-bottom: 0.75rem;
+      color: var(--black);
     }
 
     .surface-desc {
-      font-size: 0.9rem;
-      color: var(--gray-hi);
-      line-height: 1.65;
-      margin-bottom: 1.25rem;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 1.5rem;
     }
 
-    .feature-list {
+    .feat-list {
       list-style: none;
       display: flex;
       flex-direction: column;
-      gap: 0.5rem;
+      gap: 0.55rem;
     }
 
-    .feature-list li {
+    .feat-list li {
       display: flex;
       align-items: flex-start;
       gap: 0.6rem;
-      font-size: 0.85rem;
-      color: var(--gray-hi);
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--black);
     }
 
-    .check {
+    .ck {
       width: 16px;
       height: 16px;
-      background: rgba(37,99,235,0.2);
+      background: var(--blue);
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-      margin-top: 2px;
-      color: var(--sky);
-      font-size: 0.6rem;
+      margin-top: 1px;
+      color: #fff;
+      font-size: 0.55rem;
     }
 
-    /* ─── HOW IT WORKS ─── */
-    .steps-track {
+    /* ── HOW IT WORKS ── */
+    .steps-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 0;
+      gap: 2rem;
+    }
+
+    @media (max-width: 700px) { .steps-grid { grid-template-columns: 1fr; } }
+
+    .step {
+      border-top: 3px solid var(--border);
+      padding-top: 1.75rem;
       position: relative;
     }
 
-    @media (max-width: 700px) { .steps-track { grid-template-columns: 1fr; gap: 2rem; } }
+    .step.active-step { border-top-color: var(--blue); }
 
-    .steps-track::before {
-      content: '';
-      position: absolute;
-      top: 2rem;
-      left: 16.67%;
-      right: 16.67%;
-      height: 1px;
-      background: linear-gradient(90deg, var(--blue), var(--sky), var(--blue));
-      opacity: 0.3;
-    }
-
-    @media (max-width: 700px) { .steps-track::before { display: none; } }
-
-    .step-item {
-      padding: 0 2rem;
-      text-align: center;
-    }
-
-    .step-icon {
-      width: 4rem;
-      height: 4rem;
-      background: var(--bg-3);
-      border: 1px solid var(--border-hi);
-      border-radius: 14px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 1.25rem;
-    }
-
-    .step-icon svg { width: 24px; height: 24px; color: var(--sky); }
-
-    .step-num-label {
-      font-family: 'Syne Mono', monospace;
-      font-size: 0.65rem;
-      letter-spacing: 0.18em;
-      color: var(--blue-lt);
-      text-transform: uppercase;
-      margin-bottom: 0.4rem;
-    }
-
-    .step-title {
-      font-family: 'Syne', sans-serif;
+    .step-n {
+      font-size: 0.6rem;
       font-weight: 800;
-      font-size: 1.1rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--blue);
       margin-bottom: 0.6rem;
     }
 
-    .step-desc {
-      font-size: 0.875rem;
-      color: var(--gray-hi);
-      line-height: 1.65;
+    .step-icon-box {
+      width: 44px;
+      height: 44px;
+      background: var(--off);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1rem;
     }
 
-    /* ─── FEATURES GRID ─── */
-    .features-bg { background: var(--bg-1); }
+    .step-icon-box svg { width: 22px; height: 22px; color: var(--black); }
+
+    .step h3 {
+      font-size: 1rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      margin-bottom: 0.6rem;
+      color: var(--black);
+    }
+
+    .step p {
+      font-size: 0.83rem;
+      font-weight: 500;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    /* ── FEATURES ── */
+    .features-bg { background: var(--black); }
+
+    .features-bg .section-h { color: var(--white); }
+    .features-bg .section-p { color: rgba(255,255,255,0.5); }
+    .features-bg .eyebrow { color: var(--blue); }
+    .features-bg .eyebrow::before { background: var(--blue); }
 
     .feat-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
       gap: 1px;
-      background: var(--border);
-      border: 1px solid var(--border);
-      border-radius: 16px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 8px;
       overflow: hidden;
     }
 
     .feat-cell {
-      background: var(--bg-2);
+      background: var(--black);
       padding: 1.5rem;
+      border: none;
       transition: background 0.2s;
     }
 
-    .feat-cell:hover { background: var(--bg-3); }
+    .feat-cell:hover { background: #132237; }
 
-    .feat-icon {
-      width: 36px;
-      height: 36px;
-      background: rgba(37,99,235,0.12);
-      border-radius: 8px;
+    .feat-icon-box {
+      width: 34px;
+      height: 34px;
+      background: rgba(37,99,235,0.15);
+      border-radius: 6px;
       display: flex;
       align-items: center;
       justify-content: center;
       margin-bottom: 0.75rem;
     }
 
-    .feat-icon svg { width: 18px; height: 18px; color: var(--blue-lt); }
+    .feat-icon-box svg { width: 16px; height: 16px; color: var(--blue); }
 
-    .feat-title {
-      font-family: 'Syne', sans-serif;
-      font-weight: 700;
-      font-size: 0.95rem;
-      margin-bottom: 0.35rem;
+    .feat-h {
+      font-size: 0.82rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--white);
+      margin-bottom: 0.4rem;
     }
 
-    .feat-desc { font-size: 0.82rem; color: var(--gray-mid); line-height: 1.6; }
+    .feat-p { font-size: 0.78rem; font-weight: 500; color: rgba(255,255,255,0.45); line-height: 1.65; }
 
-    /* ─── PRICING ─── */
+    /* ── PRICING ── */
+    .pricing-bg { background: var(--off); }
+
     .pricing-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -861,194 +749,204 @@
     @media (max-width: 900px) { .pricing-grid { grid-template-columns: 1fr; max-width: 420px; } }
 
     .price-card {
-      background: var(--bg-2);
-      border: 1px solid var(--border);
-      border-radius: 16px;
+      background: var(--white);
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
       padding: 2rem;
-      transition: transform 0.25s;
     }
 
-    .price-card.featured {
-      background: linear-gradient(135deg, var(--bg-3), var(--bg-2));
+    .price-card.feat {
       border-color: var(--blue);
-      transform: scale(1.04);
-      box-shadow: 0 0 0 1px rgba(37,99,235,0.3), 0 20px 50px rgba(37,99,235,0.15);
-    }
-
-    @media (max-width: 900px) { .price-card.featured { transform: none; } }
-
-    .price-badge {
-      display: inline-block;
       background: var(--blue);
-      color: #fff;
-      font-family: 'Syne Mono', monospace;
-      font-size: 0.65rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      padding: 0.25rem 0.6rem;
-      border-radius: 4px;
-      margin-bottom: 1rem;
     }
 
     .price-tier {
-      font-family: 'Syne', sans-serif;
+      font-size: 0.7rem;
       font-weight: 800;
-      font-size: 1.1rem;
-      margin-bottom: 0.5rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--blue);
+      margin-bottom: 1rem;
     }
+
+    .price-card.feat .price-tier { color: rgba(255,255,255,0.7); }
 
     .price-amount {
       display: flex;
       align-items: flex-end;
-      gap: 0.25rem;
-      margin: 1rem 0;
+      gap: 0.2rem;
+      margin-bottom: 0.5rem;
     }
 
-    .price-dollar {
-      font-family: 'Syne', sans-serif;
-      font-size: 1.5rem;
+    .price-sym {
+      font-size: 1.3rem;
       font-weight: 700;
-      color: var(--gray-mid);
-      padding-bottom: 0.4rem;
+      padding-bottom: 0.35rem;
+      color: var(--black);
     }
 
-    .price-num {
-      font-family: 'Syne', sans-serif;
+    .price-card.feat .price-sym { color: var(--white); }
+
+    .price-n {
       font-size: 3rem;
-      font-weight: 800;
+      font-weight: 900;
       line-height: 1;
+      letter-spacing: -0.03em;
+      color: var(--black);
     }
 
-    .price-period {
-      font-size: 0.85rem;
-      color: var(--gray-mid);
+    .price-card.feat .price-n { color: var(--white); }
+
+    .price-per {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--muted);
       padding-bottom: 0.4rem;
     }
 
-    .price-desc {
-      font-size: 0.875rem;
-      color: var(--gray-mid);
+    .price-card.feat .price-per { color: rgba(255,255,255,0.6); }
+
+    .price-blurb {
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--muted);
+      line-height: 1.6;
       margin-bottom: 1.5rem;
-      line-height: 1.55;
     }
 
-    .price-divider {
+    .price-card.feat .price-blurb { color: rgba(255,255,255,0.7); }
+
+    .price-line {
       height: 1px;
       background: var(--border);
       margin: 1.25rem 0;
     }
 
-    .price-features {
+    .price-card.feat .price-line { background: rgba(255,255,255,0.2); }
+
+    .price-items {
       list-style: none;
       display: flex;
       flex-direction: column;
-      gap: 0.65rem;
+      gap: 0.6rem;
       margin-bottom: 1.75rem;
     }
 
-    .price-features li {
+    .price-items li {
       display: flex;
       align-items: flex-start;
-      gap: 0.6rem;
-      font-size: 0.875rem;
-      color: var(--gray-hi);
+      gap: 0.5rem;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--black);
     }
 
-    .price-check {
-      color: var(--sky);
-      font-size: 0.7rem;
-      margin-top: 3px;
-      flex-shrink: 0;
-    }
+    .price-card.feat .price-items li { color: rgba(255,255,255,0.9); }
 
-    .price-dash { color: var(--gray-lo); margin-top: 3px; flex-shrink: 0; }
+    .pi-check { color: var(--blue); flex-shrink: 0; margin-top: 2px; font-size: 0.75rem; }
+    .price-card.feat .pi-check { color: rgba(255,255,255,0.8); }
+    .pi-dash { color: var(--border); flex-shrink: 0; margin-top: 2px; }
 
-    .btn-price-primary {
+    .btn-p-blue {
       display: block;
       text-align: center;
       background: var(--blue);
-      color: #fff;
-      font-weight: 700;
-      font-size: 0.95rem;
+      color: var(--white);
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
       padding: 0.8rem;
-      border-radius: 8px;
+      border-radius: 4px;
       text-decoration: none;
       transition: background 0.2s;
     }
 
-    .btn-price-primary:hover { background: var(--blue-lt); }
+    .btn-p-blue:hover { background: var(--blue-dk); }
 
-    .btn-price-primary.amber-btn {
-      background: var(--amber);
-      color: #07111f;
-    }
-
-    .btn-price-primary.amber-btn:hover { background: var(--amber-lt); }
-
-    .btn-price-outline {
+    .btn-p-white {
       display: block;
       text-align: center;
-      border: 1px solid var(--border-hi);
-      color: var(--gray-hi);
-      font-weight: 600;
-      font-size: 0.95rem;
+      background: var(--white);
+      color: var(--blue);
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
       padding: 0.8rem;
-      border-radius: 8px;
+      border-radius: 4px;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+
+    .btn-p-white:hover { background: rgba(255,255,255,0.88); }
+
+    .btn-p-outline {
+      display: block;
+      text-align: center;
+      border: 1.5px solid var(--border);
+      color: var(--black);
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.8rem;
+      border-radius: 4px;
       text-decoration: none;
       transition: border-color 0.2s, color 0.2s;
     }
 
-    .btn-price-outline:hover { border-color: var(--sky); color: var(--sky); }
+    .btn-p-outline:hover { border-color: var(--blue); color: var(--blue); }
 
-    /* ─── CONTACT ─── */
-    .contact-bg { background: var(--bg-1); }
-
+    /* ── CONTACT ── */
     .contact-wrap {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 4rem;
+      gap: 5rem;
       align-items: start;
     }
 
-    @media (max-width: 768px) { .contact-wrap { grid-template-columns: 1fr; gap: 2.5rem; } }
+    @media (max-width: 768px) { .contact-wrap { grid-template-columns: 1fr; gap: 3rem; } }
 
-    .contact-left { }
-
-    .contact-person {
+    .contact-person-row {
       display: flex;
       align-items: center;
       gap: 1rem;
-      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1.5px solid var(--border);
+      margin-bottom: 1.75rem;
     }
 
-    .contact-avatar {
-      width: 60px;
-      height: 60px;
-      background: linear-gradient(135deg, var(--bg-4), var(--blue));
-      border-radius: 14px;
+    .avatar {
+      width: 56px;
+      height: 56px;
+      background: var(--blue);
+      border-radius: 6px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-family: 'Syne', sans-serif;
-      font-size: 1.4rem;
-      font-weight: 800;
-      color: #fff;
+      font-size: 1.1rem;
+      font-weight: 900;
+      color: var(--white);
+      letter-spacing: 0.05em;
       flex-shrink: 0;
     }
 
-    .contact-name {
-      font-family: 'Syne', sans-serif;
-      font-size: 1.2rem;
-      font-weight: 800;
+    .avatar-name {
+      font-size: 1.1rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--black);
       margin-bottom: 0.15rem;
     }
 
-    .contact-role {
-      font-family: 'Syne Mono', monospace;
-      font-size: 0.68rem;
-      letter-spacing: 0.14em;
+    .avatar-role {
+      font-size: 0.65rem;
+      font-weight: 800;
+      letter-spacing: 0.18em;
       text-transform: uppercase;
-      color: var(--sky);
+      color: var(--blue);
     }
 
     .contact-details {
@@ -1062,96 +960,99 @@
       align-items: center;
       gap: 0.85rem;
       text-decoration: none;
-      color: var(--gray-hi);
-      font-size: 0.95rem;
+      color: var(--black);
+      font-size: 0.88rem;
+      font-weight: 600;
       transition: color 0.15s;
     }
 
-    .contact-row:hover { color: var(--white); }
+    .contact-row:hover { color: var(--blue); }
 
-    .contact-icon {
-      width: 38px;
-      height: 38px;
-      background: var(--bg-3);
+    .contact-icon-box {
+      width: 36px;
+      height: 36px;
+      background: var(--off);
       border: 1px solid var(--border);
-      border-radius: 10px;
+      border-radius: 6px;
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
     }
 
-    .contact-icon svg { width: 16px; height: 16px; color: var(--blue-lt); }
+    .contact-icon-box svg { width: 15px; height: 15px; color: var(--blue); }
 
-    /* ─── FORM ─── */
-    .form-grid { display: flex; flex-direction: column; gap: 1rem; }
+    /* ── FORM ── */
+    form { display: flex; flex-direction: column; gap: 1rem; }
 
-    .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-
-    @media (max-width: 500px) { .form-row-2 { grid-template-columns: 1fr; } }
+    .f2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    @media (max-width: 480px) { .f2 { grid-template-columns: 1fr; } }
 
     label {
       display: flex;
       flex-direction: column;
       gap: 0.4rem;
-      font-size: 0.78rem;
-      font-weight: 600;
-      letter-spacing: 0.05em;
+      font-size: 0.65rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: var(--gray-mid);
+      color: var(--muted);
     }
 
     input, textarea, select {
-      background: var(--bg-2);
-      border: 1px solid var(--border-hi);
-      border-radius: 8px;
-      color: var(--white);
-      font-family: 'Figtree', sans-serif;
-      font-size: 0.95rem;
+      background: var(--off);
+      border: 1.5px solid var(--border);
+      border-radius: 4px;
+      color: var(--black);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 500;
       padding: 0.7rem 1rem;
       transition: border-color 0.2s;
       outline: none;
       width: 100%;
     }
 
-    input:focus, textarea:focus, select:focus { border-color: var(--blue-lt); }
-    input::placeholder, textarea::placeholder { color: var(--gray-lo); }
+    input:focus, textarea:focus, select:focus { border-color: var(--blue); background: var(--white); }
+    input::placeholder, textarea::placeholder { color: #a0b0c4; }
     textarea { resize: vertical; min-height: 100px; }
+    select option { background: var(--white); }
 
-    select option { background: var(--bg-2); }
-
-    .btn-submit {
-      background: var(--amber);
-      color: #07111f;
-      font-family: 'Figtree', sans-serif;
-      font-weight: 700;
-      font-size: 1rem;
+    .btn-form {
+      background: var(--blue);
+      color: var(--white);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
       border: none;
-      border-radius: 8px;
-      padding: 0.85rem 1.5rem;
+      border-radius: 4px;
+      padding: 0.9rem;
       cursor: pointer;
       transition: background 0.2s;
       width: 100%;
     }
 
-    .btn-submit:hover { background: var(--amber-lt); }
+    .btn-form:hover { background: var(--blue-dk); }
 
-    .form-success {
+    .form-ok {
       display: none;
-      background: rgba(37,99,235,0.1);
-      border: 1px solid rgba(56,189,248,0.3);
-      border-radius: 10px;
+      background: rgba(37,99,235,0.06);
+      border: 1.5px solid rgba(37,99,235,0.2);
+      border-radius: 6px;
       padding: 1.25rem;
       text-align: center;
-      color: var(--sky);
-      font-size: 0.95rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--blue);
     }
 
-    /* ─── FOOTER ─── */
+    /* ── FOOTER ── */
     footer {
-      background: var(--bg-0);
-      border-top: 1px solid var(--border);
-      padding: 2.5rem 1.5rem;
+      background: var(--black);
+      padding: 2rem;
+      border-top: 4px solid var(--blue);
     }
 
     .footer-inner {
@@ -1164,192 +1065,148 @@
       flex-wrap: wrap;
     }
 
-    .footer-brand {
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-      text-decoration: none;
+    .footer-copy {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: rgba(255,255,255,0.35);
+      letter-spacing: 0.05em;
     }
 
-    .footer-right {
-      font-size: 0.8rem;
-      color: var(--gray-lo);
-    }
+    .footer-copy a { color: rgba(255,255,255,0.5); text-decoration: none; transition: color 0.15s; }
+    .footer-copy a:hover { color: var(--white); }
 
-    .footer-right a { color: var(--gray-mid); text-decoration: none; }
-    .footer-right a:hover { color: var(--white); }
-
-    /* ─── SCROLL REVEAL ─── */
+    /* ── REVEAL ── */
     .reveal {
       opacity: 0;
-      transform: translateY(24px);
-      transition: opacity 0.6s ease, transform 0.6s ease;
+      transform: translateY(20px);
+      transition: opacity 0.55s ease, transform 0.55s ease;
     }
 
-    .reveal.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    .reveal-delay-1 { transition-delay: 0.1s; }
-    .reveal-delay-2 { transition-delay: 0.2s; }
-    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal.in { opacity: 1; transform: none; }
+    .d1 { transition-delay: 0.1s; }
+    .d2 { transition-delay: 0.2s; }
   </style>
 </head>
 <body>
 
-<!-- ─── LOGO SVG DEF ─── -->
-<svg style="display:none" xmlns="http://www.w3.org/2000/svg">
-  <symbol id="logo-s" viewBox="0 0 40 40">
-    <path d="M20 2 L34 10 V18 L20 26 L6 18 V10 Z" fill="#2563eb"/>
-    <path d="M20 14 L34 22 V30 L20 38 L6 30 V22 Z" fill="#0c1829" stroke="#3b82f6" stroke-width="0.8"/>
-    <path d="M24.5 11.5 L29 14.2 V19.8 L24.5 22.5 L20 19.8 V14.2 Z" fill="#1c3050"/>
-    <path d="M15.5 17.5 L20 20.2 V25.8 L15.5 28.5 L11 25.8 V20.2 Z" fill="#3b82f6" opacity="0.75"/>
+<!-- LOGO SYMBOL -->
+<svg style="display:none">
+  <symbol id="sd-logo" viewBox="0 0 40 40">
+    <path d="M20 2L33 9.5V17L20 24.5L7 17V9.5Z" fill="#2563eb"/>
+    <path d="M20 15.5L33 23V30.5L20 38L7 30.5V23Z" fill="#0d1b2e" stroke="#2563eb" stroke-width="0.6"/>
+    <path d="M24.5 10.5L29 13.3V18.7L24.5 21.5L20 18.7V13.3Z" fill="#1a3356"/>
+    <path d="M15.5 19L20 21.8V27.2L15.5 30L11 27.2V21.8Z" fill="#2563eb" opacity="0.7"/>
   </symbol>
 </svg>
 
-<!-- ─── NAV ─── -->
+<!-- NAV -->
 <nav>
   <div class="nav-inner">
     <a href="#" class="nav-brand">
-      <svg width="34" height="34" aria-hidden="true"><use href="#logo-s"/></svg>
-      <div class="brand-text">
-        <span class="b1">Shawcliffe</span>
-        <span class="b2">Digital</span>
+      <svg width="32" height="32" aria-hidden="true"><use href="#sd-logo"/></svg>
+      <div class="brand-words">
+        <span class="w1">Shawcliffe</span>
+        <span class="w2">Digital</span>
       </div>
     </a>
     <ul class="nav-links">
       <li><a href="#product">Product</a></li>
-      <li><a href="#how-it-works">How It Works</a></li>
+      <li><a href="#process">Process</a></li>
       <li><a href="#pricing">Pricing</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
-    <a href="#contact" class="nav-cta">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3l14 9-14 9V3z"/></svg>
-      Get Started
-    </a>
+    <a href="#contact" class="nav-cta">Get Started</a>
   </div>
 </nav>
 
-<!-- ─── HERO ─── -->
+<!-- HERO -->
 <section class="hero">
   <div class="hero-inner">
-    <div class="hero-copy">
-      <div class="hero-badge">
-        <span class="badge-dot"></span>
-        Serving Local Businesses
-      </div>
-      <h1>Your Brand.<br/><span class="hl">Your App.</span><br/>Live in Days.</h1>
-      <p>Shawcliffe Digital builds fully branded iOS apps, Android apps, and booking websites for local contractors and owner operators — at a fraction of custom development costs.</p>
-      <div class="hero-actions">
-        <a href="#contact" class="btn-amber">
+    <div>
+      <div class="hero-label">Custom Branded Apps</div>
+      <h1>Your Brand.<br/><span class="blue">Your App.</span><br/>Live in Days.</h1>
+      <p>Shawcliffe Digital builds fully branded iOS apps, Android apps, and booking websites for local contractors and owner operators — at a fraction of custom development cost.</p>
+      <div class="hero-btns">
+        <a href="#contact" class="btn-primary">
           Book a Free Consultation
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </a>
-        <a href="#product" class="btn-ghost">See the Platform</a>
-      </div>
-      <div class="hero-stats">
-        <div>
-          <div class="hero-stat-num">3</div>
-          <div class="hero-stat-label">Branded surfaces</div>
-        </div>
-        <div>
-          <div class="hero-stat-num">&lt;5 min</div>
-          <div class="hero-stat-label">To go live</div>
-        </div>
-        <div>
-          <div class="hero-stat-num">100%</div>
-          <div class="hero-stat-label">Your branding</div>
-        </div>
+        <a href="#product" class="btn-outline-white">See the Platform</a>
       </div>
     </div>
 
     <div class="hero-visual">
       <!-- Web mockup -->
-      <div>
-        <div class="web-mockup">
-          <div class="web-browser-bar">
-            <div class="browser-dots">
-              <div class="browser-dot"></div>
-              <div class="browser-dot"></div>
-              <div class="browser-dot"></div>
-            </div>
-            <div class="browser-url">
-              <span class="url-text">book.mikesplumbing.com</span>
+      <div class="device-web">
+        <div class="web-chrome">
+          <div class="chrome-dots">
+            <div class="chrome-dot"></div>
+            <div class="chrome-dot"></div>
+            <div class="chrome-dot"></div>
+          </div>
+          <div class="chrome-bar">
+            <span class="chrome-url">book.mikesplumbing.com</span>
+          </div>
+        </div>
+        <div class="web-body">
+          <div class="web-header-block">
+            <div class="web-logo-sq"></div>
+            <div class="web-hd-lines">
+              <div class="web-hd-line1"></div>
+              <div class="web-hd-line2"></div>
             </div>
           </div>
-          <div class="web-booking-page">
-            <div class="web-biz-header">
-              <div class="web-biz-logo"></div>
-              <div class="web-biz-name">
-                <div class="web-biz-name-line"></div>
-                <div class="web-biz-sub-line"></div>
-              </div>
+          <div class="web-sec-label">Choose a Service</div>
+          <div class="web-svcs">
+            <div class="web-svc sel">
+              <div class="web-svc-l1"></div>
+              <div class="web-svc-l2"></div>
             </div>
-            <div class="web-section-label">Choose a Service</div>
-            <div class="web-service-cards">
-              <div class="web-service-card selected">
-                <div class="web-svc-title"></div>
-                <div class="web-svc-price blue"></div>
-              </div>
-              <div class="web-service-card">
-                <div class="web-svc-title"></div>
-                <div class="web-svc-price"></div>
-              </div>
-              <div class="web-service-card">
-                <div class="web-svc-title"></div>
-                <div class="web-svc-price"></div>
-              </div>
-              <div class="web-service-card">
-                <div class="web-svc-title"></div>
-                <div class="web-svc-price"></div>
-              </div>
+            <div class="web-svc">
+              <div class="web-svc-l1"></div>
+              <div class="web-svc-l2"></div>
             </div>
-            <div class="web-cta-btn">
-              <span class="web-cta-text">Book Now →</span>
+            <div class="web-svc">
+              <div class="web-svc-l1"></div>
+              <div class="web-svc-l2"></div>
+            </div>
+            <div class="web-svc">
+              <div class="web-svc-l1"></div>
+              <div class="web-svc-l2"></div>
             </div>
           </div>
+          <div class="web-btn"><span class="web-btn-text">Book Now →</span></div>
         </div>
       </div>
 
-      <!-- Phone mockups -->
-      <div style="display:flex; flex-direction:column; gap:1rem;">
-        <div class="phone-wrap main">
-          <div class="phone main">
-            <div class="phone-notch"></div>
-            <div class="phone-screen">
-              <div class="app-header">
-                <div class="app-logo-row">
-                  <div class="app-logo-dot"></div>
-                  <div class="app-logo-text"></div>
-                </div>
-                <div class="app-cal-label">Today</div>
-                <div class="app-cal-date">Tue 27</div>
-              </div>
-              <div class="app-slot-grid">
-                <div class="app-slot active"><div class="app-slot-time">9:00 AM</div></div>
-                <div class="app-slot"><div class="app-slot-time">10:00 AM</div></div>
-                <div class="app-slot"><div class="app-slot-time">2:00 PM</div></div>
-                <div class="app-slot active"><div class="app-slot-time">3:30 PM</div></div>
-              </div>
-              <div class="app-booking">
-                <div class="app-booking-name"></div>
-                <div class="app-booking-time"></div>
-              </div>
-              <div class="app-booking">
-                <div class="app-booking-name"></div>
-                <div style="display:flex;gap:4px;align-items:center;margin-top:4px;">
-                  <div class="app-booking-time" style="width:30%"></div>
-                  <div class="app-status"></div>
-                </div>
-              </div>
-              <div class="app-nav">
-                <div class="app-nav-item active"></div>
-                <div class="app-nav-item"></div>
-                <div class="app-nav-item"></div>
-                <div class="app-nav-item"></div>
-              </div>
-            </div>
+      <!-- Phone mockup -->
+      <div class="device-phone">
+        <div class="phone-notch"><div class="phone-notch-pill"></div></div>
+        <div class="phone-body">
+          <div class="ph-topbar">
+            <div class="ph-bar-label">Calendar</div>
+            <div class="ph-bar-date">Tue 27</div>
+          </div>
+          <div class="ph-slots">
+            <div class="ph-slot on">9:00 AM</div>
+            <div class="ph-slot">10:30 AM</div>
+            <div class="ph-slot">2:00 PM</div>
+            <div class="ph-slot on">3:30 PM</div>
+          </div>
+          <div class="ph-booking">
+            <div class="ph-booking-line w60"></div>
+            <div class="ph-booking-line w35"></div>
+            <div class="ph-badge"></div>
+          </div>
+          <div class="ph-booking">
+            <div class="ph-booking-line w60"></div>
+            <div class="ph-booking-line w35"></div>
+          </div>
+          <div class="ph-nav">
+            <div class="ph-nav-dot act"></div>
+            <div class="ph-nav-dot"></div>
+            <div class="ph-nav-dot"></div>
+            <div class="ph-nav-dot"></div>
           </div>
         </div>
       </div>
@@ -1357,318 +1214,310 @@
   </div>
 </section>
 
-<!-- ─── PROBLEM STRIP ─── -->
-<div class="problem-strip">
-  <div class="problem-inner">
-    <div class="problem-item">
-      <div class="problem-x">✕</div>
-      <div class="problem-text"><strong>Generic scheduling tools</strong> don't reflect your brand or trade.</div>
+<div class="stripe"></div>
+
+<!-- PROBLEM STRIP -->
+<div class="problem-bg">
+  <section>
+    <div class="problem-grid">
+      <div class="problem-item">
+        <div class="problem-x">✕</div>
+        <div class="problem-text"><strong>Generic scheduling tools</strong> don't carry your brand or fit your trade.</div>
+      </div>
+      <div class="problem-item">
+        <div class="problem-x">✕</div>
+        <div class="problem-text"><strong>Custom app development</strong> costs $50,000+ and takes 6+ months.</div>
+      </div>
+      <div class="problem-item">
+        <div class="problem-x">✕</div>
+        <div class="problem-text"><strong>Phone-only bookings</strong> mean missed jobs and scheduling conflicts.</div>
+      </div>
+      <div class="problem-item">
+        <div class="problem-x">✕</div>
+        <div class="problem-text"><strong>No digital presence</strong> means losing work to tech-forward competitors.</div>
+      </div>
     </div>
-    <div class="problem-item">
-      <div class="problem-x">✕</div>
-      <div class="problem-text"><strong>Custom app development</strong> costs $50K+ and takes 6+ months.</div>
-    </div>
-    <div class="problem-item">
-      <div class="problem-x">✕</div>
-      <div class="problem-text"><strong>Clients booking over the phone</strong> means missed jobs and double-bookings.</div>
-    </div>
-    <div class="problem-item">
-      <div class="problem-x">✕</div>
-      <div class="problem-text"><strong>No digital presence</strong> means losing work to tech-savvy competitors.</div>
-    </div>
-  </div>
+  </section>
 </div>
 
-<!-- ─── PRODUCT SURFACES ─── -->
-<section id="product" class="surfaces-bg">
+<!-- PRODUCT SURFACES -->
+<section id="product">
   <div class="container">
-    <span class="eyebrow">The Platform</span>
-    <h2 class="section-title reveal">Three branded surfaces.<br/>One subscription.</h2>
-    <p class="section-sub reveal reveal-delay-1">Every contractor gets a complete branded digital stack — iOS app, Android app, and a booking website — all tied to a single account and powered by the same backend.</p>
+    <div class="eyebrow reveal">The Platform</div>
+    <h2 class="section-h reveal">Three branded surfaces.<br/>One subscription.</h2>
+    <p class="section-p reveal d1">Every contractor gets a complete branded digital stack — iOS app, Android app, and a booking website — powered by the same backend, configured in minutes.</p>
 
     <div class="surfaces-grid">
       <div class="surface-card reveal">
-        <div class="surface-number">01</div>
+        <div class="surface-num">01</div>
         <div class="surface-tag">iOS App</div>
         <h3 class="surface-title">Native iPhone App</h3>
-        <p class="surface-desc">A fully branded SwiftUI app — your logo, your colors, your name on the App Store. Manage your calendar, services, and bookings from your pocket.</p>
-        <ul class="feature-list">
-          <li><span class="check">✓</span> Your logo, colors &amp; app name</li>
-          <li><span class="check">✓</span> Calendar, bookings &amp; availability</li>
-          <li><span class="check">✓</span> Listed on the App Store under your brand</li>
-          <li><span class="check">✓</span> Offline-first with cloud sync</li>
-          <li><span class="check">✓</span> Built &amp; submitted automatically</li>
+        <p class="surface-desc">Your logo, your colors, your name on the App Store. Manage bookings, services, and your calendar from your pocket.</p>
+        <ul class="feat-list">
+          <li><span class="ck">✓</span>Your branding — logo, colors, app name</li>
+          <li><span class="ck">✓</span>Calendar, bookings &amp; availability</li>
+          <li><span class="ck">✓</span>Listed on App Store under your brand</li>
+          <li><span class="ck">✓</span>Offline-first with cloud sync</li>
+          <li><span class="ck">✓</span>Built &amp; submitted automatically</li>
         </ul>
       </div>
 
-      <div class="surface-card reveal reveal-delay-1">
-        <div class="surface-number">02</div>
+      <div class="surface-card reveal d1">
+        <div class="surface-num">02</div>
         <div class="surface-tag">Android App</div>
         <h3 class="surface-title">Native Android App</h3>
-        <p class="surface-desc">The same complete experience on Android — Jetpack Compose, full feature parity with iOS, and per-client builds deployed to Google Play.</p>
-        <ul class="feature-list">
-          <li><span class="check">✓</span> Full feature parity with iOS</li>
-          <li><span class="check">✓</span> Material You with your brand tokens</li>
-          <li><span class="check">✓</span> Google Play listing under your name</li>
-          <li><span class="check">✓</span> Syncs to the same backend as iOS</li>
-          <li><span class="check">✓</span> Automated AAB builds + submission</li>
+        <p class="surface-desc">Full feature parity with iOS. Your branded app on Google Play — built in Kotlin, deployed automatically.</p>
+        <ul class="feat-list">
+          <li><span class="ck">✓</span>Full iOS feature parity</li>
+          <li><span class="ck">✓</span>Material You with your brand tokens</li>
+          <li><span class="ck">✓</span>Google Play listing under your name</li>
+          <li><span class="ck">✓</span>Same backend as iOS</li>
+          <li><span class="ck">✓</span>Automated AAB builds + submission</li>
         </ul>
       </div>
 
-      <div class="surface-card reveal reveal-delay-2">
-        <div class="surface-number">03</div>
+      <div class="surface-card reveal d2">
+        <div class="surface-num">03</div>
         <div class="surface-tag">Booking Website</div>
         <h3 class="surface-title">Branded Booking Page</h3>
-        <p class="surface-desc">A fast, mobile-friendly booking site for your clients — no app required. Served on your subdomain or your own custom domain.</p>
-        <ul class="feature-list">
-          <li><span class="check">✓</span> yourname.contractr.app or your domain</li>
-          <li><span class="check">✓</span> 5-step booking wizard for customers</li>
-          <li><span class="check">✓</span> Loads in &lt;2s on mobile</li>
-          <li><span class="check">✓</span> Booking confirmation emails</li>
-          <li><span class="check">✓</span> Live in &lt;5 minutes</li>
+        <p class="surface-desc">A fast, mobile-friendly booking site your clients can use without downloading an app — on your subdomain or custom domain.</p>
+        <ul class="feat-list">
+          <li><span class="ck">✓</span>yourname.contractr.app or your domain</li>
+          <li><span class="ck">✓</span>5-step booking wizard for customers</li>
+          <li><span class="ck">✓</span>Loads in &lt;2s on mobile</li>
+          <li><span class="ck">✓</span>Branded confirmation emails</li>
+          <li><span class="ck">✓</span>Live in under 5 minutes</li>
         </ul>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ─── HOW IT WORKS ─── -->
-<section id="how-it-works">
+<!-- HOW IT WORKS -->
+<section id="process" style="background:var(--off);">
   <div class="container">
-    <span class="eyebrow">The Process</span>
-    <h2 class="section-title reveal">From sign-up to live app<br/>in under 5 minutes.</h2>
-    <p class="section-sub reveal reveal-delay-1">No developers. No long meetings. No waiting months. Configure your brand, subscribe, and we handle the rest automatically.</p>
+    <div class="eyebrow reveal">The Process</div>
+    <h2 class="section-h reveal">From sign-up to live app<br/>in under 5 minutes.</h2>
+    <p class="section-p reveal d1">No developers. No long meetings. Configure your brand, subscribe, and our pipeline handles the rest.</p>
 
-    <div class="steps-track">
-      <div class="step-item reveal">
-        <div class="step-icon">
+    <div class="steps-grid">
+      <div class="step active-step reveal">
+        <div class="step-n">Step 01</div>
+        <div class="step-icon-box">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
         </div>
-        <div class="step-num-label">Step 01</div>
-        <h3 class="step-title">Sign Up &amp; Configure</h3>
-        <p class="step-desc">Upload your logo, pick your brand colors, set your business name and subdomain. Done in under 3 minutes.</p>
+        <h3>Sign Up &amp; Configure</h3>
+        <p>Upload your logo, pick your brand colors, set your business name and subdomain. Done in under 3 minutes — no tech skills needed.</p>
       </div>
 
-      <div class="step-item reveal reveal-delay-1">
-        <div class="step-icon">
+      <div class="step active-step reveal d1">
+        <div class="step-n">Step 02</div>
+        <div class="step-icon-box">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
         </div>
-        <div class="step-num-label">Step 02</div>
-        <h3 class="step-title">Preview &amp; Subscribe</h3>
-        <p class="step-desc">See a live preview of your branded booking page before you commit. Pick a plan and subscribe — your booking site activates instantly.</p>
+        <h3>Preview &amp; Subscribe</h3>
+        <p>See a live preview of your branded booking page before you commit. Subscribe and your booking site activates instantly.</p>
       </div>
 
-      <div class="step-item reveal reveal-delay-2">
-        <div class="step-icon">
+      <div class="step active-step reveal d2">
+        <div class="step-n">Step 03</div>
+        <div class="step-icon-box">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
         </div>
-        <div class="step-num-label">Step 03</div>
-        <h3 class="step-title">Apps Built &amp; Submitted</h3>
-        <p class="step-desc">Our CI/CD pipeline builds your branded iOS and Android apps automatically and submits them to the App Store and Google Play — no Xcode required.</p>
+        <h3>Apps Built &amp; Submitted</h3>
+        <p>Our pipeline builds your branded iOS and Android apps and submits them to both stores automatically — zero Xcode required.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ─── FEATURES ─── -->
+<!-- FEATURES -->
 <section class="features-bg">
   <div class="container">
-    <span class="eyebrow">Everything Included</span>
-    <h2 class="section-title reveal">Built for how contractors<br/>actually run their business.</h2>
-    <p class="section-sub reveal reveal-delay-1">Every feature that matters. Nothing that doesn't.</p>
+    <div class="eyebrow reveal">Everything Included</div>
+    <h2 class="section-h reveal">Built for how contractors<br/>actually run their business.</h2>
+    <p class="section-p reveal d1">Every feature that matters. Nothing that doesn't.</p>
 
-    <div class="feat-grid reveal reveal-delay-1">
+    <div class="feat-grid reveal d1">
       <div class="feat-cell">
-        <div class="feat-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        <div class="feat-icon-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
         </div>
-        <div class="feat-title">Calendar View</div>
-        <div class="feat-desc">Month and week views with all upcoming bookings at a glance. Tap any booking for full details and status controls.</div>
+        <div class="feat-h">Calendar View</div>
+        <div class="feat-p">Month and week views with all upcoming bookings. Tap any booking to view details or update status.</div>
       </div>
-
       <div class="feat-cell">
-        <div class="feat-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-        </div>
-        <div class="feat-title">Availability Editor</div>
-        <div class="feat-desc">Set weekly recurring hours and block off time-off dates. Customers can only book when you're actually available.</div>
-      </div>
-
-      <div class="feat-cell">
-        <div class="feat-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-        </div>
-        <div class="feat-title">Services &amp; Pricing</div>
-        <div class="feat-desc">Define your services, durations, prices, and buffers. Customers pick the service, you handle the work.</div>
-      </div>
-
-      <div class="feat-cell">
-        <div class="feat-icon">
+        <div class="feat-icon-box">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
         </div>
-        <div class="feat-title">Smart Slot Generation</div>
-        <div class="feat-desc">Automatic slot availability based on your hours, service duration, buffers, and existing bookings — no double-booking possible.</div>
+        <div class="feat-h">Smart Scheduling</div>
+        <div class="feat-p">Automatic slot generation based on your hours, service durations, buffers, and existing bookings. No double-bookings possible.</div>
       </div>
-
       <div class="feat-cell">
-        <div class="feat-icon">
+        <div class="feat-icon-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        </div>
+        <div class="feat-h">Availability Editor</div>
+        <div class="feat-p">Set your weekly hours and block off time-off dates. Customers only see slots when you're actually free.</div>
+      </div>
+      <div class="feat-cell">
+        <div class="feat-icon-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        </div>
+        <div class="feat-h">Services &amp; Pricing</div>
+        <div class="feat-p">Define services, durations, prices, and buffer times. Customers pick the service — you do the work.</div>
+      </div>
+      <div class="feat-cell">
+        <div class="feat-icon-box">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.38 2 2 0 0 1 3.6 1.17h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.81a16 16 0 0 0 6.29 6.29l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
         </div>
-        <div class="feat-title">Booking Confirmation Emails</div>
-        <div class="feat-desc">Customers get a branded confirmation email with your logo, their booking details, and all the info they need.</div>
+        <div class="feat-h">Confirmation Emails</div>
+        <div class="feat-p">Customers get a branded confirmation email with your logo, booking details, and everything they need.</div>
       </div>
-
       <div class="feat-cell">
-        <div class="feat-icon">
+        <div class="feat-icon-box">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
         </div>
-        <div class="feat-title">Cloud Sync</div>
-        <div class="feat-desc">Bookings made on the web appear in your app. Calendar edits sync back to the server. Works offline, reconciles when you reconnect.</div>
+        <div class="feat-h">Cloud Sync</div>
+        <div class="feat-p">Web bookings appear in your app. Calendar edits sync to the server. Works offline and reconciles when you reconnect.</div>
       </div>
-
       <div class="feat-cell">
-        <div class="feat-icon">
+        <div class="feat-icon-box">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
         </div>
-        <div class="feat-title">Custom Domain</div>
-        <div class="feat-desc">Bring your own domain. Point a CNAME and your booking page lives at book.yourbusiness.com — SSL included automatically.</div>
+        <div class="feat-h">Custom Domain</div>
+        <div class="feat-p">Point a CNAME and your booking page lives at book.yourbusiness.com — SSL provisioned automatically.</div>
       </div>
-
       <div class="feat-cell">
-        <div class="feat-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
-        </div>
-        <div class="feat-title">Stripe Billing</div>
-        <div class="feat-desc">Monthly subscription managed through Stripe. Upgrade, downgrade, or cancel anytime — from the dashboard, no calls required.</div>
-      </div>
-
-      <div class="feat-cell">
-        <div class="feat-icon">
+        <div class="feat-icon-box">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
         </div>
-        <div class="feat-title">Build Status Dashboard</div>
-        <div class="feat-desc">Track your iOS and Android app builds in real time — Queued → Building → Submitted → Live. No wondering what's happening.</div>
+        <div class="feat-h">Build Status Dashboard</div>
+        <div class="feat-p">Track your iOS and Android builds in real time — Queued → Building → Submitted → Live. Full visibility, no surprises.</div>
+      </div>
+      <div class="feat-cell">
+        <div class="feat-icon-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+        </div>
+        <div class="feat-h">Stripe Billing</div>
+        <div class="feat-p">Managed monthly subscription through Stripe. Upgrade, downgrade, or cancel anytime from your dashboard.</div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ─── PRICING ─── -->
-<section id="pricing">
+<!-- PRICING -->
+<section id="pricing" class="pricing-bg">
   <div class="container">
-    <span class="eyebrow">Pricing</span>
-    <h2 class="section-title reveal">Simple, transparent pricing.</h2>
-    <p class="section-sub reveal reveal-delay-1">No setup fees. No hidden costs. Your booking site goes live the moment you subscribe.</p>
+    <div class="eyebrow reveal">Pricing</div>
+    <h2 class="section-h reveal">Simple, transparent pricing.</h2>
+    <p class="section-p reveal d1">No setup fees. No hidden costs. Your booking site goes live the moment you subscribe.</p>
 
     <div class="pricing-grid">
-
       <div class="price-card reveal">
         <div class="price-tier">Web Starter</div>
         <div class="price-amount">
-          <span class="price-dollar">$</span>
-          <span class="price-num">79</span>
-          <span class="price-period">/month</span>
+          <span class="price-sym">$</span>
+          <span class="price-n">79</span>
+          <span class="price-per">/mo</span>
         </div>
-        <p class="price-desc">Branded booking website only. Great for getting started before your apps are live.</p>
-        <div class="price-divider"></div>
-        <ul class="price-features">
-          <li><span class="price-check">✓</span> Branded booking website</li>
-          <li><span class="price-check">✓</span> Custom subdomain</li>
-          <li><span class="price-check">✓</span> Unlimited bookings</li>
-          <li><span class="price-check">✓</span> Booking confirmation emails</li>
-          <li><span class="price-check">✓</span> Services &amp; availability management</li>
-          <li><span class="price-dash">—</span> iOS App</li>
-          <li><span class="price-dash">—</span> Android App</li>
-          <li><span class="price-dash">—</span> Custom domain</li>
+        <p class="price-blurb">Branded booking website only. The fastest way to get a professional digital presence live today.</p>
+        <div class="price-line"></div>
+        <ul class="price-items">
+          <li><span class="pi-check">✓</span>Branded booking website</li>
+          <li><span class="pi-check">✓</span>Custom subdomain</li>
+          <li><span class="pi-check">✓</span>Unlimited bookings</li>
+          <li><span class="pi-check">✓</span>Confirmation emails</li>
+          <li><span class="pi-check">✓</span>Services &amp; availability</li>
+          <li><span class="pi-dash">—</span>iOS App</li>
+          <li><span class="pi-dash">—</span>Android App</li>
+          <li><span class="pi-dash">—</span>Custom domain</li>
         </ul>
-        <a href="#contact" class="btn-price-outline">Get Started</a>
+        <a href="#contact" class="btn-p-outline">Get Started</a>
       </div>
 
-      <div class="price-card featured reveal reveal-delay-1">
-        <div class="price-badge">Most Popular</div>
+      <div class="price-card feat reveal d1">
         <div class="price-tier">Pro</div>
         <div class="price-amount">
-          <span class="price-dollar">$</span>
-          <span class="price-num">199</span>
-          <span class="price-period">/month</span>
+          <span class="price-sym">$</span>
+          <span class="price-n">199</span>
+          <span class="price-per">/mo</span>
         </div>
-        <p class="price-desc">Everything in Web Starter, plus native iOS and Android apps with your branding on both app stores.</p>
-        <div class="price-divider"></div>
-        <ul class="price-features">
-          <li><span class="price-check">✓</span> Everything in Web Starter</li>
-          <li><span class="price-check">✓</span> Native iOS app (App Store)</li>
-          <li><span class="price-check">✓</span> Native Android app (Google Play)</li>
-          <li><span class="price-check">✓</span> Custom domain support</li>
-          <li><span class="price-check">✓</span> App build status dashboard</li>
-          <li><span class="price-check">✓</span> Priority support</li>
-          <li><span class="price-check">✓</span> Analytics dashboard</li>
-          <li><span class="price-dash">—</span> White-glove onboarding</li>
+        <p class="price-blurb">The complete stack. Native iOS app, Android app, and booking website — all under your brand.</p>
+        <div class="price-line"></div>
+        <ul class="price-items">
+          <li><span class="pi-check">✓</span>Everything in Web Starter</li>
+          <li><span class="pi-check">✓</span>Native iOS app (App Store)</li>
+          <li><span class="pi-check">✓</span>Native Android app (Google Play)</li>
+          <li><span class="pi-check">✓</span>Custom domain support</li>
+          <li><span class="pi-check">✓</span>Build status dashboard</li>
+          <li><span class="pi-check">✓</span>Analytics dashboard</li>
+          <li><span class="pi-check">✓</span>Priority support</li>
+          <li><span class="pi-dash">—</span>White-glove onboarding</li>
         </ul>
-        <a href="#contact" class="btn-price-primary amber-btn">Get Started</a>
+        <a href="#contact" class="btn-p-white">Get Started</a>
       </div>
 
-      <div class="price-card reveal reveal-delay-2">
+      <div class="price-card reveal d2">
         <div class="price-tier">Enterprise</div>
         <div class="price-amount">
-          <span class="price-dollar"></span>
-          <span class="price-num" style="font-size:2rem;">Custom</span>
+          <span class="price-n" style="font-size:2.2rem;padding-bottom:0.1rem;">Custom</span>
         </div>
-        <p class="price-desc">For multi-location contractors or businesses needing bespoke features, integrations, or reseller arrangements.</p>
-        <div class="price-divider"></div>
-        <ul class="price-features">
-          <li><span class="price-check">✓</span> Everything in Pro</li>
-          <li><span class="price-check">✓</span> White-glove onboarding</li>
-          <li><span class="price-check">✓</span> Dedicated account manager</li>
-          <li><span class="price-check">✓</span> Custom integrations</li>
-          <li><span class="price-check">✓</span> Multi-location support</li>
-          <li><span class="price-check">✓</span> Reseller / agency pricing</li>
-          <li><span class="price-check">✓</span> SLA &amp; uptime guarantee</li>
-          <li><span class="price-check">✓</span> Custom contracts</li>
+        <p class="price-blurb">Multi-location businesses, custom integrations, or reseller / agency arrangements.</p>
+        <div class="price-line"></div>
+        <ul class="price-items">
+          <li><span class="pi-check">✓</span>Everything in Pro</li>
+          <li><span class="pi-check">✓</span>White-glove onboarding</li>
+          <li><span class="pi-check">✓</span>Dedicated account manager</li>
+          <li><span class="pi-check">✓</span>Custom integrations</li>
+          <li><span class="pi-check">✓</span>Multi-location support</li>
+          <li><span class="pi-check">✓</span>Reseller / agency pricing</li>
+          <li><span class="pi-check">✓</span>SLA &amp; uptime guarantee</li>
+          <li><span class="pi-check">✓</span>Custom contracts</li>
         </ul>
-        <a href="#contact" class="btn-price-primary">Talk to Us</a>
+        <a href="#contact" class="btn-p-blue">Talk to Us</a>
       </div>
-
     </div>
   </div>
 </section>
 
-<!-- ─── CONTACT ─── -->
-<section id="contact" class="contact-bg">
+<!-- CONTACT -->
+<section id="contact">
   <div class="container">
-    <span class="eyebrow">Get in Touch</span>
-    <h2 class="section-title reveal">Let's build something<br/>for your business.</h2>
-    <p class="section-sub reveal reveal-delay-1">Book a free 15-minute call. We'll walk through the platform and tell you exactly what your branded app stack would look like.</p>
+    <div class="eyebrow reveal">Get in Touch</div>
+    <h2 class="section-h reveal">Let's build something<br/>for your business.</h2>
+    <p class="section-p reveal d1">Book a free 15-minute call. We'll walk through the platform and show you exactly what your branded app would look like.</p>
 
     <div class="contact-wrap">
-      <div class="contact-left reveal">
-        <div class="contact-person">
-          <div class="contact-avatar">CO</div>
+      <div class="reveal">
+        <div class="contact-person-row">
+          <div class="avatar">CO</div>
           <div>
-            <div class="contact-name">Cassandra Orr</div>
-            <div class="contact-role">CTO &mdash; Shawcliffe Digital</div>
+            <div class="avatar-name">Cassandra Orr</div>
+            <div class="avatar-role">CTO — Shawcliffe Digital</div>
           </div>
         </div>
         <div class="contact-details">
           <a href="tel:+13683389261" class="contact-row">
-            <div class="contact-icon">
+            <div class="contact-icon-box">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.38 2 2 0 0 1 3.6 1.17h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.81a16 16 0 0 0 6.29 6.29l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
             </div>
             (368) 338-9261
           </a>
           <a href="mailto:cassandra@shawcliffedigital.com" class="contact-row">
-            <div class="contact-icon">
+            <div class="contact-icon-box">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
             </div>
             cassandra@shawcliffedigital.com
           </a>
           <a href="https://shawcliffedigital.com" class="contact-row">
-            <div class="contact-icon">
+            <div class="contact-icon-box">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
             </div>
             shawcliffedigital.com
           </a>
-          <div class="contact-row" style="cursor:default;">
-            <div class="contact-icon">
+          <div class="contact-row" style="cursor:default; pointer-events:none;">
+            <div class="contact-icon-box">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
             </div>
             Serving Local Businesses
@@ -1676,27 +1525,23 @@
         </div>
       </div>
 
-      <div class="reveal reveal-delay-1">
-        <form id="contact-form" class="form-grid" novalidate>
-          <div class="form-row-2">
-            <label>
-              Your Name
+      <div class="reveal d1">
+        <form id="contact-form" novalidate>
+          <div class="f2">
+            <label>Your Name
               <input type="text" name="name" placeholder="Jane Smith" required />
             </label>
-            <label>
-              Business Name
+            <label>Business Name
               <input type="text" name="business" placeholder="Smith Plumbing" />
             </label>
           </div>
-          <div class="form-row-2">
-            <label>
-              Phone
+          <div class="f2">
+            <label>Phone
               <input type="tel" name="phone" placeholder="(368) 000-0000" />
             </label>
-            <label>
-              I'm interested in
+            <label>I'm interested in
               <select name="plan">
-                <option value="">Select a plan</option>
+                <option value="">Select a plan…</option>
                 <option>Web Starter ($79/mo)</option>
                 <option>Pro — iOS + Android + Web ($199/mo)</option>
                 <option>Enterprise</option>
@@ -1704,13 +1549,12 @@
               </select>
             </label>
           </div>
-          <label>
-            Tell us about your business
+          <label>Tell us about your business
             <textarea name="message" placeholder="What trade or service do you offer? What's your biggest booking challenge right now?"></textarea>
           </label>
-          <button type="submit" class="btn-submit">Send Message →</button>
+          <button type="submit" class="btn-form">Send Message</button>
         </form>
-        <div class="form-success" id="form-success">
+        <div class="form-ok" id="form-ok">
           <strong>Message received!</strong><br/>
           Cassandra will be in touch within one business day.
         </div>
@@ -1719,39 +1563,36 @@
   </div>
 </section>
 
-<!-- ─── FOOTER ─── -->
+<!-- FOOTER -->
 <footer>
   <div class="footer-inner">
-    <a href="#" class="footer-brand">
-      <svg width="28" height="28" aria-hidden="true"><use href="#logo-s"/></svg>
-      <div class="brand-text">
-        <span class="b1">Shawcliffe</span>
-        <span class="b2">Digital</span>
+    <a href="#" class="nav-brand">
+      <svg width="28" height="28" aria-hidden="true"><use href="#sd-logo"/></svg>
+      <div class="brand-words">
+        <span class="w1" style="color:#fff;">Shawcliffe</span>
+        <span class="w2">Digital</span>
       </div>
     </a>
-    <div class="footer-right">
+    <div class="footer-copy">
       &copy; 2025 Shawcliffe Digital &nbsp;&middot;&nbsp;
-      <a href="mailto:cassandra@shawcliffedigital.com">cassandra@shawcliffedigital.com</a> &nbsp;&middot;&nbsp;
-      Custom Branded Apps for Local Contractors &amp; Owner Operators
+      Custom Branded Apps for Local Contractors &amp; Owner Operators &nbsp;&middot;&nbsp;
+      <a href="mailto:cassandra@shawcliffedigital.com">cassandra@shawcliffedigital.com</a>
     </div>
   </div>
 </footer>
 
 <script>
-  // Scroll reveal
-  const observer = new IntersectionObserver(
-    entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }),
-    { threshold: 0.12 }
+  const obs = new IntersectionObserver(
+    es => es.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); }),
+    { threshold: 0.1 }
   );
-  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 
-  // Contact form
   document.getElementById('contact-form').addEventListener('submit', function(e) {
     e.preventDefault();
     this.style.display = 'none';
-    document.getElementById('form-success').style.display = 'block';
+    document.getElementById('form-ok').style.display = 'block';
   });
 </script>
-
 </body>
 </html>
