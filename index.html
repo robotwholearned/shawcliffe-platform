@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shawcliffe Digital — Custom Branded Apps for Local Contractors & Owner Operators</title>
+  <meta name="description" content="Shawcliffe Digital builds custom branded apps and websites for local contractors and owner operators. Serving local businesses." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy-900: #0a1628;
+      --navy-800: #0d1b2e;
+      --navy-700: #1a2d4a;
+      --navy-600: #243857;
+      --blue-600: #2563eb;
+      --blue-500: #3b82f6;
+      --blue-400: #60a5fa;
+      --white: #f8fafc;
+      --gray-300: #cbd5e1;
+      --gray-400: #94a3b8;
+      --gray-500: #64748b;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: var(--navy-900);
+      color: var(--white);
+      line-height: 1.6;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(10, 22, 40, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(37, 99, 235, 0.15);
+      padding: 0 1.5rem;
+    }
+
+    .nav-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 68px;
+      gap: 1rem;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      text-decoration: none;
+    }
+
+    .nav-wordmark {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.1;
+    }
+
+    .nav-wordmark .name {
+      font-size: 1.05rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      color: var(--white);
+      text-transform: uppercase;
+    }
+
+    .nav-wordmark .sub {
+      font-size: 0.6rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      color: var(--blue-400);
+      text-transform: uppercase;
+    }
+
+    .nav-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: var(--blue-600);
+      color: #fff;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.875rem;
+      padding: 0.5rem 1.1rem;
+      border-radius: 6px;
+      white-space: nowrap;
+      transition: background 0.2s;
+    }
+
+    .nav-cta:hover { background: var(--blue-500); }
+
+    /* ── HERO ── */
+    .hero {
+      padding: 5rem 1.5rem 4.5rem;
+      text-align: center;
+      background: radial-gradient(ellipse 80% 60% at 50% -10%, rgba(37,99,235,0.18) 0%, transparent 70%);
+    }
+
+    .hero-logo {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 1.75rem;
+    }
+
+    .hero h1 {
+      font-size: clamp(1.9rem, 5vw, 3rem);
+      font-weight: 800;
+      line-height: 1.18;
+      max-width: 720px;
+      margin: 0 auto 1rem;
+      letter-spacing: -0.02em;
+    }
+
+    .hero h1 .accent { color: var(--blue-400); }
+
+    .hero p {
+      font-size: 1.1rem;
+      color: var(--gray-300);
+      max-width: 520px;
+      margin: 0 auto 2.25rem;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 0.9rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      display: inline-block;
+      background: var(--blue-600);
+      color: #fff;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 1rem;
+      padding: 0.8rem 1.8rem;
+      border-radius: 8px;
+      transition: background 0.2s, transform 0.15s;
+    }
+
+    .btn-primary:hover { background: var(--blue-500); transform: translateY(-1px); }
+
+    .btn-outline {
+      display: inline-block;
+      border: 1.5px solid rgba(96, 165, 250, 0.45);
+      color: var(--blue-400);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1rem;
+      padding: 0.8rem 1.8rem;
+      border-radius: 8px;
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    .btn-outline:hover { border-color: var(--blue-400); color: #fff; }
+
+    /* ── SECTION WRAPPER ── */
+    section { padding: 4.5rem 1.5rem; }
+
+    .section-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--blue-400);
+      margin-bottom: 0.75rem;
+    }
+
+    .section-title {
+      font-size: clamp(1.5rem, 3.5vw, 2.1rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.6rem;
+    }
+
+    .section-sub {
+      color: var(--gray-400);
+      font-size: 1rem;
+      max-width: 560px;
+      margin-bottom: 3rem;
+    }
+
+    /* ── VALUE PROPS ── */
+    .values-bg { background: var(--navy-800); }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .card {
+      background: var(--navy-700);
+      border: 1px solid rgba(37, 99, 235, 0.15);
+      border-radius: 12px;
+      padding: 1.75rem;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+
+    .card:hover {
+      border-color: rgba(96, 165, 250, 0.35);
+      transform: translateY(-3px);
+    }
+
+    .card-icon {
+      width: 44px;
+      height: 44px;
+      background: rgba(37, 99, 235, 0.15);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1rem;
+    }
+
+    .card-icon svg { width: 22px; height: 22px; color: var(--blue-400); }
+
+    .card h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .card p {
+      font-size: 0.9rem;
+      color: var(--gray-400);
+      line-height: 1.65;
+    }
+
+    /* ── HOW IT WORKS ── */
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 2rem;
+      counter-reset: steps;
+    }
+
+    .step {
+      position: relative;
+      padding-left: 3.5rem;
+    }
+
+    .step-num {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 2.25rem;
+      height: 2.25rem;
+      background: var(--blue-600);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: 800;
+      color: #fff;
+      flex-shrink: 0;
+    }
+
+    .step h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 0.4rem;
+    }
+
+    .step p {
+      font-size: 0.9rem;
+      color: var(--gray-400);
+      line-height: 1.65;
+    }
+
+    /* ── CONTACT ── */
+    .contact-bg { background: var(--navy-800); }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3.5rem;
+      align-items: start;
+    }
+
+    @media (max-width: 768px) {
+      .contact-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+    }
+
+    .contact-info { display: flex; flex-direction: column; gap: 1.25rem; }
+
+    .contact-info h3 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+
+    .contact-info .role {
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--blue-400);
+      margin-bottom: 1rem;
+    }
+
+    .contact-detail {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.95rem;
+      color: var(--gray-300);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+
+    .contact-detail:hover { color: var(--white); }
+
+    .contact-detail-icon {
+      width: 36px;
+      height: 36px;
+      background: rgba(37, 99, 235, 0.15);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .contact-detail-icon svg { width: 16px; height: 16px; color: var(--blue-400); }
+
+    /* ── FORM ── */
+    form { display: flex; flex-direction: column; gap: 1rem; }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+    @media (max-width: 500px) { .form-row { grid-template-columns: 1fr; } }
+
+    label {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--gray-300);
+      letter-spacing: 0.04em;
+    }
+
+    input, textarea, select {
+      background: var(--navy-700);
+      border: 1px solid rgba(37, 99, 235, 0.2);
+      border-radius: 8px;
+      color: var(--white);
+      font-family: inherit;
+      font-size: 0.95rem;
+      padding: 0.65rem 0.9rem;
+      transition: border-color 0.2s;
+      outline: none;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      border-color: var(--blue-500);
+    }
+
+    input::placeholder, textarea::placeholder { color: var(--gray-500); }
+
+    textarea { resize: vertical; min-height: 110px; }
+
+    .form-submit {
+      background: var(--blue-600);
+      color: #fff;
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 8px;
+      padding: 0.85rem 1.5rem;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin-top: 0.25rem;
+    }
+
+    .form-submit:hover { background: var(--blue-500); }
+
+    .form-success {
+      display: none;
+      background: rgba(37, 99, 235, 0.12);
+      border: 1px solid rgba(96, 165, 250, 0.3);
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      font-size: 0.95rem;
+      color: var(--blue-400);
+      text-align: center;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--navy-900);
+      border-top: 1px solid rgba(37, 99, 235, 0.1);
+      padding: 2rem 1.5rem;
+      text-align: center;
+    }
+
+    .footer-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .footer-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .footer-name {
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .footer-tagline {
+      font-size: 0.78rem;
+      color: var(--gray-500);
+    }
+
+    .footer-copy {
+      font-size: 0.75rem;
+      color: var(--gray-500);
+    }
+
+    .divider {
+      width: 48px;
+      height: 2px;
+      background: var(--blue-600);
+      border-radius: 1px;
+      margin: 0.25rem 0;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <div class="nav-inner">
+    <a href="#" class="nav-brand">
+      <!-- Logo mark -->
+      <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M18 3L30 10V17L18 24L6 17V10L18 3Z" fill="#2563eb"/>
+        <path d="M18 12L30 19V26L18 33L6 26V19L18 12Z" fill="#0d1b2e" stroke="#2563eb" stroke-width="0.5"/>
+        <path d="M22 10L26 12.5V17.5L22 20L18 17.5V12.5L22 10Z" fill="#1a2d4a"/>
+        <path d="M14 16L18 18.5V23.5L14 26L10 23.5V18.5L14 16Z" fill="#2563eb" opacity="0.7"/>
+      </svg>
+      <div class="nav-wordmark">
+        <span class="name">Shawcliffe</span>
+        <span class="sub">Digital</span>
+      </div>
+    </a>
+    <a href="tel:+13683389261" class="nav-cta">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.38 2 2 0 0 1 3.6 1.17h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.81a16 16 0 0 0 6.29 6.29l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+      (368) 338-9261
+    </a>
+  </div>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-logo">
+    <!-- Larger logo for hero -->
+    <svg width="72" height="72" viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Shawcliffe Digital logo">
+      <path d="M36 6L60 20V34L36 48L12 34V20L36 6Z" fill="#2563eb"/>
+      <path d="M36 24L60 38V52L36 66L12 52V38L36 24Z" fill="#0d1b2e" stroke="#2563eb" stroke-width="1"/>
+      <path d="M44 20L52 25V35L44 40L36 35V25L44 20Z" fill="#1a2d4a"/>
+      <path d="M28 32L36 37V47L28 52L20 47V37L28 32Z" fill="#2563eb" opacity="0.75"/>
+    </svg>
+  </div>
+  <h1>Custom Branded Apps for <span class="accent">Local Contractors</span> &amp; Owner Operators</h1>
+  <p>We build the tech so you can focus on the work. Your brand, your app — done right.</p>
+  <div class="hero-actions">
+    <a href="#contact" class="btn-primary">Get a Free Consultation</a>
+    <a href="#how-it-works" class="btn-outline">See How It Works</a>
+  </div>
+</section>
+
+<!-- ── VALUE PROPS ── -->
+<section class="values-bg">
+  <div class="section-inner">
+    <span class="section-label">Why Shawcliffe Digital</span>
+    <h2 class="section-title">Built for the businesses that build things</h2>
+    <p class="section-sub">No generic templates. No confusing tech jargon. Just a branded digital presence that works as hard as you do.</p>
+    <div class="cards-grid">
+
+      <div class="card">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+        </div>
+        <h3>Your Brand, Your App</h3>
+        <p>Every project is custom — your colours, your logo, your message. Clients see you, not a template.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <h3>Built for Contractors &amp; Trades</h3>
+        <p>Estimate request forms, client portals, job booking — features that match how your business actually runs.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <h3>Simple &amp; Transparent</h3>
+        <p>Plain-English updates, no hidden costs, no lock-in. You own your digital assets from day one.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── HOW IT WORKS ── -->
+<section id="how-it-works">
+  <div class="section-inner">
+    <span class="section-label">The Process</span>
+    <h2 class="section-title">From first call to finished product</h2>
+    <p class="section-sub">Three straightforward steps. No surprises along the way.</p>
+    <div class="steps-grid">
+
+      <div class="step">
+        <div class="step-num">01</div>
+        <h3>Discovery Call</h3>
+        <p>A 15-minute conversation about your business, your clients, and what you actually need — before a single pixel gets designed.</p>
+      </div>
+
+      <div class="step">
+        <div class="step-num">02</div>
+        <h3>Design &amp; Build</h3>
+        <p>We build your app or website with regular plain-English updates. You give feedback; we iterate until it's right.</p>
+      </div>
+
+      <div class="step">
+        <div class="step-num">03</div>
+        <h3>Hand-Off &amp; Support</h3>
+        <p>You get full ownership of everything we build, plus ongoing support so the tech never becomes your problem.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── CONTACT ── -->
+<section id="contact" class="contact-bg">
+  <div class="section-inner">
+    <span class="section-label">Get in Touch</span>
+    <h2 class="section-title">Ready to get started?</h2>
+    <p class="section-sub">Tell us about your business and we'll reach out within one business day.</p>
+
+    <div class="contact-grid">
+
+      <!-- Info -->
+      <div class="contact-info">
+        <div>
+          <h3>Cassandra Orr</h3>
+          <p class="role">CTO</p>
+          <div class="divider"></div>
+        </div>
+
+        <a href="tel:+13683389261" class="contact-detail">
+          <div class="contact-detail-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.38 2 2 0 0 1 3.6 1.17h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.81a16 16 0 0 0 6.29 6.29l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          </div>
+          (368) 338-9261
+        </a>
+
+        <a href="mailto:cassandra@shawcliffedigital.com" class="contact-detail">
+          <div class="contact-detail-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+          </div>
+          cassandra@shawcliffedigital.com
+        </a>
+
+        <a href="https://shawcliffedigital.com" class="contact-detail">
+          <div class="contact-detail-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          </div>
+          shawcliffedigital.com
+        </a>
+
+        <div class="contact-detail" style="cursor:default;">
+          <div class="contact-detail-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+          </div>
+          Serving Local Businesses
+        </div>
+      </div>
+
+      <!-- Form -->
+      <div>
+        <form id="contact-form" novalidate>
+          <div class="form-row">
+            <label>
+              Your Name
+              <input type="text" name="name" placeholder="Jane Smith" required />
+            </label>
+            <label>
+              Business Type
+              <input type="text" name="business_type" placeholder="Plumber, Electrician…" />
+            </label>
+          </div>
+          <label>
+            Phone Number
+            <input type="tel" name="phone" placeholder="(555) 000-0000" />
+          </label>
+          <label>
+            What can we help you with?
+            <textarea name="message" placeholder="Tell us a bit about your business and what you're looking to build…"></textarea>
+          </label>
+          <button type="submit" class="form-submit">Send Message</button>
+        </form>
+        <div class="form-success" id="form-success">
+          Thanks! We'll be in touch within one business day.
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <svg width="22" height="22" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M18 3L30 10V17L18 24L6 17V10L18 3Z" fill="#2563eb"/>
+        <path d="M18 12L30 19V26L18 33L6 26V19L18 12Z" fill="#0d1b2e" stroke="#2563eb" stroke-width="0.5"/>
+        <path d="M22 10L26 12.5V17.5L22 20L18 17.5V12.5L22 10Z" fill="#1a2d4a"/>
+        <path d="M14 16L18 18.5V23.5L14 26L10 23.5V18.5L14 16Z" fill="#2563eb" opacity="0.7"/>
+      </svg>
+      <span class="footer-name">Shawcliffe Digital</span>
+    </div>
+    <p class="footer-tagline">Custom Branded Apps for Local Contractors &amp; Owner Operators</p>
+    <p class="footer-copy">&copy; 2025 Shawcliffe Digital &middot; <a href="mailto:cassandra@shawcliffedigital.com" style="color:inherit;">cassandra@shawcliffedigital.com</a></p>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('contact-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    this.style.display = 'none';
+    document.getElementById('form-success').style.display = 'block';
+  });
+</script>
+
+</body>
+</html>
