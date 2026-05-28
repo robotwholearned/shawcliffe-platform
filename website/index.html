@@ -132,8 +132,8 @@
 
     @media (min-width: 1024px) {
       .hero {
-        grid-template-columns: 1fr 1px 1fr;
-        gap: 0;
+        grid-template-columns: 1fr 1fr;
+        gap: 4rem;
         padding-top: 5rem;
       }
     }
@@ -566,6 +566,184 @@
       .footer-inner { flex-direction: row; justify-content: space-between; }
     }
 
+    /* ─── MODAL ─── */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(2,6,23,0.55);
+      backdrop-filter: blur(4px);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    .modal-backdrop.open { display: flex; }
+
+    .modal {
+      background: var(--white);
+      border-radius: 1.25rem;
+      width: 100%;
+      max-width: 520px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.2);
+      animation: modal-in 0.22s ease;
+    }
+
+    @keyframes modal-in {
+      from { opacity: 0; transform: translateY(12px) scale(0.98); }
+      to   { opacity: 1; transform: none; }
+    }
+
+    .modal-header {
+      padding: 1.75rem 1.75rem 0;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .modal-title {
+      font-size: 1.4rem;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      color: var(--slate-950);
+    }
+
+    .modal-subtitle {
+      margin-top: 0.25rem;
+      font-size: 0.875rem;
+      color: var(--slate-600);
+      line-height: 1.6;
+    }
+
+    .modal-close {
+      background: var(--slate-50);
+      border: 1px solid var(--slate-200);
+      border-radius: 9999px;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      color: var(--slate-600);
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .modal-close:hover { background: var(--slate-200); color: var(--slate-950); }
+
+    .modal-body {
+      padding: 1.5rem 1.75rem 1.75rem;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    @media (max-width: 480px) { .form-row { grid-template-columns: 1fr; } }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      margin-bottom: 1rem;
+    }
+
+    .field label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--slate-600);
+    }
+
+    .field input,
+    .field select,
+    .field textarea {
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--slate-950);
+      background: var(--slate-50);
+      border: 1.5px solid var(--slate-200);
+      border-radius: 0.5rem;
+      padding: 0.65rem 0.9rem;
+      width: 100%;
+      outline: none;
+      transition: border-color 0.15s, background 0.15s;
+    }
+
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      border-color: var(--blue-700);
+      background: var(--white);
+    }
+
+    .field input::placeholder,
+    .field textarea::placeholder { color: #94a3b8; }
+
+    .field textarea { resize: vertical; min-height: 90px; }
+
+    .btn-submit {
+      width: 100%;
+      background: var(--blue-700);
+      color: var(--white);
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 9999px;
+      padding: 0.85rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      transition: background 0.2s;
+      margin-top: 0.5rem;
+    }
+
+    .btn-submit:hover { background: var(--blue-800); }
+
+    /* Thank-you state */
+    .modal-thanks {
+      display: none;
+      padding: 3rem 1.75rem;
+      text-align: center;
+    }
+
+    .thanks-icon {
+      width: 56px;
+      height: 56px;
+      background: rgba(29,78,216,0.1);
+      border-radius: 9999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.25rem;
+      color: var(--blue-700);
+    }
+
+    .thanks-title {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: var(--slate-950);
+      margin-bottom: 0.5rem;
+    }
+
+    .thanks-text {
+      font-size: 0.9rem;
+      color: var(--slate-600);
+      line-height: 1.75;
+    }
+
     /* ─── REVEAL ─── */
     .reveal {
       opacity: 0;
@@ -605,7 +783,7 @@
       <li><a href="#contact">Contact</a></li>
     </ul>
 
-    <a href="#contact" class="btn-dark">Book a Call</a>
+    <a href="#" class="btn-dark" data-modal="booking">Book a Call</a>
   </div>
 </header>
 
@@ -627,9 +805,6 @@
       </p>
     </div>
 
-    <!-- Centre: vertical rule (desktop only) -->
-    <div class="hero-vr" aria-hidden="true"></div>
-
     <!-- Right: content + contact -->
     <div class="hero-content reveal d1" id="contact">
       <p class="eyebrow">Shawcliffe Digital</p>
@@ -637,7 +812,7 @@
       <p class="hero-p">Minimal, professional app systems for contractors who want more leads, better follow-up, stronger reviews, and a cleaner customer experience.</p>
 
       <div class="hero-btns">
-        <a href="#packages" class="btn-blue">
+        <a href="#" class="btn-blue" data-modal="booking">
           Get a Free App Blueprint
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
         </a>
@@ -870,7 +1045,7 @@
         <h2 class="cta-h2">See what a branded app could look like for your business.</h2>
         <p class="cta-p">We'll map out the features that make sense for your service business, including quote requests, reminders, reviews, and customer follow-up.</p>
       </div>
-      <a href="#contact" class="btn-white">
+      <a href="#" class="btn-white" data-modal="booking">
         Book Your Free Call
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
       </a>
@@ -887,12 +1062,129 @@
   </div>
 </footer>
 
+<!-- ═══ BOOKING MODAL ═══ -->
+<div class="modal-backdrop" id="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+  <div class="modal">
+
+    <!-- Form state -->
+    <div id="modal-form-wrap">
+      <div class="modal-header">
+        <div>
+          <div class="modal-title" id="modal-title">Book Your Free Call</div>
+          <p class="modal-subtitle">We'll walk through exactly what a branded app would look like for your business.</p>
+        </div>
+        <button class="modal-close" id="modal-close" aria-label="Close">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="booking-form" novalidate>
+          <div class="form-row">
+            <div class="field">
+              <label for="f-name">Your Name *</label>
+              <input type="text" id="f-name" name="name" placeholder="Jane Smith" required />
+            </div>
+            <div class="field">
+              <label for="f-business">Business Name</label>
+              <input type="text" id="f-business" name="business" placeholder="Smith Roofing" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="field">
+              <label for="f-phone">Phone</label>
+              <input type="tel" id="f-phone" name="phone" placeholder="(000) 000-0000" />
+            </div>
+            <div class="field">
+              <label for="f-email">Email *</label>
+              <input type="email" id="f-email" name="email" placeholder="jane@example.com" required />
+            </div>
+          </div>
+          <div class="field">
+            <label for="f-time">Best Time to Reach You</label>
+            <select id="f-time" name="best_time">
+              <option value="">Select a time…</option>
+              <option>Morning (8am – 12pm)</option>
+              <option>Afternoon (12pm – 5pm)</option>
+              <option>Evening (5pm – 8pm)</option>
+              <option>Anytime</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="f-message">Tell us about your business</label>
+            <textarea id="f-message" name="message" placeholder="What trade or service do you offer? What's your biggest challenge right now?"></textarea>
+          </div>
+          <button type="submit" class="btn-submit">
+            Send My Request
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Thank-you state -->
+    <div class="modal-thanks" id="modal-thanks">
+      <div class="thanks-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+      </div>
+      <div class="thanks-title">You're all set!</div>
+      <p class="thanks-text">Thanks for reaching out. Cassandra will be in touch within one business day to book your free call.</p>
+    </div>
+
+  </div>
+</div>
+
 <script>
+  // ── Scroll reveal ──
   const obs = new IntersectionObserver(
     entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); }),
     { threshold: 0.08 }
   );
   document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+  // ── Modal ──
+  const backdrop = document.getElementById('modal-backdrop');
+  const formWrap = document.getElementById('modal-form-wrap');
+  const thanks   = document.getElementById('modal-thanks');
+
+  function openModal() {
+    backdrop.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    document.getElementById('f-name').focus();
+  }
+
+  function closeModal() {
+    backdrop.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  // Wire all CTA buttons to open the modal
+  document.querySelectorAll('[data-modal]').forEach(el => {
+    el.addEventListener('click', e => { e.preventDefault(); openModal(); });
+  });
+
+  document.getElementById('modal-close').addEventListener('click', closeModal);
+
+  backdrop.addEventListener('click', e => {
+    if (e.target === backdrop) closeModal();
+  });
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeModal();
+  });
+
+  // Form submit → show thank you
+  document.getElementById('booking-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const name  = document.getElementById('f-name').value.trim();
+    const email = document.getElementById('f-email').value.trim();
+    if (!name || !email) {
+      if (!name)  document.getElementById('f-name').focus();
+      else        document.getElementById('f-email').focus();
+      return;
+    }
+    formWrap.style.display = 'none';
+    thanks.style.display   = 'block';
+  });
 </script>
 
 </body>
