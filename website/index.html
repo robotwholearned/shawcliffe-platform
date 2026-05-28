@@ -4,952 +4,274 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Shawcliffe Digital — Custom Branded Apps for Contractors</title>
-  <meta name="description" content="Shawcliffe Digital builds custom branded iOS apps, Android apps, and booking websites for local contractors and owner operators." />
+  <meta name="description" content="Shawcliffe Digital builds custom branded app systems for local contractors and owner operators — more leads, better follow-up, stronger reviews." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --black:   #0d1b2e;
-      --blue:    #2563eb;
-      --blue-dk: #1a48c4;
-      --white:   #ffffff;
-      --off:     #f4f6f9;
-      --muted:   #4a5a70;
-      --border:  #d6dce8;
+      --slate-50:  #f8fafc;
+      --slate-200: #e2e8f0;
+      --slate-300: #cbd5e1;
+      --slate-500: #64748b;
+      --slate-600: #475569;
+      --slate-700: #334155;
+      --slate-900: #0f172a;
+      --slate-950: #020617;
+      --blue-400:  #60a5fa;
+      --blue-700:  #1d4ed8;
+      --blue-800:  #1e40af;
+      --white:     #ffffff;
     }
 
     html { scroll-behavior: smooth; }
 
     body {
-      font-family: 'Montserrat', sans-serif;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
       background: var(--white);
-      color: var(--black);
+      color: var(--slate-950);
       line-height: 1.6;
       overflow-x: hidden;
     }
 
-    /* ── NAV ── */
-    nav {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      background: rgba(255,255,255,0.96);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid var(--border);
+    /* ─── HEADER ─── */
+    header {
+      border-bottom: 1px solid var(--slate-200);
     }
 
-    .nav-inner {
-      max-width: 1200px;
+    .header-inner {
+      max-width: 1280px;
       margin: 0 auto;
-      padding: 0 2rem;
-      height: 72px;
+      padding: 1.75rem 1.5rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 1.5rem;
-    }
-
-    .nav-brand {
-      display: flex;
-      align-items: center;
-      gap: 0.7rem;
-      text-decoration: none;
-      flex-shrink: 0;
-    }
-
-    .brand-words { line-height: 1; }
-    .brand-words .w1 {
-      display: block;
-      font-size: 0.95rem;
-      font-weight: 900;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--black);
-    }
-    .brand-words .w2 {
-      display: block;
-      font-size: 0.6rem;
-      font-weight: 700;
-      letter-spacing: 0.28em;
-      text-transform: uppercase;
-      color: var(--blue);
-    }
-
-    .nav-links {
-      display: flex;
-      align-items: center;
-      gap: 2.5rem;
-      list-style: none;
-    }
-
-    .nav-links a {
-      font-size: 0.78rem;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--muted);
-      text-decoration: none;
-      transition: color 0.2s;
-    }
-
-    .nav-links a:hover { color: var(--black); }
-
-    @media (max-width: 768px) { .nav-links { display: none; } }
-
-    .nav-cta {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      background: var(--blue);
-      color: var(--white);
-      font-size: 0.75rem;
-      font-weight: 800;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      padding: 0.65rem 1.4rem;
-      border-radius: 4px;
-      text-decoration: none;
-      flex-shrink: 0;
-      transition: background 0.2s;
-    }
-
-    .nav-cta:hover { background: var(--blue-dk); }
-
-    /* ── HERO ── */
-    .hero {
-      background: var(--black);
-      padding: 7rem 2rem 6rem;
-    }
-
-    .hero-inner {
-      max-width: 1200px;
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 5rem;
-      align-items: center;
-    }
-
-    @media (max-width: 900px) {
-      .hero-inner { grid-template-columns: 1fr; gap: 3rem; }
-      .hero-visual { display: none; }
-    }
-
-    .hero-label {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-size: 0.65rem;
-      font-weight: 700;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--blue);
-      margin-bottom: 1.5rem;
-    }
-
-    .hero-label::before {
-      content: '';
-      display: block;
-      width: 24px;
-      height: 2px;
-      background: var(--blue);
-    }
-
-    .hero h1 {
-      font-size: clamp(2.4rem, 5vw, 3.8rem);
-      font-weight: 900;
-      line-height: 1.05;
-      letter-spacing: -0.02em;
-      color: var(--white);
-      margin-bottom: 1.5rem;
-      text-transform: uppercase;
-    }
-
-    .hero h1 .blue { color: var(--blue); }
-
-    .hero p {
-      font-size: 0.95rem;
-      font-weight: 500;
-      color: rgba(255,255,255,0.65);
-      line-height: 1.75;
-      max-width: 440px;
-      margin-bottom: 2.5rem;
-    }
-
-    .hero-btns {
-      display: flex;
-      gap: 1rem;
-      flex-wrap: wrap;
-    }
-
-    .btn-primary {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      background: var(--blue);
-      color: var(--white);
-      font-size: 0.75rem;
-      font-weight: 800;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      padding: 0.9rem 1.75rem;
-      border-radius: 4px;
-      text-decoration: none;
-      transition: background 0.2s;
-    }
-
-    .btn-primary:hover { background: var(--blue-dk); }
-
-    .btn-outline-white {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      border: 1.5px solid rgba(255,255,255,0.25);
-      color: rgba(255,255,255,0.8);
-      font-size: 0.75rem;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      padding: 0.9rem 1.75rem;
-      border-radius: 4px;
-      text-decoration: none;
-      transition: border-color 0.2s, color 0.2s;
-    }
-
-    .btn-outline-white:hover { border-color: var(--white); color: var(--white); }
-
-    /* ── HERO VISUAL ── */
-    .hero-visual {
-      display: flex;
-      gap: 1.25rem;
-      align-items: flex-start;
-      justify-content: center;
-    }
-
-    .device-phone {
-      width: 155px;
-      background: #0a111e;
-      border-radius: 24px;
-      border: 1.5px solid rgba(255,255,255,0.1);
-      overflow: hidden;
-      box-shadow: 0 24px 48px rgba(0,0,0,0.5);
-    }
-
-    .device-phone.small {
-      width: 135px;
-      margin-top: 2.5rem;
-      opacity: 0.75;
-    }
-
-    .phone-notch {
-      height: 10px;
-      background: #060d18;
-      display: flex;
-      justify-content: center;
-      align-items: flex-end;
-      padding-bottom: 0;
-    }
-
-    .phone-notch-pill {
-      width: 45px;
-      height: 5px;
-      background: #0a111e;
-      border-radius: 0 0 5px 5px;
-    }
-
-    .phone-body { padding: 8px; }
-
-    .ph-topbar {
-      background: var(--blue);
-      border-radius: 8px;
-      padding: 8px;
-      margin-bottom: 6px;
-    }
-
-    .ph-bar-label {
-      font-size: 6px;
-      font-weight: 700;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.6);
-      margin-bottom: 3px;
-    }
-
-    .ph-bar-date {
-      font-size: 16px;
-      font-weight: 900;
-      color: #fff;
-      letter-spacing: -0.02em;
-      line-height: 1;
-    }
-
-    .ph-slots {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 4px;
-      margin-bottom: 6px;
-    }
-
-    .ph-slot {
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 6px;
-      padding: 5px 4px;
-      text-align: center;
-      font-size: 6.5px;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      color: rgba(255,255,255,0.4);
-    }
-
-    .ph-slot.on {
-      background: rgba(37,99,235,0.2);
-      border-color: var(--blue);
-      color: #7eb3ff;
-    }
-
-    .ph-booking {
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 6px;
-      padding: 7px;
-      margin-bottom: 5px;
-    }
-
-    .ph-booking-line {
-      height: 4px;
-      border-radius: 2px;
-      background: rgba(255,255,255,0.2);
-      margin-bottom: 3px;
-    }
-
-    .ph-booking-line.w60 { width: 60%; }
-    .ph-booking-line.w35 { width: 35%; opacity: 0.5; }
-
-    .ph-badge {
-      display: inline-block;
-      width: 32px;
-      height: 10px;
-      background: rgba(37,99,235,0.4);
-      border-radius: 3px;
-      border: 1px solid var(--blue);
-      margin-top: 2px;
-    }
-
-    .ph-nav {
-      display: flex;
-      justify-content: space-around;
-      padding: 7px 4px;
-      border-top: 1px solid rgba(255,255,255,0.07);
-      margin-top: 4px;
-    }
-
-    .ph-nav-dot {
-      width: 18px;
-      height: 18px;
-      border-radius: 4px;
-      background: rgba(255,255,255,0.08);
-    }
-
-    .ph-nav-dot.act { background: rgba(37,99,235,0.35); }
-
-    .device-web {
-      width: 220px;
-      background: #f4f6f9;
-      border-radius: 10px;
-      border: 1.5px solid rgba(255,255,255,0.15);
-      overflow: hidden;
-      box-shadow: 0 24px 48px rgba(0,0,0,0.4);
-    }
-
-    .web-chrome {
-      background: #ffffff;
-      padding: 7px 8px;
-      border-bottom: 1px solid #dde2ea;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .chrome-dots { display: flex; gap: 3px; }
-    .chrome-dot { width: 6px; height: 6px; border-radius: 50%; }
-    .chrome-dot:nth-child(1) { background: #ff6059; opacity: 0.8; }
-    .chrome-dot:nth-child(2) { background: #ffbd2e; opacity: 0.8; }
-    .chrome-dot:nth-child(3) { background: #27c840; opacity: 0.8; }
-
-    .chrome-bar {
-      flex: 1;
-      height: 14px;
-      background: #f0f2f5;
-      border-radius: 3px;
-      display: flex;
-      align-items: center;
-      padding: 0 5px;
-    }
-
-    .chrome-url { font-size: 5.5px; font-weight: 600; color: #7a8a9e; letter-spacing: 0.03em; }
-
-    .web-body { padding: 8px; }
-
-    .web-header-block {
-      background: var(--blue);
-      border-radius: 6px;
-      padding: 8px;
-      margin-bottom: 7px;
-      display: flex;
-      align-items: center;
-      gap: 7px;
-    }
-
-    .web-logo-sq {
-      width: 24px;
-      height: 24px;
-      background: rgba(255,255,255,0.2);
-      border-radius: 5px;
-      flex-shrink: 0;
-    }
-
-    .web-hd-lines { flex: 1; }
-    .web-hd-line1 { height: 5px; background: rgba(255,255,255,0.75); border-radius: 2px; margin-bottom: 3px; width: 80%; }
-    .web-hd-line2 { height: 3.5px; background: rgba(255,255,255,0.4); border-radius: 2px; width: 55%; }
-
-    .web-sec-label {
-      font-size: 5px;
-      font-weight: 800;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: #7a8a9e;
-      margin-bottom: 5px;
-    }
-
-    .web-svcs {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 4px;
-      margin-bottom: 7px;
-    }
-
-    .web-svc {
-      background: #fff;
-      border: 1px solid #dde2ea;
-      border-radius: 5px;
-      padding: 5px;
-    }
-
-    .web-svc.sel { border-color: var(--blue); background: rgba(37,99,235,0.06); }
-
-    .web-svc-l1 { height: 4px; background: #c8d2df; border-radius: 2px; margin-bottom: 3px; width: 75%; }
-    .web-svc-l2 { height: 3px; background: #e4e8ef; border-radius: 2px; width: 45%; }
-    .web-svc.sel .web-svc-l2 { background: rgba(37,99,235,0.3); }
-
-    .web-btn {
-      background: var(--blue);
-      border-radius: 4px;
-      height: 18px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .web-btn-text { font-size: 6px; font-weight: 800; letter-spacing: 0.1em; color: #fff; text-transform: uppercase; }
-
-    /* ── RULE / DIVIDER STRIPE ── */
-    .stripe {
-      height: 4px;
-      background: linear-width;
-      background: linear-gradient(90deg, var(--blue) 0%, #1a48c4 100%);
-    }
-
-    /* ── SECTION BASE ── */
-    section { padding: 5.5rem 2rem; }
-
-    .container { max-width: 1200px; margin: 0 auto; }
-
-    .eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.6rem;
-      font-size: 0.65rem;
-      font-weight: 800;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: var(--blue);
-      margin-bottom: 1rem;
-    }
-
-    .eyebrow::before {
-      content: '';
-      display: block;
-      width: 20px;
-      height: 2px;
-      background: var(--blue);
-      flex-shrink: 0;
-    }
-
-    .section-h {
-      font-size: clamp(1.8rem, 3.5vw, 2.6rem);
-      font-weight: 900;
-      letter-spacing: -0.02em;
-      text-transform: uppercase;
-      line-height: 1.05;
-      margin-bottom: 0.75rem;
-      color: var(--black);
-    }
-
-    .section-p {
-      font-size: 0.9rem;
-      font-weight: 500;
-      color: var(--muted);
-      max-width: 520px;
-      margin-bottom: 3.5rem;
-      line-height: 1.75;
-    }
-
-    /* ── PROBLEM STRIP ── */
-    .problem-bg { background: var(--off); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
-
-    .problem-bg section { padding: 2.75rem 2rem; }
-
-    .problem-grid {
-      max-width: 1200px;
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 1.5rem;
-    }
-
-    .problem-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 0.75rem;
-    }
-
-    .problem-x {
-      width: 20px;
-      height: 20px;
-      background: #fff;
-      border: 1.5px solid #c8d2df;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      margin-top: 2px;
-      font-size: 0.6rem;
-      color: #94a3b8;
-    }
-
-    .problem-text { font-size: 0.82rem; font-weight: 500; color: var(--muted); line-height: 1.55; }
-    .problem-text strong { color: var(--black); font-weight: 700; }
-
-    /* ── SURFACES ── */
-    .surfaces-bg { background: var(--off); }
-
-    .surfaces-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1.5px;
-      background: var(--border);
-      border: 1.5px solid var(--border);
-      border-radius: 8px;
-      overflow: hidden;
-    }
-
-    @media (max-width: 900px) { .surfaces-grid { grid-template-columns: 1fr; } }
-
-    .surface-card {
-      background: var(--white);
-      padding: 2.25rem;
-    }
-
-    .surface-num {
-      font-size: 3.5rem;
-      font-weight: 900;
-      line-height: 1;
-      color: var(--off);
-      margin-bottom: 1rem;
-      letter-spacing: -0.04em;
-    }
-
-    .surface-tag {
-      font-size: 0.6rem;
-      font-weight: 800;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--blue);
-      margin-bottom: 0.5rem;
-    }
-
-    .surface-title {
-      font-size: 1.15rem;
-      font-weight: 900;
-      text-transform: uppercase;
-      letter-spacing: 0.02em;
-      margin-bottom: 0.75rem;
-      color: var(--black);
-    }
-
-    .surface-desc {
-      font-size: 0.85rem;
-      font-weight: 500;
-      color: var(--muted);
-      line-height: 1.7;
-      margin-bottom: 1.5rem;
-    }
-
-    .feat-list {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 0.55rem;
-    }
-
-    .feat-list li {
-      display: flex;
-      align-items: flex-start;
-      gap: 0.6rem;
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: var(--black);
-    }
-
-    .ck {
-      width: 16px;
-      height: 16px;
-      background: var(--blue);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      margin-top: 1px;
-      color: #fff;
-      font-size: 0.55rem;
-    }
-
-    /* ── HOW IT WORKS ── */
-    .steps-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
       gap: 2rem;
     }
 
-    @media (max-width: 700px) { .steps-grid { grid-template-columns: 1fr; } }
-
-    .step {
-      border-top: 3px solid var(--border);
-      padding-top: 1.75rem;
-      position: relative;
-    }
-
-    .step.active-step { border-top-color: var(--blue); }
-
-    .step-n {
-      font-size: 0.6rem;
-      font-weight: 800;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--blue);
-      margin-bottom: 0.6rem;
-    }
-
-    .step-icon-box {
-      width: 44px;
-      height: 44px;
-      background: var(--off);
-      border-radius: 6px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 1rem;
-    }
-
-    .step-icon-box svg { width: 22px; height: 22px; color: var(--black); }
-
-    .step h3 {
-      font-size: 1rem;
-      font-weight: 900;
-      text-transform: uppercase;
-      letter-spacing: 0.03em;
-      margin-bottom: 0.6rem;
-      color: var(--black);
-    }
-
-    .step p {
-      font-size: 0.83rem;
-      font-weight: 500;
-      color: var(--muted);
-      line-height: 1.7;
-    }
-
-    /* ── FEATURES ── */
-    .features-bg { background: var(--black); }
-
-    .features-bg .section-h { color: var(--white); }
-    .features-bg .section-p { color: rgba(255,255,255,0.5); }
-    .features-bg .eyebrow { color: var(--blue); }
-    .features-bg .eyebrow::before { background: var(--blue); }
-
-    .feat-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-      gap: 1px;
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 8px;
-      overflow: hidden;
-    }
-
-    .feat-cell {
-      background: var(--black);
-      padding: 1.5rem;
-      border: none;
-      transition: background 0.2s;
-    }
-
-    .feat-cell:hover { background: #132237; }
-
-    .feat-icon-box {
-      width: 34px;
-      height: 34px;
-      background: rgba(37,99,235,0.15);
-      border-radius: 6px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 0.75rem;
-    }
-
-    .feat-icon-box svg { width: 16px; height: 16px; color: var(--blue); }
-
-    .feat-h {
-      font-size: 0.82rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--white);
-      margin-bottom: 0.4rem;
-    }
-
-    .feat-p { font-size: 0.78rem; font-weight: 500; color: rgba(255,255,255,0.45); line-height: 1.65; }
-
-    /* ── PRICING ── */
-    .pricing-bg { background: var(--off); }
-
-    .pricing-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1.5rem;
-      align-items: start;
-    }
-
-    @media (max-width: 900px) { .pricing-grid { grid-template-columns: 1fr; max-width: 420px; } }
-
-    .price-card {
-      background: var(--white);
-      border: 1.5px solid var(--border);
-      border-radius: 8px;
-      padding: 2rem;
-    }
-
-    .price-card.feat {
-      border-color: var(--blue);
-      background: var(--blue);
-    }
-
-    .price-tier {
-      font-size: 0.7rem;
-      font-weight: 800;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--blue);
-      margin-bottom: 1rem;
-    }
-
-    .price-card.feat .price-tier { color: rgba(255,255,255,0.7); }
-
-    .price-amount {
-      display: flex;
-      align-items: flex-end;
-      gap: 0.2rem;
-      margin-bottom: 0.5rem;
-    }
-
-    .price-sym {
-      font-size: 1.3rem;
-      font-weight: 700;
-      padding-bottom: 0.35rem;
-      color: var(--black);
-    }
-
-    .price-card.feat .price-sym { color: var(--white); }
-
-    .price-n {
-      font-size: 3rem;
-      font-weight: 900;
-      line-height: 1;
-      letter-spacing: -0.03em;
-      color: var(--black);
-    }
-
-    .price-card.feat .price-n { color: var(--white); }
-
-    .price-per {
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: var(--muted);
-      padding-bottom: 0.4rem;
-    }
-
-    .price-card.feat .price-per { color: rgba(255,255,255,0.6); }
-
-    .price-blurb {
-      font-size: 0.82rem;
-      font-weight: 500;
-      color: var(--muted);
-      line-height: 1.6;
-      margin-bottom: 1.5rem;
-    }
-
-    .price-card.feat .price-blurb { color: rgba(255,255,255,0.7); }
-
-    .price-line {
-      height: 1px;
-      background: var(--border);
-      margin: 1.25rem 0;
-    }
-
-    .price-card.feat .price-line { background: rgba(255,255,255,0.2); }
-
-    .price-items {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 0.6rem;
-      margin-bottom: 1.75rem;
-    }
-
-    .price-items li {
-      display: flex;
-      align-items: flex-start;
-      gap: 0.5rem;
-      font-size: 0.82rem;
-      font-weight: 600;
-      color: var(--black);
-    }
-
-    .price-card.feat .price-items li { color: rgba(255,255,255,0.9); }
-
-    .pi-check { color: var(--blue); flex-shrink: 0; margin-top: 2px; font-size: 0.75rem; }
-    .price-card.feat .pi-check { color: rgba(255,255,255,0.8); }
-    .pi-dash { color: var(--border); flex-shrink: 0; margin-top: 2px; }
-
-    .btn-p-blue {
-      display: block;
-      text-align: center;
-      background: var(--blue);
-      color: var(--white);
-      font-size: 0.72rem;
-      font-weight: 800;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      padding: 0.8rem;
-      border-radius: 4px;
-      text-decoration: none;
-      transition: background 0.2s;
-    }
-
-    .btn-p-blue:hover { background: var(--blue-dk); }
-
-    .btn-p-white {
-      display: block;
-      text-align: center;
-      background: var(--white);
-      color: var(--blue);
-      font-size: 0.72rem;
-      font-weight: 800;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      padding: 0.8rem;
-      border-radius: 4px;
-      text-decoration: none;
-      transition: background 0.2s;
-    }
-
-    .btn-p-white:hover { background: rgba(255,255,255,0.88); }
-
-    .btn-p-outline {
-      display: block;
-      text-align: center;
-      border: 1.5px solid var(--border);
-      color: var(--black);
-      font-size: 0.72rem;
-      font-weight: 800;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      padding: 0.8rem;
-      border-radius: 4px;
-      text-decoration: none;
-      transition: border-color 0.2s, color 0.2s;
-    }
-
-    .btn-p-outline:hover { border-color: var(--blue); color: var(--blue); }
-
-    /* ── CONTACT ── */
-    .contact-wrap {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 5rem;
-      align-items: start;
-    }
-
-    @media (max-width: 768px) { .contact-wrap { grid-template-columns: 1fr; gap: 3rem; } }
-
-    .contact-person-row {
+    .logo-lockup {
       display: flex;
       align-items: center;
       gap: 1rem;
-      padding-bottom: 1.5rem;
-      border-bottom: 1.5px solid var(--border);
-      margin-bottom: 1.75rem;
-    }
-
-    .avatar {
-      width: 56px;
-      height: 56px;
-      background: var(--blue);
-      border-radius: 6px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.1rem;
-      font-weight: 900;
-      color: var(--white);
-      letter-spacing: 0.05em;
+      text-decoration: none;
+      color: inherit;
       flex-shrink: 0;
     }
 
-    .avatar-name {
-      font-size: 1.1rem;
-      font-weight: 900;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      color: var(--black);
-      margin-bottom: 0.15rem;
-    }
+    .logo-words { line-height: 1; }
 
-    .avatar-role {
-      font-size: 0.65rem;
+    .logo-name {
+      display: block;
+      font-size: 1.25rem;
       font-weight: 800;
-      letter-spacing: 0.18em;
+      letter-spacing: 0.14em;
       text-transform: uppercase;
-      color: var(--blue);
+      color: var(--slate-950);
     }
 
-    .contact-details {
+    .logo-sub {
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.36em;
+      text-transform: uppercase;
+      color: var(--blue-700);
+      margin-top: 0.2rem;
+    }
+
+    .header-nav {
+      display: none;
+      list-style: none;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    @media (min-width: 768px) { .header-nav { display: flex; } }
+
+    .header-nav a {
+      font-size: 0.875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--slate-600);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+
+    .header-nav a:hover { color: var(--slate-950); }
+
+    .btn-dark {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: var(--slate-950);
+      color: var(--white);
+      font-size: 0.875rem;
+      font-weight: 700;
+      padding: 0.6rem 1.5rem;
+      border-radius: 9999px;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: background 0.2s;
+    }
+
+    .btn-dark:hover { background: var(--blue-800); }
+
+    /* ─── HERO ─── */
+    .hero {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 5rem;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 3rem;
+      align-items: center;
+    }
+
+    @media (min-width: 1024px) {
+      .hero {
+        grid-template-columns: 1fr 1px 1fr;
+        gap: 0;
+        padding-top: 5rem;
+      }
+    }
+
+    /* Left card */
+    .hero-card {
+      background: var(--white);
+      border: 1px solid var(--slate-200);
+      border-radius: 2rem;
+      padding: 2.5rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .logo-mark-large {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+    }
+
+    .logo-mark-name {
+      margin-top: 0.75rem;
+      font-size: 2.4rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--slate-950);
+      line-height: 1;
+      text-align: center;
+    }
+
+    .logo-mark-sub {
+      margin-top: 0.75rem;
+      font-size: 1.4rem;
+      font-weight: 700;
+      letter-spacing: 0.36em;
+      text-transform: uppercase;
+      color: var(--blue-700);
+      text-align: center;
+    }
+
+    .card-divider {
+      width: 80%;
+      height: 1px;
+      background: var(--slate-200);
+      margin: 2.5rem auto;
+    }
+
+    .hero-tagline {
+      max-width: 320px;
+      text-align: center;
+      font-size: 1.1rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      line-height: 1.8;
+      color: var(--slate-950);
+    }
+
+    .hero-tagline .blue { color: var(--blue-700); }
+
+    .hero-vr { display: none; }
+
+    /* Right content */
+    .hero-content {}
+
+    @media (min-width: 1024px) { .hero-content { padding-left: 3rem; } }
+
+    .eyebrow {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.28em;
+      color: var(--blue-700);
+    }
+
+    .hero-h1 {
+      margin-top: 1.25rem;
+      font-size: clamp(2.2rem, 4.5vw, 3.75rem);
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      line-height: 1.1;
+      color: var(--slate-950);
+    }
+
+    .hero-p {
+      margin-top: 1.5rem;
+      max-width: 480px;
+      font-size: 1.1rem;
+      line-height: 2;
+      color: var(--slate-600);
+    }
+
+    .hero-btns {
+      margin-top: 2.25rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .btn-blue {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--blue-700);
+      color: var(--white);
+      font-size: 0.9rem;
+      font-weight: 700;
+      padding: 0.75rem 2rem;
+      border-radius: 9999px;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+
+    .btn-blue:hover { background: var(--blue-800); }
+
+    .btn-outline {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      border: 1.5px solid var(--slate-300);
+      color: var(--slate-950);
+      font-size: 0.9rem;
+      font-weight: 700;
+      padding: 0.75rem 2rem;
+      border-radius: 9999px;
+      text-decoration: none;
+      transition: border-color 0.2s;
+    }
+
+    .btn-outline:hover { border-color: var(--slate-950); }
+
+    /* Contact rows */
+    .contact-rows {
+      margin-top: 3rem;
       display: flex;
       flex-direction: column;
       gap: 1rem;
@@ -958,645 +280,620 @@
     .contact-row {
       display: flex;
       align-items: center;
-      gap: 0.85rem;
+      gap: 1rem;
       text-decoration: none;
-      color: var(--black);
-      font-size: 0.88rem;
-      font-weight: 600;
+      color: var(--slate-900);
+      font-size: 1.05rem;
       transition: color 0.15s;
     }
 
-    .contact-row:hover { color: var(--blue); }
+    .contact-row:not([href]) { pointer-events: none; }
+    .contact-row[href]:hover { color: var(--blue-700); }
 
-    .contact-icon-box {
-      width: 36px;
-      height: 36px;
-      background: var(--off);
-      border: 1px solid var(--border);
-      border-radius: 6px;
+    .contact-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--slate-950);
+      color: var(--white);
+      border-radius: 9999px;
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
     }
 
-    .contact-icon-box svg { width: 15px; height: 15px; color: var(--blue); }
-
-    /* ── FORM ── */
-    form { display: flex; flex-direction: column; gap: 1rem; }
-
-    .f2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-    @media (max-width: 480px) { .f2 { grid-template-columns: 1fr; } }
-
-    label {
-      display: flex;
-      flex-direction: column;
-      gap: 0.4rem;
-      font-size: 0.65rem;
-      font-weight: 800;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--muted);
+    .contact-sep {
+      width: 1px;
+      height: 28px;
+      background: var(--slate-300);
+      flex-shrink: 0;
     }
 
-    input, textarea, select {
-      background: var(--off);
-      border: 1.5px solid var(--border);
-      border-radius: 4px;
-      color: var(--black);
-      font-family: 'Montserrat', sans-serif;
-      font-size: 0.88rem;
-      font-weight: 500;
-      padding: 0.7rem 1rem;
-      transition: border-color 0.2s;
-      outline: none;
-      width: 100%;
+    /* ─── SERVICES ─── */
+    .services-section {
+      border-top: 1px solid var(--slate-200);
+      border-bottom: 1px solid var(--slate-200);
+      background: var(--slate-50);
     }
 
-    input:focus, textarea:focus, select:focus { border-color: var(--blue); background: var(--white); }
-    input::placeholder, textarea::placeholder { color: #a0b0c4; }
-    textarea { resize: vertical; min-height: 100px; }
-    select option { background: var(--white); }
-
-    .btn-form {
-      background: var(--blue);
-      color: var(--white);
-      font-family: 'Montserrat', sans-serif;
-      font-size: 0.75rem;
-      font-weight: 800;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      border: none;
-      border-radius: 4px;
-      padding: 0.9rem;
-      cursor: pointer;
-      transition: background 0.2s;
-      width: 100%;
-    }
-
-    .btn-form:hover { background: var(--blue-dk); }
-
-    .form-ok {
-      display: none;
-      background: rgba(37,99,235,0.06);
-      border: 1.5px solid rgba(37,99,235,0.2);
-      border-radius: 6px;
-      padding: 1.25rem;
-      text-align: center;
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: var(--blue);
-    }
-
-    /* ── FOOTER ── */
-    footer {
-      background: var(--black);
-      padding: 2rem;
-      border-top: 4px solid var(--blue);
-    }
-
-    .footer-inner {
-      max-width: 1200px;
+    .services-inner {
+      max-width: 1280px;
       margin: 0 auto;
+      padding: 4rem 1.5rem;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+
+    @media (min-width: 640px)  { .services-inner { grid-template-columns: repeat(2, 1fr); } }
+    @media (min-width: 1024px) { .services-inner { grid-template-columns: repeat(4, 1fr); } }
+
+    .benefit {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .benefit-icon {
+      width: 44px;
+      height: 44px;
+      border: 1.5px solid var(--blue-700);
+      color: var(--blue-700);
+      border-radius: 9999px;
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .benefit-title {
+      font-size: 0.875rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--slate-950);
+    }
+
+    .benefit-text {
+      margin-top: 0.25rem;
+      font-size: 0.875rem;
+      line-height: 1.75;
+      color: var(--slate-600);
+    }
+
+    /* ─── PACKAGES ─── */
+    .packages-section {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 5rem 1.5rem;
+    }
+
+    .packages-intro {
+      max-width: 42rem;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .packages-intro h2 {
+      margin-top: 1rem;
+      font-size: clamp(1.8rem, 4vw, 2.5rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      color: var(--slate-950);
+    }
+
+    .packages-intro p {
+      margin-top: 1rem;
+      font-size: 1.05rem;
+      line-height: 2;
+      color: var(--slate-600);
+    }
+
+    .packages-grid {
+      margin-top: 3rem;
+      display: grid;
+      grid-template-columns: 1fr;
       gap: 1.5rem;
-      flex-wrap: wrap;
     }
 
-    .footer-copy {
-      font-size: 0.72rem;
-      font-weight: 600;
-      color: rgba(255,255,255,0.35);
-      letter-spacing: 0.05em;
+    @media (min-width: 1024px) { .packages-grid { grid-template-columns: repeat(3, 1fr); } }
+
+    .pkg-card {
+      border: 1.5px solid var(--slate-200);
+      border-radius: 1rem;
+      padding: 1.75rem;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
     }
 
-    .footer-copy a { color: rgba(255,255,255,0.5); text-decoration: none; transition: color 0.15s; }
-    .footer-copy a:hover { color: var(--white); }
+    .pkg-card.featured {
+      border-color: var(--blue-700);
+      box-shadow: 0 8px 30px rgba(29,78,216,0.12);
+    }
 
-    /* ── REVEAL ── */
+    .pkg-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .pkg-name {
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: 0.01em;
+      color: var(--slate-950);
+    }
+
+    .pkg-desc {
+      margin-top: 0.5rem;
+      font-size: 0.875rem;
+      line-height: 1.75;
+      color: var(--slate-600);
+    }
+
+    .pkg-badge {
+      background: var(--blue-700);
+      color: var(--white);
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .pkg-price {
+      margin-top: 1.75rem;
+      display: flex;
+      align-items: flex-end;
+      gap: 0.25rem;
+    }
+
+    .pkg-amount {
+      font-size: 2.5rem;
+      font-weight: 800;
+      line-height: 1;
+      color: var(--slate-950);
+    }
+
+    .pkg-per {
+      font-size: 1rem;
+      color: var(--slate-500);
+      padding-bottom: 0.2rem;
+    }
+
+    .pkg-items {
+      margin-top: 1.75rem;
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .pkg-item {
+      display: flex;
+      gap: 0.75rem;
+      align-items: flex-start;
+      font-size: 0.875rem;
+      line-height: 1.75;
+      color: var(--slate-700);
+    }
+
+    .pkg-item svg { flex-shrink: 0; color: var(--blue-700); margin-top: 3px; }
+
+    /* ─── CTA BAND ─── */
+    .cta-band {
+      background: var(--slate-950);
+      color: var(--white);
+    }
+
+    .cta-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 4rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2.5rem;
+    }
+
+    @media (min-width: 768px) {
+      .cta-inner {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+      }
+    }
+
+    .cta-eyebrow {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.28em;
+      color: var(--blue-400);
+      margin-bottom: 1rem;
+    }
+
+    .cta-h2 {
+      font-size: clamp(1.6rem, 3.5vw, 2.5rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      max-width: 600px;
+    }
+
+    .cta-p {
+      margin-top: 1rem;
+      font-size: 1.05rem;
+      line-height: 2;
+      color: #94a3b8;
+      max-width: 580px;
+    }
+
+    .btn-white {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--white);
+      color: var(--slate-950);
+      font-size: 0.9rem;
+      font-weight: 700;
+      padding: 0.85rem 2rem;
+      border-radius: 9999px;
+      text-decoration: none;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: background 0.2s;
+    }
+
+    .btn-white:hover { background: var(--slate-50); }
+
+    /* ─── FOOTER ─── */
+    .footer-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      font-size: 0.875rem;
+      color: var(--slate-500);
+      border-top: 1px solid var(--slate-200);
+    }
+
+    @media (min-width: 768px) {
+      .footer-inner { flex-direction: row; justify-content: space-between; }
+    }
+
+    /* ─── REVEAL ─── */
     .reveal {
       opacity: 0;
-      transform: translateY(20px);
-      transition: opacity 0.55s ease, transform 0.55s ease;
+      transform: translateY(12px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
     }
 
     .reveal.in { opacity: 1; transform: none; }
-    .d1 { transition-delay: 0.1s; }
-    .d2 { transition-delay: 0.2s; }
+    .d1 { transition-delay: 0.08s; }
   </style>
 </head>
 <body>
 
-<!-- LOGO SYMBOLS -->
+<!-- SVG SYMBOL LIBRARY -->
 <svg style="display:none" xmlns="http://www.w3.org/2000/svg">
-  <!-- Light-bg version: original brand colors -->
-  <symbol id="sd-logo" viewBox="0 0 129 169">
-    <path d="M 67 32 L 24 59 L 24 96 L 60 118 L 66 118 L 66 105 L 38 87 L 38 66 L 65 49 L 93 65 L 108 58 Z" fill="#114AC4"/>
-    <path d="M 72 74 L 66 74 L 66 87 L 94 105 L 94 126 L 67 143 L 39 127 L 24 134 L 65 160 L 108 133 L 108 96 Z" fill="#040F23"/>
-  </symbol>
-  <!-- Dark-bg version: dark path → white so it reads on navy footer -->
-  <symbol id="sd-logo-inv" viewBox="0 0 129 169">
-    <path d="M 67 32 L 24 59 L 24 96 L 60 118 L 66 118 L 66 105 L 38 87 L 38 66 L 65 49 L 93 65 L 108 58 Z" fill="#114AC4"/>
-    <path d="M 72 74 L 66 74 L 66 87 L 94 105 L 94 126 L 67 143 L 39 127 L 24 134 L 65 160 L 108 133 L 108 96 Z" fill="#ffffff"/>
+  <symbol id="logo-mark" viewBox="0 0 100 100">
+    <path d="M69 13H35L20 28v26l16 10 10-12-14-8V34l9-9h28z" fill="#155ed6"/>
+    <path d="M31 87h34l15-15V46L64 36 54 48l14 8v10l-9 9H31z" fill="#061225"/>
+    <path d="M36 59l22-22 12 9-24 24z" fill="#ffffff"/>
   </symbol>
 </svg>
 
-<!-- NAV -->
-<nav>
-  <div class="nav-inner">
-    <a href="#" class="nav-brand">
-      <svg width="31" height="40" aria-hidden="true"><use href="#sd-logo"/></svg>
-      <div class="brand-words">
-        <span class="w1">Shawcliffe</span>
-        <span class="w2">Digital</span>
+<!-- ═══ HEADER ═══ -->
+<header>
+  <div class="header-inner">
+    <a href="#" class="logo-lockup" aria-label="Shawcliffe Digital home">
+      <svg width="42" height="42" aria-hidden="true"><use href="#logo-mark"/></svg>
+      <div class="logo-words">
+        <span class="logo-name">Shawcliffe</span>
+        <span class="logo-sub">Digital</span>
       </div>
     </a>
-    <ul class="nav-links">
-      <li><a href="#product">Product</a></li>
-      <li><a href="#process">Process</a></li>
-      <li><a href="#pricing">Pricing</a></li>
+
+    <ul class="header-nav" role="list">
+      <li><a href="#services">Services</a></li>
+      <li><a href="#packages">Packages</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
-    <a href="#contact" class="nav-cta">Get Started</a>
-  </div>
-</nav>
 
-<!-- HERO -->
-<section class="hero">
-  <div class="hero-inner">
-    <div>
-      <div class="hero-label">Custom Branded Apps</div>
-      <h1>Your Brand.<br/><span class="blue">Your App.</span><br/>Live in Days.</h1>
-      <p>Shawcliffe Digital builds fully branded iOS apps, Android apps, and booking websites for local contractors and owner operators — at a fraction of custom development cost.</p>
+    <a href="#contact" class="btn-dark">Book a Call</a>
+  </div>
+</header>
+
+<!-- ═══ HERO ═══ -->
+<main>
+  <div class="hero">
+
+    <!-- Left: brand card -->
+    <div class="hero-card reveal">
+      <div class="logo-mark-large">
+        <svg width="96" height="96" aria-label="Shawcliffe Digital logo mark"><use href="#logo-mark"/></svg>
+        <div class="logo-mark-name">SHAWCLIFFE</div>
+        <div class="logo-mark-sub">DIGITAL</div>
+      </div>
+      <div class="card-divider"></div>
+      <p class="hero-tagline">
+        Custom branded apps for
+        <span class="blue">local contractors &amp; owner operators</span>
+      </p>
+    </div>
+
+    <!-- Centre: vertical rule (desktop only) -->
+    <div class="hero-vr" aria-hidden="true"></div>
+
+    <!-- Right: content + contact -->
+    <div class="hero-content reveal d1" id="contact">
+      <p class="eyebrow">Shawcliffe Digital</p>
+      <h1 class="hero-h1">Your business. Your brand. In your customer's pocket.</h1>
+      <p class="hero-p">Minimal, professional app systems for contractors who want more leads, better follow-up, stronger reviews, and a cleaner customer experience.</p>
+
       <div class="hero-btns">
-        <a href="#contact" class="btn-primary">
-          Book a Free Consultation
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        <a href="#packages" class="btn-blue">
+          Get a Free App Blueprint
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
         </a>
-        <a href="#product" class="btn-outline-white">See the Platform</a>
+        <a href="#packages" class="btn-outline">View Packages</a>
+      </div>
+
+      <div class="contact-rows">
+        <a href="tel:+12893140591" class="contact-row">
+          <div class="contact-icon" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.38 2 2 0 0 1 3.6 1.17h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.81a16 16 0 0 0 6.29 6.29l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          </div>
+          <div class="contact-sep"></div>
+          <span>(289) 314-0591</span>
+        </a>
+
+        <a href="mailto:hello@shawcliffedigital.com" class="contact-row">
+          <div class="contact-icon" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+          </div>
+          <div class="contact-sep"></div>
+          <span>hello@shawcliffedigital.com</span>
+        </a>
+
+        <a href="https://shawcliffedigital.com" class="contact-row">
+          <div class="contact-icon" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><path d="M2 12h20"/></svg>
+          </div>
+          <div class="contact-sep"></div>
+          <span>shawcliffedigital.com</span>
+        </a>
+
+        <div class="contact-row">
+          <div class="contact-icon" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+          </div>
+          <div class="contact-sep"></div>
+          <span>Serving Local Businesses</span>
+        </div>
       </div>
     </div>
 
-    <div class="hero-visual">
-      <!-- Web mockup -->
-      <div class="device-web">
-        <div class="web-chrome">
-          <div class="chrome-dots">
-            <div class="chrome-dot"></div>
-            <div class="chrome-dot"></div>
-            <div class="chrome-dot"></div>
-          </div>
-          <div class="chrome-bar">
-            <span class="chrome-url">book.mikesplumbing.com</span>
-          </div>
-        </div>
-        <div class="web-body">
-          <div class="web-header-block">
-            <div class="web-logo-sq"></div>
-            <div class="web-hd-lines">
-              <div class="web-hd-line1"></div>
-              <div class="web-hd-line2"></div>
-            </div>
-          </div>
-          <div class="web-sec-label">Choose a Service</div>
-          <div class="web-svcs">
-            <div class="web-svc sel">
-              <div class="web-svc-l1"></div>
-              <div class="web-svc-l2"></div>
-            </div>
-            <div class="web-svc">
-              <div class="web-svc-l1"></div>
-              <div class="web-svc-l2"></div>
-            </div>
-            <div class="web-svc">
-              <div class="web-svc-l1"></div>
-              <div class="web-svc-l2"></div>
-            </div>
-            <div class="web-svc">
-              <div class="web-svc-l1"></div>
-              <div class="web-svc-l2"></div>
-            </div>
-          </div>
-          <div class="web-btn"><span class="web-btn-text">Book Now →</span></div>
-        </div>
-      </div>
-
-      <!-- Phone mockup -->
-      <div class="device-phone">
-        <div class="phone-notch"><div class="phone-notch-pill"></div></div>
-        <div class="phone-body">
-          <div class="ph-topbar">
-            <div class="ph-bar-label">Calendar</div>
-            <div class="ph-bar-date">Tue 27</div>
-          </div>
-          <div class="ph-slots">
-            <div class="ph-slot on">9:00 AM</div>
-            <div class="ph-slot">10:30 AM</div>
-            <div class="ph-slot">2:00 PM</div>
-            <div class="ph-slot on">3:30 PM</div>
-          </div>
-          <div class="ph-booking">
-            <div class="ph-booking-line w60"></div>
-            <div class="ph-booking-line w35"></div>
-            <div class="ph-badge"></div>
-          </div>
-          <div class="ph-booking">
-            <div class="ph-booking-line w60"></div>
-            <div class="ph-booking-line w35"></div>
-          </div>
-          <div class="ph-nav">
-            <div class="ph-nav-dot act"></div>
-            <div class="ph-nav-dot"></div>
-            <div class="ph-nav-dot"></div>
-            <div class="ph-nav-dot"></div>
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
-</section>
 
-<div class="stripe"></div>
+  <!-- ═══ SERVICES ═══ -->
+  <section id="services" class="services-section">
+    <div class="services-inner">
 
-<!-- PROBLEM STRIP -->
-<div class="problem-bg">
-  <section>
-    <div class="problem-grid">
-      <div class="problem-item">
-        <div class="problem-x">✕</div>
-        <div class="problem-text"><strong>Generic scheduling tools</strong> don't carry your brand or fit your trade.</div>
+      <div class="benefit reveal">
+        <div class="benefit-icon" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.38 2 2 0 0 1 3.6 1.17h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.81a16 16 0 0 0 6.29 6.29l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        </div>
+        <div>
+          <div class="benefit-title">More Leads</div>
+          <p class="benefit-text">Make it simple for customers to request quotes, call, or send job details.</p>
+        </div>
       </div>
-      <div class="problem-item">
-        <div class="problem-x">✕</div>
-        <div class="problem-text"><strong>Custom app development</strong> costs $50,000+ and takes 6+ months.</div>
+
+      <div class="benefit reveal d1">
+        <div class="benefit-icon" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <div>
+          <div class="benefit-title">More Reviews</div>
+          <p class="benefit-text">Guide happy customers toward leaving reviews after completed jobs.</p>
+        </div>
       </div>
-      <div class="problem-item">
-        <div class="problem-x">✕</div>
-        <div class="problem-text"><strong>Phone-only bookings</strong> mean missed jobs and scheduling conflicts.</div>
+
+      <div class="benefit reveal d1">
+        <div class="benefit-icon" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <div>
+          <div class="benefit-title">Save Time</div>
+          <p class="benefit-text">Keep common requests, reminders, and follow-up actions organized.</p>
+        </div>
       </div>
-      <div class="problem-item">
-        <div class="problem-x">✕</div>
-        <div class="problem-text"><strong>No digital presence</strong> means losing work to tech-forward competitors.</div>
+
+      <div class="benefit reveal d1">
+        <div class="benefit-icon" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <div>
+          <div class="benefit-title">Look Professional</div>
+          <p class="benefit-text">Give your local business a polished digital presence under your own brand.</p>
+        </div>
       </div>
+
     </div>
   </section>
-</div>
 
-<!-- PRODUCT SURFACES -->
-<section id="product">
-  <div class="container">
-    <div class="eyebrow reveal">The Platform</div>
-    <h2 class="section-h reveal">Three branded surfaces.<br/>One subscription.</h2>
-    <p class="section-p reveal d1">Every contractor gets a complete branded digital stack — iOS app, Android app, and a booking website — powered by the same backend, configured in minutes.</p>
-
-    <div class="surfaces-grid">
-      <div class="surface-card reveal">
-        <div class="surface-num">01</div>
-        <div class="surface-tag">iOS App</div>
-        <h3 class="surface-title">Native iPhone App</h3>
-        <p class="surface-desc">Your logo, your colors, your name on the App Store. Manage bookings, services, and your calendar from your pocket.</p>
-        <ul class="feat-list">
-          <li><span class="ck">✓</span>Your branding — logo, colors, app name</li>
-          <li><span class="ck">✓</span>Calendar, bookings &amp; availability</li>
-          <li><span class="ck">✓</span>Listed on App Store under your brand</li>
-          <li><span class="ck">✓</span>Offline-first with cloud sync</li>
-          <li><span class="ck">✓</span>Built &amp; submitted automatically</li>
-        </ul>
-      </div>
-
-      <div class="surface-card reveal d1">
-        <div class="surface-num">02</div>
-        <div class="surface-tag">Android App</div>
-        <h3 class="surface-title">Native Android App</h3>
-        <p class="surface-desc">Full feature parity with iOS. Your branded app on Google Play — built in Kotlin, deployed automatically.</p>
-        <ul class="feat-list">
-          <li><span class="ck">✓</span>Full iOS feature parity</li>
-          <li><span class="ck">✓</span>Material You with your brand tokens</li>
-          <li><span class="ck">✓</span>Google Play listing under your name</li>
-          <li><span class="ck">✓</span>Same backend as iOS</li>
-          <li><span class="ck">✓</span>Automated AAB builds + submission</li>
-        </ul>
-      </div>
-
-      <div class="surface-card reveal d2">
-        <div class="surface-num">03</div>
-        <div class="surface-tag">Booking Website</div>
-        <h3 class="surface-title">Branded Booking Page</h3>
-        <p class="surface-desc">A fast, mobile-friendly booking site your clients can use without downloading an app — on your subdomain or custom domain.</p>
-        <ul class="feat-list">
-          <li><span class="ck">✓</span>yourname.contractr.app or your domain</li>
-          <li><span class="ck">✓</span>5-step booking wizard for customers</li>
-          <li><span class="ck">✓</span>Loads in &lt;2s on mobile</li>
-          <li><span class="ck">✓</span>Branded confirmation emails</li>
-          <li><span class="ck">✓</span>Live in under 5 minutes</li>
-        </ul>
-      </div>
+  <!-- ═══ PACKAGES ═══ -->
+  <section id="packages" class="packages-section">
+    <div class="packages-intro reveal">
+      <p class="eyebrow">Simple Packages</p>
+      <h2>Choose the app system that fits your business.</h2>
+      <p>Built for contractors, home-service businesses, and owner-operators who want practical digital tools without unnecessary complexity.</p>
     </div>
-  </div>
-</section>
 
-<!-- HOW IT WORKS -->
-<section id="process" style="background:var(--off);">
-  <div class="container">
-    <div class="eyebrow reveal">The Process</div>
-    <h2 class="section-h reveal">From sign-up to live app<br/>in under 5 minutes.</h2>
-    <p class="section-p reveal d1">No developers. No long meetings. Configure your brand, subscribe, and our pipeline handles the rest.</p>
+    <div class="packages-grid">
 
-    <div class="steps-grid">
-      <div class="step active-step reveal">
-        <div class="step-n">Step 01</div>
-        <div class="step-icon-box">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-        </div>
-        <h3>Sign Up &amp; Configure</h3>
-        <p>Upload your logo, pick your brand colors, set your business name and subdomain. Done in under 3 minutes — no tech skills needed.</p>
-      </div>
-
-      <div class="step active-step reveal d1">
-        <div class="step-n">Step 02</div>
-        <div class="step-icon-box">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
-        </div>
-        <h3>Preview &amp; Subscribe</h3>
-        <p>See a live preview of your branded booking page before you commit. Subscribe and your booking site activates instantly.</p>
-      </div>
-
-      <div class="step active-step reveal d2">
-        <div class="step-n">Step 03</div>
-        <div class="step-icon-box">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-        </div>
-        <h3>Apps Built &amp; Submitted</h3>
-        <p>Our pipeline builds your branded iOS and Android apps and submits them to both stores automatically — zero Xcode required.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- FEATURES -->
-<section class="features-bg">
-  <div class="container">
-    <div class="eyebrow reveal">Everything Included</div>
-    <h2 class="section-h reveal">Built for how contractors<br/>actually run their business.</h2>
-    <p class="section-p reveal d1">Every feature that matters. Nothing that doesn't.</p>
-
-    <div class="feat-grid reveal d1">
-      <div class="feat-cell">
-        <div class="feat-icon-box">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-        </div>
-        <div class="feat-h">Calendar View</div>
-        <div class="feat-p">Month and week views with all upcoming bookings. Tap any booking to view details or update status.</div>
-      </div>
-      <div class="feat-cell">
-        <div class="feat-icon-box">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-        </div>
-        <div class="feat-h">Smart Scheduling</div>
-        <div class="feat-p">Automatic slot generation based on your hours, service durations, buffers, and existing bookings. No double-bookings possible.</div>
-      </div>
-      <div class="feat-cell">
-        <div class="feat-icon-box">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-        </div>
-        <div class="feat-h">Availability Editor</div>
-        <div class="feat-p">Set your weekly hours and block off time-off dates. Customers only see slots when you're actually free.</div>
-      </div>
-      <div class="feat-cell">
-        <div class="feat-icon-box">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-        </div>
-        <div class="feat-h">Services &amp; Pricing</div>
-        <div class="feat-p">Define services, durations, prices, and buffer times. Customers pick the service — you do the work.</div>
-      </div>
-      <div class="feat-cell">
-        <div class="feat-icon-box">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.38 2 2 0 0 1 3.6 1.17h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.81a16 16 0 0 0 6.29 6.29l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-        </div>
-        <div class="feat-h">Confirmation Emails</div>
-        <div class="feat-p">Customers get a branded confirmation email with your logo, booking details, and everything they need.</div>
-      </div>
-      <div class="feat-cell">
-        <div class="feat-icon-box">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
-        </div>
-        <div class="feat-h">Cloud Sync</div>
-        <div class="feat-p">Web bookings appear in your app. Calendar edits sync to the server. Works offline and reconciles when you reconnect.</div>
-      </div>
-      <div class="feat-cell">
-        <div class="feat-icon-box">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-        </div>
-        <div class="feat-h">Custom Domain</div>
-        <div class="feat-p">Point a CNAME and your booking page lives at book.yourbusiness.com — SSL provisioned automatically.</div>
-      </div>
-      <div class="feat-cell">
-        <div class="feat-icon-box">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-        </div>
-        <div class="feat-h">Build Status Dashboard</div>
-        <div class="feat-p">Track your iOS and Android builds in real time — Queued → Building → Submitted → Live. Full visibility, no surprises.</div>
-      </div>
-      <div class="feat-cell">
-        <div class="feat-icon-box">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
-        </div>
-        <div class="feat-h">Stripe Billing</div>
-        <div class="feat-p">Managed monthly subscription through Stripe. Upgrade, downgrade, or cancel anytime from your dashboard.</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- PRICING -->
-<section id="pricing" class="pricing-bg">
-  <div class="container">
-    <div class="eyebrow reveal">Pricing</div>
-    <h2 class="section-h reveal">Simple, transparent pricing.</h2>
-    <p class="section-p reveal d1">No setup fees. No hidden costs. Your booking site goes live the moment you subscribe.</p>
-
-    <div class="pricing-grid">
-      <div class="price-card reveal">
-        <div class="price-tier">Web Starter</div>
-        <div class="price-amount">
-          <span class="price-sym">$</span>
-          <span class="price-n">79</span>
-          <span class="price-per">/mo</span>
-        </div>
-        <p class="price-blurb">Branded booking website only. The fastest way to get a professional digital presence live today.</p>
-        <div class="price-line"></div>
-        <ul class="price-items">
-          <li><span class="pi-check">✓</span>Branded booking website</li>
-          <li><span class="pi-check">✓</span>Custom subdomain</li>
-          <li><span class="pi-check">✓</span>Unlimited bookings</li>
-          <li><span class="pi-check">✓</span>Confirmation emails</li>
-          <li><span class="pi-check">✓</span>Services &amp; availability</li>
-          <li><span class="pi-dash">—</span>iOS App</li>
-          <li><span class="pi-dash">—</span>Android App</li>
-          <li><span class="pi-dash">—</span>Custom domain</li>
-        </ul>
-        <a href="#contact" class="btn-p-outline">Get Started</a>
-      </div>
-
-      <div class="price-card feat reveal d1">
-        <div class="price-tier">Pro</div>
-        <div class="price-amount">
-          <span class="price-sym">$</span>
-          <span class="price-n">199</span>
-          <span class="price-per">/mo</span>
-        </div>
-        <p class="price-blurb">The complete stack. Native iOS app, Android app, and booking website — all under your brand.</p>
-        <div class="price-line"></div>
-        <ul class="price-items">
-          <li><span class="pi-check">✓</span>Everything in Web Starter</li>
-          <li><span class="pi-check">✓</span>Native iOS app (App Store)</li>
-          <li><span class="pi-check">✓</span>Native Android app (Google Play)</li>
-          <li><span class="pi-check">✓</span>Custom domain support</li>
-          <li><span class="pi-check">✓</span>Build status dashboard</li>
-          <li><span class="pi-check">✓</span>Analytics dashboard</li>
-          <li><span class="pi-check">✓</span>Priority support</li>
-          <li><span class="pi-dash">—</span>White-glove onboarding</li>
-        </ul>
-        <a href="#contact" class="btn-p-white">Get Started</a>
-      </div>
-
-      <div class="price-card reveal d2">
-        <div class="price-tier">Enterprise</div>
-        <div class="price-amount">
-          <span class="price-n" style="font-size:2.2rem;padding-bottom:0.1rem;">Custom</span>
-        </div>
-        <p class="price-blurb">Multi-location businesses, custom integrations, or reseller / agency arrangements.</p>
-        <div class="price-line"></div>
-        <ul class="price-items">
-          <li><span class="pi-check">✓</span>Everything in Pro</li>
-          <li><span class="pi-check">✓</span>White-glove onboarding</li>
-          <li><span class="pi-check">✓</span>Dedicated account manager</li>
-          <li><span class="pi-check">✓</span>Custom integrations</li>
-          <li><span class="pi-check">✓</span>Multi-location support</li>
-          <li><span class="pi-check">✓</span>Reseller / agency pricing</li>
-          <li><span class="pi-check">✓</span>SLA &amp; uptime guarantee</li>
-          <li><span class="pi-check">✓</span>Custom contracts</li>
-        </ul>
-        <a href="#contact" class="btn-p-blue">Talk to Us</a>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- CONTACT -->
-<section id="contact">
-  <div class="container">
-    <div class="eyebrow reveal">Get in Touch</div>
-    <h2 class="section-h reveal">Let's build something<br/>for your business.</h2>
-    <p class="section-p reveal d1">Book a free 15-minute call. We'll walk through the platform and show you exactly what your branded app would look like.</p>
-
-    <div class="contact-wrap">
-      <div class="reveal">
-        <div class="contact-person-row">
-          <div class="avatar">CO</div>
+      <!-- Starter -->
+      <div class="pkg-card reveal">
+        <div class="pkg-header">
           <div>
-            <div class="avatar-name">Cassandra Orr</div>
-            <div class="avatar-role">CTO — Shawcliffe Digital</div>
+            <div class="pkg-name">Starter App</div>
+            <p class="pkg-desc">For small owner-operators who want a simple branded app presence.</p>
           </div>
         </div>
-        <div class="contact-details">
-          <a href="tel:+13683389261" class="contact-row">
-            <div class="contact-icon-box">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.38 2 2 0 0 1 3.6 1.17h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.81a16 16 0 0 0 6.29 6.29l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-            </div>
-            (368) 338-9261
-          </a>
-          <a href="mailto:cassandra@shawcliffedigital.com" class="contact-row">
-            <div class="contact-icon-box">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-            </div>
-            cassandra@shawcliffedigital.com
-          </a>
-          <a href="https://shawcliffedigital.com" class="contact-row">
-            <div class="contact-icon-box">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-            </div>
-            shawcliffedigital.com
-          </a>
-          <div class="contact-row" style="cursor:default; pointer-events:none;">
-            <div class="contact-icon-box">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-            </div>
-            Serving Local Businesses
-          </div>
+        <div class="pkg-price">
+          <span class="pkg-amount">$99</span>
+          <span class="pkg-per">/mo</span>
         </div>
+        <ul class="pkg-items" role="list">
+          <li class="pkg-item">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+            Branded app layout
+          </li>
+          <li class="pkg-item">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+            Contact buttons
+          </li>
+          <li class="pkg-item">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+            Services page
+          </li>
+          <li class="pkg-item">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+            Quote request form
+          </li>
+          <li class="pkg-item">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+            Review link
+          </li>
+          <li class="pkg-item">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+            Basic setup and support
+          </li>
+        </ul>
       </div>
 
-      <div class="reveal d1">
-        <form id="contact-form" novalidate>
-          <div class="f2">
-            <label>Your Name
-              <input type="text" name="name" placeholder="Jane Smith" required />
-            </label>
-            <label>Business Name
-              <input type="text" name="business" placeholder="Smith Plumbing" />
-            </label>
+      <!-- Growth (featured) -->
+      <div class="pkg-card featured reveal d1">
+        <div class="pkg-header">
+          <div>
+            <div class="pkg-name">Growth App</div>
+            <p class="pkg-desc">For contractors who want more leads, repeat business, and customer reminders.</p>
           </div>
-          <div class="f2">
-            <label>Phone
-              <input type="tel" name="phone" placeholder="(368) 000-0000" />
-            </label>
-            <label>I'm interested in
-              <select name="plan">
-                <option value="">Select a plan…</option>
-                <option>Web Starter ($79/mo)</option>
-                <option>Pro — iOS + Android + Web ($199/mo)</option>
-                <option>Enterprise</option>
-                <option>Just exploring</option>
-              </select>
-            </label>
-          </div>
-          <label>Tell us about your business
-            <textarea name="message" placeholder="What trade or service do you offer? What's your biggest booking challenge right now?"></textarea>
-          </label>
-          <button type="submit" class="btn-form">Send Message</button>
-        </form>
-        <div class="form-ok" id="form-ok">
-          <strong>Message received!</strong><br/>
-          Cassandra will be in touch within one business day.
+          <span class="pkg-badge">Popular</span>
         </div>
+        <div class="pkg-price">
+          <span class="pkg-amount">$169</span>
+          <span class="pkg-per">/mo</span>
+        </div>
+        <ul class="pkg-items" role="list">
+          <li class="pkg-item">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+            Everything in Starter
+          </li>
+          <li class="pkg-item">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+            Push notifications
+          </li>
+          <li class="pkg-item">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+            Seasonal offers
+          </li>
+          <li class="pkg-item">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+            Maintenance reminders
+          </li>
+          <li class="pkg-item">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+            Lead / customer list
+          </li>
+          <li class="pkg-item">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+            Photo upload form
+          </li>
+        </ul>
       </div>
+
+      <!-- Premium -->
+      <div class="pkg-card reveal d1">
+        <div class="pkg-header">
+          <div>
+            <div class="pkg-name">Premium App</div>
+            <p class="pkg-desc">For contractors who want a more complete customer system and advanced features.</p>
+          </div>
+        </div>
+        <div class="pkg-price">
+          <span class="pkg-amount">$249</span>
+          <span class="pkg-per">/mo</span>
+        </div>
+        <ul class="pkg-items" role="list">
+          <li class="pkg-item">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+            Everything in Growth
+          </li>
+          <li class="pkg-item">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+            Admin dashboard
+          </li>
+          <li class="pkg-item">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+            Customer segments
+          </li>
+          <li class="pkg-item">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+            Loyalty / referral features
+          </li>
+          <li class="pkg-item">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+            Advanced forms
+          </li>
+          <li class="pkg-item">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+            Priority support
+          </li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══ CTA BAND ═══ -->
+  <div class="cta-band">
+    <div class="cta-inner reveal">
+      <div>
+        <p class="cta-eyebrow">Free Contractor App Blueprint</p>
+        <h2 class="cta-h2">See what a branded app could look like for your business.</h2>
+        <p class="cta-p">We'll map out the features that make sense for your service business, including quote requests, reminders, reviews, and customer follow-up.</p>
+      </div>
+      <a href="#contact" class="btn-white">
+        Book Your Free Call
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </a>
     </div>
   </div>
-</section>
 
-<!-- FOOTER -->
+</main>
+
+<!-- ═══ FOOTER ═══ -->
 <footer>
   <div class="footer-inner">
-    <a href="#" class="nav-brand">
-      <svg width="25" height="32" aria-hidden="true"><use href="#sd-logo-inv"/></svg>
-      <div class="brand-words">
-        <span class="w1" style="color:#fff;">Shawcliffe</span>
-        <span class="w2">Digital</span>
-      </div>
-    </a>
-    <div class="footer-copy">
-      &copy; 2025 Shawcliffe Digital &nbsp;&middot;&nbsp;
-      Custom Branded Apps for Local Contractors &amp; Owner Operators &nbsp;&middot;&nbsp;
-      <a href="mailto:cassandra@shawcliffedigital.com">cassandra@shawcliffedigital.com</a>
-    </div>
+    <p>© Shawcliffe Digital</p>
+    <p>Custom branded apps for local contractors &amp; owner operators.</p>
   </div>
 </footer>
 
 <script>
   const obs = new IntersectionObserver(
-    es => es.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); }),
-    { threshold: 0.1 }
+    entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); }),
+    { threshold: 0.08 }
   );
   document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
-
-  document.getElementById('contact-form').addEventListener('submit', function(e) {
-    e.preventDefault();
-    this.style.display = 'none';
-    document.getElementById('form-ok').style.display = 'block';
-  });
 </script>
+
 </body>
 </html>
