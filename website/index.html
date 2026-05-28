@@ -1172,18 +1172,45 @@
     if (e.key === 'Escape') closeModal();
   });
 
-  // Form submit → show thank you
-  document.getElementById('booking-form').addEventListener('submit', function(e) {
+  // Form submit → POST to server, then show thank you
+  document.getElementById('booking-form').addEventListener('submit', async function(e) {
     e.preventDefault();
+
     const name  = document.getElementById('f-name').value.trim();
     const email = document.getElementById('f-email').value.trim();
-    if (!name || !email) {
-      if (!name)  document.getElementById('f-name').focus();
-      else        document.getElementById('f-email').focus();
-      return;
+    if (!name)  { document.getElementById('f-name').focus();  return; }
+    if (!email) { document.getElementById('f-email').focus(); return; }
+
+    const submitBtn = this.querySelector('.btn-submit');
+    submitBtn.disabled    = true;
+    submitBtn.textContent = 'Sending…';
+
+    try {
+      const res  = await fetch('/api/book', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({
+          name,
+          business:  document.getElementById('f-business').value.trim(),
+          phone:     document.getElementById('f-phone').value.trim(),
+          email,
+          best_time: document.getElementById('f-time').value,
+          message:   document.getElementById('f-message').value.trim(),
+        }),
+      });
+      const data = await res.json();
+
+      if (data.ok) {
+        formWrap.style.display = 'none';
+        thanks.style.display   = 'block';
+      } else {
+        throw new Error(data.error || 'Something went wrong.');
+      }
+    } catch (err) {
+      submitBtn.disabled    = false;
+      submitBtn.textContent = 'Send My Request';
+      alert('Sorry, something went wrong: ' + err.message);
     }
-    formWrap.style.display = 'none';
-    thanks.style.display   = 'block';
   });
 </script>
 
