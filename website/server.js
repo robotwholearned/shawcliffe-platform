@@ -1,14 +1,23 @@
 require('dotenv').config();
-const express = require('express');
-const path    = require('path');
+const express   = require('express');
+const path      = require('path');
+const rateLimit = require('express-rate-limit');
 
 const app  = express();
 const PORT = process.env.PORT || 3000;
 
 // ── Middleware ────────────────────────────────────────────────────────────────
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '10kb' }));
+app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 app.use(express.static(__dirname));
+
+const bookingLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 5,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { ok: false, error: 'Too many requests. Please try again in a minute.' },
+});
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 function escapeHtml(str) {
@@ -21,12 +30,30 @@ function escapeHtml(str) {
     .replace(/'/g, '&#39;');
 }
 
+const ALLOWED_TIMES = ['Morning (8am – 12pm)', 'Afternoon (12pm – 5pm)', 'Evening (5pm – 8pm)', 'Anytime'];
+
 // ── Booking form endpoint ─────────────────────────────────────────────────────
-app.post('/api/book', async (req, res) => {
+app.post('/api/book', bookingLimiter, async (req, res) => {
   const { name, business, phone, email, best_time, message } = req.body;
 
   if (!name || !email) {
     return res.status(400).json({ ok: false, error: 'Name and email are required.' });
+  }
+
+  if (String(name).length > 100 || String(email).length > 200) {
+    return res.status(400).json({ ok: false, error: 'Input too long.' });
+  }
+  if (business && String(business).length > 200) {
+    return res.status(400).json({ ok: false, error: 'Input too long.' });
+  }
+  if (phone && String(phone).length > 30) {
+    return res.status(400).json({ ok: false, error: 'Input too long.' });
+  }
+  if (message && String(message).length > 2000) {
+    return res.status(400).json({ ok: false, error: 'Message must be under 2000 characters.' });
+  }
+  if (best_time && !ALLOWED_TIMES.includes(best_time)) {
+    return res.status(400).json({ ok: false, error: 'Invalid best time selection.' });
   }
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
