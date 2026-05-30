@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="3.62in" height="2.12in" viewBox="0 0 3620 2120" role="img" aria-labelledby="title desc">
+  <title id="title">Shawcliffe Digital Business Card - Cassandra Orr CTO Minimal Text and Logo</title>
+  <desc id="desc">Minimalist print-size business card with 3.62 inch by 2.12 inch full bleed canvas. Only text and logo elements are included.</desc>
+  <defs>
+    <style><![CDATA[
+      .navy { fill: #040F23; }
+      .blue { fill: #114AC4; }
+      .txt { font-family: Montserrat, Arial, Helvetica, sans-serif; }
+      .bold { font-weight: 800; }
+      .semi { font-weight: 700; }
+      .regular { font-weight: 400; }
+    ]]></style>
+    <clipPath id="trim-clip">
+      <rect x="60" y="60" width="3500" height="2000"/>
+    </clipPath>
+
+    <!-- Shawcliffe Digital monogram from supplied SVG logo -->
+    <g id="sd-mark">
+      <path d="M 67 32 L 24 59 L 24 96 L 60 118 L 66 118 L 66 105 L 38 87 L 38 66 L 65 49 L 93 65 L 108 58 Z" fill="#114AC4"/>
+      <path d="M 72 74 L 66 74 L 66 87 L 94 105 L 94 126 L 67 143 L 39 127 L 24 134 L 65 160 L 108 133 L 108 96 Z" fill="#040F23"/>
+    </g>
+  </defs>
+
+  <rect id="full-bleed-background" x="0" y="0" width="3620" height="2120" fill="#FFFFFF"/>
+
+  <g id="live-artwork-within-trim" clip-path="url(#trim-clip)">
+    <g id="brand-block" class="txt" text-anchor="middle">
+      <use href="#sd-mark" transform="translate(755 335) scale(2.2)"/>
+      <text x="895" y="955" class="navy bold" font-size="142" letter-spacing="13">SHAWCLIFFE</text>
+      <text x="895" y="1095" class="blue semi" font-size="82" letter-spacing="38">DIGITAL</text>
+      <text x="895" y="1360" class="navy semi" font-size="64" letter-spacing="7">CUSTOM BRANDED APPS FOR</text>
+      <text x="895" y="1478" class="blue semi" font-size="64" letter-spacing="7">LOCAL CONTRACTORS &amp;</text>
+      <text x="895" y="1596" class="blue semi" font-size="64" letter-spacing="7">OWNER OPERATORS</text>
+    </g>
+
+    <g id="contact-block" class="txt">
+      <text x="2015" y="620" class="navy bold" font-size="120" letter-spacing="7">CASSANDRA ORR</text>
+      <text x="2015" y="775" class="blue semi" font-size="76" letter-spacing="22">CTO</text>
+      <text x="2265" y="1040" class="navy regular" font-size="68">(289) 314-0591</text>
+      <text x="2265" y="1225" class="navy regular" font-size="58">cassandra@shawcliffedigital.com</text>
+      <text x="2265" y="1410" class="navy regular" font-size="68">shawcliffedigital.com</text>
+      <text x="2265" y="1595" class="navy regular" font-size="68">Serving Local Businesses</text>
+    </g>
+  </g>
+</svg>
