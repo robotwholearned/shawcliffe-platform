@@ -125,7 +125,11 @@ app.post('/api/book', bookingLimiter, async (req, res) => {
   }
 });
 
-// ── Catch-all → serve index.html ──────────────────────────────────────────────
+// ── Catch-all → serve index.html (non-API routes only) ───────────────────────
+app.use('/api', (req, res) => {
+  res.status(404).json({ ok: false, error: 'Not found.' });
+});
+
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
