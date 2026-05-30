@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="3.62in" height="2.12in" viewBox="0 0 3620 2120" role="img" aria-labelledby="title desc">
+  <title id="title">Shawcliffe Digital Business Card - Cassandra Orr CTO Minimal Text and Logo</title>
+  <desc id="desc">Minimalist print-size business card with 3.62 inch by 2.12 inch full bleed canvas. Only text and logo elements are included.</desc>
+  <defs>
+    <style><![CDATA[
+      .navy { fill: #040F23; }
+      .blue { fill: #114AC4; }
+      .txt { font-family: Montserrat, Arial, Helvetica, sans-serif; }
+      .inter { font-family: Inter, Arial, Helvetica, sans-serif; }
+      .bold { font-weight: 800; }
+      .semi { font-weight: 700; }
+      .regular { font-weight: 400; }
+      .blue-stroke { stroke: #114AC4; stroke-width: 6; stroke-linecap: square; }
+    ]]></style>
+    <clipPath id="trim-clip">
+      <rect x="60" y="60" width="3500" height="2000"/>
+    </clipPath>
+
+    <g id="sd-mark">
+      <path d="M 67 32 L 24 59 L 24 96 L 60 118 L 66 118 L 66 105 L 38 87 L 38 66 L 65 49 L 93 65 L 108 58 Z" fill="#114AC4"/>
+      <path d="M 72 74 L 66 74 L 66 87 L 94 105 L 94 126 L 67 143 L 39 127 L 24 134 L 65 160 L 108 133 L 108 96 Z" fill="#040F23"/>
+    </g>
+  </defs>
+
+  <rect id="full-bleed-background" x="0" y="0" width="3620" height="2120" fill="#FFFFFF"/>
+
+  <g id="live-artwork-within-trim" clip-path="url(#trim-clip)">
+
+    <!-- Vertical centre divider -->
+    <line x1="1810" y1="410" x2="1810" y2="1710" stroke="#C9CDD4" stroke-width="3"/>
+
+    <!-- Left brand block -->
+    <g id="brand-block" class="txt" text-anchor="middle">
+      <use href="#sd-mark" transform="translate(755 335) scale(2.2)"/>
+      <text x="895" y="955" class="navy bold" font-size="142" letter-spacing="13">SHAWCLIFFE</text>
+
+      <!-- Blue rules flanking DIGITAL -->
+      <line x1="455" y1="1072" x2="575" y2="1072" class="blue-stroke"/>
+      <text x="895" y="1100" class="blue semi" font-size="82" text-anchor="middle"><tspan letter-spacing="38">DIGITA</tspan><tspan>L</tspan></text>
+      <line x1="1215" y1="1072" x2="1340" y2="1072" class="blue-stroke"/>
+
+      <!-- Gray separator before tagline -->
+      <line x1="505" y1="1185" x2="1290" y2="1185" stroke="#D3D6DC" stroke-width="3"/>
+
+      <text x="895" y="1320" class="navy semi" font-size="64" letter-spacing="7">CUSTOM BRANDED APPS FOR</text>
+      <text x="895" y="1438" class="blue semi" font-size="64" letter-spacing="7">LOCAL CONTRACTORS</text>
+      <text x="895" y="1556" class="blue semi" font-size="64" letter-spacing="7">&amp; OWNER OPERATORS</text>
+    </g>
+
+    <!-- Right contact block -->
+    <g id="contact-block" class="txt">
+      <text x="2015" y="620" class="navy bold" font-size="152" letter-spacing="7">CASSANDRA ORR</text>
+      <text x="2015" y="790" class="blue semi" font-size="76" letter-spacing="22">CTO</text>
+
+      <!-- Blue rule separating title from contact details -->
+      <line x1="2015" y1="865" x2="2200" y2="865" class="blue-stroke"/>
+
+      <text x="2015" y="980" class="navy regular inter" font-size="70">587-899-5692</text>
+      <text x="2015" y="1230" class="navy regular inter" font-size="70">cassandra@shawcliffedigital.com</text>
+      <text x="2015" y="1480" class="navy regular inter" font-size="70">shawcliffedigital.com</text>
+    </g>
+
+  </g>
+</svg>
