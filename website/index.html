@@ -149,6 +149,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+      width: 100%;
     }
 
     .logo-mark-large {
@@ -160,7 +161,7 @@
 
     .logo-mark-name {
       margin-top: 0.75rem;
-      font-size: 2.4rem;
+      font-size: clamp(1.5rem, 6vw, 2.4rem);
       font-weight: 800;
       letter-spacing: 0.12em;
       text-transform: uppercase;
@@ -171,7 +172,7 @@
 
     .logo-mark-sub {
       margin-top: 0.75rem;
-      font-size: 1.4rem;
+      font-size: clamp(0.9rem, 3.5vw, 1.4rem);
       font-weight: 700;
       letter-spacing: 0.36em;
       text-transform: uppercase;
@@ -496,6 +497,7 @@
       padding: 4rem 1.5rem;
       display: flex;
       flex-direction: column;
+      align-items: flex-start;
       gap: 2.5rem;
     }
 
@@ -1155,24 +1157,50 @@
   document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 
   // ── Modal ──
-  const backdrop = document.getElementById('modal-backdrop');
-  const formWrap = document.getElementById('modal-form-wrap');
-  const thanks   = document.getElementById('modal-thanks');
+  const backdrop   = document.getElementById('modal-backdrop');
+  const formWrap   = document.getElementById('modal-form-wrap');
+  const thanks     = document.getElementById('modal-thanks');
+  const submitBtn  = document.querySelector('.btn-submit');
+  const submitHTML = submitBtn.innerHTML;
+  let   opener     = null;
 
-  function openModal() {
+  const FOCUSABLE = 'a[href],button:not([disabled]),input,select,textarea,[tabindex]:not([tabindex="-1"])';
+
+  function trapFocus(e) {
+    const els   = Array.from(backdrop.querySelectorAll(FOCUSABLE));
+    const first = els[0];
+    const last  = els[els.length - 1];
+    if (e.key !== 'Tab') return;
+    if (e.shiftKey) {
+      if (document.activeElement === first) { e.preventDefault(); last.focus(); }
+    } else {
+      if (document.activeElement === last)  { e.preventDefault(); first.focus(); }
+    }
+  }
+
+  function openModal(trigger) {
+    opener = trigger || null;
+    // Reset to form state on every open
+    formWrap.style.display = '';
+    thanks.style.display   = 'none';
+    submitBtn.disabled     = false;
+    submitBtn.innerHTML    = submitHTML;
     backdrop.classList.add('open');
     document.body.style.overflow = 'hidden';
     document.getElementById('f-name').focus();
+    backdrop.addEventListener('keydown', trapFocus);
   }
 
   function closeModal() {
     backdrop.classList.remove('open');
     document.body.style.overflow = '';
+    backdrop.removeEventListener('keydown', trapFocus);
+    if (opener) { opener.focus(); opener = null; }
   }
 
   // Wire all CTA buttons to open the modal
   document.querySelectorAll('[data-modal]').forEach(el => {
-    el.addEventListener('click', e => { e.preventDefault(); openModal(); });
+    el.addEventListener('click', e => { e.preventDefault(); openModal(el); });
   });
 
   document.getElementById('modal-close').addEventListener('click', closeModal);
@@ -1182,7 +1210,7 @@
   });
 
   document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') closeModal();
+    if (e.key === 'Escape' && backdrop.classList.contains('open')) closeModal();
   });
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -1219,9 +1247,8 @@
     ].some(Boolean);
     if (hasErrors) return;
 
-    const submitBtn = this.querySelector('.btn-submit');
-    submitBtn.disabled    = true;
-    submitBtn.textContent = 'Sending…';
+    submitBtn.disabled  = true;
+    submitBtn.innerHTML = 'Sending…';
 
     try {
       const res  = await fetch('/api/book', {
@@ -1245,8 +1272,8 @@
         throw new Error(data.error || 'Something went wrong.');
       }
     } catch (err) {
-      submitBtn.disabled    = false;
-      submitBtn.textContent = 'Send My Request';
+      submitBtn.disabled  = false;
+      submitBtn.innerHTML = submitHTML;
       alert('Sorry, something went wrong: ' + err.message);
     }
   });
