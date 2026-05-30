@@ -1,2 +1,5 @@
 .claude
 .omc
+.DS_Store
+website/.env
+website/node_modules
