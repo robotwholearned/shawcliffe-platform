@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation'
-import { createClient } from '@/lib/supabase/server'
+import { createServiceClient } from '@/lib/supabase/server'
 import StatusBadge from '@/components/StatusBadge'
 import ProductCard from '@/components/ProductCard'
 import type { DailyStatusWithLocation, Product, ClientBranding } from '@/lib/supabase/types'
@@ -12,7 +12,7 @@ interface Props {
 export const revalidate = 0
 
 export default async function ClientPage({ params }: Props) {
-  const supabase = createClient()
+  const supabase = createServiceClient()
   const today = new Date().toISOString().split('T')[0]
 
   const { data: client } = await supabase

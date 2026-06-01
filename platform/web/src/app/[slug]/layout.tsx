@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
-import { createClient } from '@/lib/supabase/server'
+import { createServiceClient } from '@/lib/supabase/server'
 import { brandingToVars, FONT_IMPORT } from '@/lib/theme'
 import type { ClientBranding } from '@/lib/supabase/types'
 
@@ -10,7 +10,7 @@ interface Props {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const supabase = createClient()
+  const supabase = createServiceClient()
   const { data } = await supabase
     .from('clients')
     .select('business_name, client_branding(tagline)')
@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function ClientLayout({ children, params }: Props) {
-  const supabase = createClient()
+  const supabase = createServiceClient()
   const { data: client } = await supabase
     .from('clients')
     .select('id, business_name, active, client_branding(*)')
