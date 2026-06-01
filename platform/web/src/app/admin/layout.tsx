@@ -1,8 +1,12 @@
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import { headers } from 'next/headers'
 import { createClient } from '@/lib/supabase/server'
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
+  const pathname = headers().get('x-pathname') ?? ''
+  if (pathname === '/admin/login') return <>{children}</>
+
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
 

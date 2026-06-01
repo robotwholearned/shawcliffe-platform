@@ -26,6 +26,9 @@ export async function middleware(req: NextRequest) {
   )
   await supabase.auth.getUser()
 
+  // Make pathname available to server-component layouts via header
+  res.headers.set('x-pathname', req.nextUrl.pathname)
+
   // Subdomain routing: tomsproduce.shawcliffe.ca → rewrite to /tomsproduce
   const hostname = req.headers.get('host') ?? ''
   const hostWithoutPort = hostname.replace(/:\d+$/, '')
