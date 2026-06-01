@@ -15,7 +15,7 @@ const STATUS_OPTIONS: { value: DailyStatusValue; label: string; emoji: string }[
 
 export default function SellerDashboard() {
   const supabase = createClient()
-  const [clientId, setClientId] = useState<string | null>(null)
+  const [clientId, setClientId] = useState<string | null | undefined>(undefined)
   const [todayStatus, setTodayStatus] = useState<DailyStatus | null>(null)
   const [products, setProducts] = useState<Product[]>([])
   const [saving, setSaving] = useState(false)
@@ -30,7 +30,7 @@ export default function SellerDashboard() {
 
       const cid: string | undefined =
         user.app_metadata?.client_id ?? user.user_metadata?.client_id
-      if (!cid) return
+      if (!cid) { setClientId(null); return }
       setClientId(cid)
 
       const [statusRes, productsRes] = await Promise.all([
@@ -91,10 +91,21 @@ export default function SellerDashboard() {
     setSaving(false)
   }, [clientId, setStatus])
 
-  if (!clientId) {
+  if (clientId === undefined) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <p className="text-sm text-gray-400">Loading…</p>
+      </div>
+    )
+  }
+
+  if (clientId === null) {
+    return (
+      <div className="flex items-center justify-center min-h-screen px-6">
+        <div className="text-center space-y-2">
+          <p className="text-sm font-medium text-gray-700">No client assigned</p>
+          <p className="text-xs text-gray-400">This account has no client_id in app_metadata. Ask your Shawcliffe admin to set it up.</p>
+        </div>
       </div>
     )
   }
