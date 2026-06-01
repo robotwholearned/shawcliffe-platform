@@ -151,6 +151,7 @@
         grid-template-columns: 1fr 1fr;
         gap: 4rem;
         padding-top: 5rem;
+        align-items: start;
       }
     }
 
@@ -582,6 +583,7 @@
 
     @media (min-width: 768px) {
       .footer-inner { flex-direction: row; justify-content: space-between; }
+      .footer-copy { order: -1; }
     }
 
     /* ─── MODAL ─── */
@@ -920,7 +922,7 @@
 
       <div class="benefit reveal d1">
         <div class="benefit-icon" aria-hidden="true">
-          <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
         </div>
         <div>
           <div class="benefit-title">Look Professional</div>
@@ -1085,8 +1087,8 @@
 <!-- ═══ FOOTER ═══ -->
 <footer>
   <div class="footer-inner">
-    <p>© Shawcliffe Digital</p>
-    <p>Custom branded apps for local contractors &amp; owner operators.</p>
+    <p class="footer-tagline">Custom branded apps for local contractors &amp; owner operators.</p>
+    <p class="footer-copy">© Shawcliffe Digital</p>
   </div>
 </footer>
 
