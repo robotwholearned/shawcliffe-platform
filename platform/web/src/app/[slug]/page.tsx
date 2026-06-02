@@ -1,14 +1,13 @@
 import { notFound } from 'next/navigation'
 import { createServiceClient } from '@/lib/supabase/server'
-import StatusBadge from '@/components/StatusBadge'
-import ProductCard from '@/components/ProductCard'
-import type { DailyStatusWithLocation, Product, ClientBranding } from '@/lib/supabase/types'
+import RealtimeStorefront from '@/components/RealtimeStorefront'
+import type { DailyStatusWithLocation, DailyStatusValue, Product, ClientBranding } from '@/lib/supabase/types'
 
 interface Props {
   params: { slug: string }
 }
 
-// Always SSR-fresh — status and products change frequently
+// SSR on every request — Realtime client takes over after hydration
 export const revalidate = 0
 
 export default async function ClientPage({ params }: Props) {
@@ -60,14 +59,6 @@ export default async function ClientPage({ params }: Props) {
         </div>
       </header>
 
-      <StatusBadge status={status?.status ?? null} customMessage={status?.custom_message} />
-
-      {status?.hours_open && status?.hours_close && (
-        <p className="text-sm text-gray-500">
-          Hours: {status.hours_open} – {status.hours_close}
-        </p>
-      )}
-
       {status?.locations && (
         <div className="bg-gray-50 rounded-xl p-4 space-y-1">
           <p className="font-medium text-sm text-gray-800">{status.locations.display_name}</p>
@@ -90,20 +81,18 @@ export default async function ClientPage({ params }: Props) {
         </div>
       )}
 
-      {products.length > 0 && (
-        <section className="space-y-2">
-          <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
-            Today's Products
-          </h2>
-          {products.map(p => (
-            <ProductCard key={p.id} product={p} />
-          ))}
-        </section>
+      {status?.hours_open && status?.hours_close && (
+        <p className="text-sm text-gray-500">
+          Hours: {status.hours_open} – {status.hours_close}
+        </p>
       )}
 
-      {products.length === 0 && status?.status === 'open' && (
-        <p className="text-sm text-gray-400 text-center py-8">No products listed yet.</p>
-      )}
+      {/* Realtime client component takes over status + products after SSR */}
+      <RealtimeStorefront
+        clientId={client.id}
+        initialStatus={status ? { status: status.status as DailyStatusValue, custom_message: status.custom_message } : null}
+        initialProducts={products}
+      />
     </main>
   )
 }
