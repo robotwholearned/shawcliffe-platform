@@ -1,7 +1,11 @@
 import { redirect } from 'next/navigation'
+import { headers } from 'next/headers'
 import { createClient } from '@/lib/supabase/server'
 
 export default async function SellerLayout({ children }: { children: React.ReactNode }) {
+  const pathname = headers().get('x-pathname') ?? ''
+  if (pathname === '/seller/login') return <>{children}</>
+
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
