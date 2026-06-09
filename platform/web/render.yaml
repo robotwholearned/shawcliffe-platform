@@ -10,6 +10,8 @@ services:
         value: production
       - key: NEXT_PUBLIC_BASE_DOMAIN
         value: shawcliffedigital.com
+        # Storefronts: {slug}.shawcliffedigital.com
+        # Admin/seller: accessed via any subdomain not matching a client slug
       - key: NEXT_PUBLIC_SUPABASE_URL
         sync: false
       - key: NEXT_PUBLIC_SUPABASE_ANON_KEY

@@ -20,6 +20,9 @@ export default function SellerDashboard() {
   const [products, setProducts] = useState<Product[]>([])
   const [saving, setSaving] = useState(false)
   const [lastSaved, setLastSaved] = useState<string | null>(null)
+  const [broadcastMsg, setBroadcastMsg] = useState('')
+  const [broadcasting, setBroadcasting] = useState(false)
+  const [broadcastResult, setBroadcastResult] = useState<{ sent: number; failed: number } | null>(null)
 
   const today = new Date().toISOString().split('T')[0]
 
@@ -90,6 +93,22 @@ export default function SellerDashboard() {
     setProducts(prev => prev.map(p => ({ ...p, status: 'sold_out' as ProductStatus })))
     setSaving(false)
   }, [clientId, setStatus])
+
+  const sendBroadcast = useCallback(async () => {
+    if (!broadcastMsg.trim()) return
+    if (!confirm(`Send SMS to all opted-in customers?\n\n"${broadcastMsg}"`)) return
+    setBroadcasting(true)
+    setBroadcastResult(null)
+    const res = await fetch('/api/broadcast/sms', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: broadcastMsg }),
+    })
+    const data = await res.json()
+    setBroadcastResult(res.ok ? { sent: data.sent, failed: data.failed } : { sent: 0, failed: 1 })
+    if (res.ok) setBroadcastMsg('')
+    setBroadcasting(false)
+  }, [broadcastMsg])
 
   if (clientId === undefined) {
     return (
@@ -174,6 +193,36 @@ export default function SellerDashboard() {
             </div>
           ))}
         </div>
+      </section>
+
+      {/* SMS Broadcast */}
+      <section className="bg-white rounded-2xl shadow-sm p-4 space-y-3">
+        <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Send Update to Customers</h2>
+        <textarea
+          value={broadcastMsg}
+          onChange={e => { setBroadcastMsg(e.target.value); setBroadcastResult(null) }}
+          placeholder="e.g. We're open today at the usual spot! Lots of strawberries left."
+          rows={3}
+          maxLength={160}
+          className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+        />
+        <div className="flex items-center justify-between">
+          <span className="text-xs text-gray-400">{broadcastMsg.length}/160</span>
+          {broadcastResult && (
+            <span className={`text-xs font-medium ${broadcastResult.failed > 0 ? 'text-red-500' : 'text-green-600'}`}>
+              {broadcastResult.failed > 0
+                ? `${broadcastResult.failed} failed`
+                : `Sent to ${broadcastResult.sent} customer${broadcastResult.sent !== 1 ? 's' : ''}`}
+            </span>
+          )}
+        </div>
+        <button
+          onClick={sendBroadcast}
+          disabled={broadcasting || !broadcastMsg.trim()}
+          className="w-full bg-blue-600 text-white rounded-xl py-2.5 text-sm font-semibold hover:bg-blue-700 active:scale-95 transition-all disabled:opacity-50"
+        >
+          {broadcasting ? 'Sending…' : 'Send SMS to All Customers'}
+        </button>
       </section>
 
       {/* End of Day */}
