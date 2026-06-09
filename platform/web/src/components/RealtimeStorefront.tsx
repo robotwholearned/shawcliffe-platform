@@ -8,11 +8,12 @@ import type { DailyStatusValue, Product } from '@/lib/supabase/types'
 
 interface Props {
   clientId: string
+  slug: string
   initialStatus: { status: DailyStatusValue; custom_message: string | null } | null
   initialProducts: Product[]
 }
 
-export default function RealtimeStorefront({ clientId, initialStatus, initialProducts }: Props) {
+export default function RealtimeStorefront({ clientId, slug, initialStatus, initialProducts }: Props) {
   const [status, setStatus] = useState(initialStatus)
   const [products, setProducts] = useState(initialProducts)
   const [connected, setConnected] = useState(true)
@@ -117,13 +118,13 @@ export default function RealtimeStorefront({ clientId, initialStatus, initialPro
 
       <div className="pt-4 flex gap-3">
         <a
-          href="signup"
+          href={`/${slug}/signup`}
           className="flex-1 text-center bg-[var(--brand-primary,#2563eb)] text-white rounded-xl py-3 text-sm font-semibold hover:opacity-90"
         >
           Get updates
         </a>
         <a
-          href="preorder"
+          href={`/${slug}/preorder`}
           className="flex-1 text-center bg-gray-100 text-gray-700 rounded-xl py-3 text-sm font-semibold hover:bg-gray-200"
         >
           Reserve an order

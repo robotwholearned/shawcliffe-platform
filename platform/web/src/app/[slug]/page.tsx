@@ -90,6 +90,7 @@ export default async function ClientPage({ params }: Props) {
       {/* Realtime client component takes over status + products after SSR */}
       <RealtimeStorefront
         clientId={client.id}
+        slug={params.slug}
         initialStatus={status ? { status: status.status as DailyStatusValue, custom_message: status.custom_message } : null}
         initialProducts={products}
       />
