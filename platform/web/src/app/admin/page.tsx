@@ -55,6 +55,7 @@ export default async function AdminDashboard() {
                 <th className="px-4 py-3 text-left">Vertical</th>
                 <th className="px-4 py-3 text-left">Status</th>
                 <th className="px-4 py-3 text-left">Created</th>
+                <th className="px-4 py-3 text-left"></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
@@ -77,6 +78,11 @@ export default async function AdminDashboard() {
                   </td>
                   <td className="px-4 py-3 text-gray-400 text-xs">
                     {new Date(c.created_at).toLocaleDateString('en-CA')}
+                  </td>
+                  <td className="px-4 py-3">
+                    <Link href={`/admin/clients/${c.id}/products`} className="text-xs text-blue-600 hover:underline">
+                      Products →
+                    </Link>
                   </td>
                 </tr>
               ))}
