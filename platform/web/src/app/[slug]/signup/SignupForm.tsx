@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { normalizePhone, phoneError } from '@/lib/phone'
 
 const CONSENT_TEXT = "I agree to receive updates about today's availability, location, and products. Message frequency varies. Reply STOP to unsubscribe. Message & data rates may apply."
 
@@ -23,15 +24,17 @@ export default function SignupForm({ clientId, businessName, slug }: Props) {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!phone && !email) { setError('Enter a phone number or email.'); return }
+    if (phone && phoneError(phone)) { setError(phoneError(phone)!); return }
     if (!smsConsent && !emailConsent) { setError('Please check at least one consent option.'); return }
 
     setSubmitting(true)
     setError(null)
 
+    const normalizedPhone = phone ? normalizePhone(phone) : null
     const res = await fetch('/api/signup', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ client_id: clientId, name, phone, email, sms_consent: smsConsent, email_consent: emailConsent, signup_source: 'website' }),
+      body: JSON.stringify({ client_id: clientId, name, phone: normalizedPhone, email, sms_consent: smsConsent, email_consent: emailConsent, signup_source: 'website' }),
     })
 
     if (!res.ok) {

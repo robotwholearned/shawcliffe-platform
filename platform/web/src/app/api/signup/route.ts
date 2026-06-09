@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServiceClient } from '@/lib/supabase/server'
+import { normalizePhone } from '@/lib/phone'
 
 const CONSENT_TEXT_VERSION = 'v1-2026-06-02'
 
@@ -9,6 +10,11 @@ export async function POST(req: NextRequest) {
 
   if (!client_id || !name || (!phone && !email)) {
     return NextResponse.json({ error: 'name and phone or email are required' }, { status: 400 })
+  }
+
+  const normalizedPhone = phone ? normalizePhone(phone) : null
+  if (phone && !normalizedPhone) {
+    return NextResponse.json({ error: 'Invalid phone number format' }, { status: 400 })
   }
   if (!sms_consent && !email_consent) {
     return NextResponse.json({ error: 'at least one consent is required' }, { status: 400 })
@@ -38,7 +44,7 @@ export async function POST(req: NextRequest) {
     .insert({
       client_id,
       name,
-      phone: phone || null,
+      phone: normalizedPhone,
       email: email || null,
       sms_consent: sms_consent ?? false,
       email_consent: email_consent ?? false,

@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import type { Product } from '@/lib/supabase/types'
+import { normalizePhone, phoneError } from '@/lib/phone'
 
 interface Props {
   clientId: string
@@ -31,18 +32,20 @@ export default function PreorderForm({ clientId, businessName, slug, initialProd
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!phone && !email) { setError('Enter a phone number or email so we can confirm your order.'); return }
+    if (phone && phoneError(phone)) { setError(phoneError(phone)!); return }
     if (selectedItems.length === 0) { setError('Select at least one product.'); return }
 
     setSubmitting(true)
     setError(null)
 
+    const normalizedPhone = phone ? normalizePhone(phone) : null
     const res = await fetch('/api/preorder', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         client_id: clientId,
         customer_name: name,
-        customer_phone: phone || null,
+        customer_phone: normalizedPhone,
         customer_email: email || null,
         items: selectedItems,
         notes: notes || null,
