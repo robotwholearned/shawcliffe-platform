@@ -27,6 +27,10 @@ export default function SellerDashboard() {
   const [newProductName, setNewProductName] = useState('')
   const [newProductPrice, setNewProductPrice] = useState('')
   const [addingProduct, setAddingProduct] = useState(false)
+  const [emailSubject, setEmailSubject] = useState('')
+  const [emailMsg, setEmailMsg] = useState('')
+  const [emailing, setEmailing] = useState(false)
+  const [emailResult, setEmailResult] = useState<{ sent: number; failed: number } | null>(null)
 
   const today = new Date().toISOString().split('T')[0]
 
@@ -124,6 +128,22 @@ export default function SellerDashboard() {
     await supabase.from('products').delete().eq('client_id', clientId).eq('id', productId)
     setProducts(prev => prev.filter(p => p.id !== productId))
   }, [clientId])
+
+  const sendEmail = useCallback(async () => {
+    if (!emailSubject.trim() || !emailMsg.trim()) return
+    if (!confirm(`Send email to all opted-in customers?\n\nSubject: "${emailSubject}"`)) return
+    setEmailing(true)
+    setEmailResult(null)
+    const res = await fetch('/api/broadcast/email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ subject: emailSubject, message: emailMsg }),
+    })
+    const data = await res.json()
+    setEmailResult(res.ok ? { sent: data.sent, failed: data.failed } : { sent: 0, failed: 1 })
+    if (res.ok) { setEmailSubject(''); setEmailMsg('') }
+    setEmailing(false)
+  }, [emailSubject, emailMsg])
 
   const sendBroadcast = useCallback(async () => {
     if (!broadcastMsg.trim()) return
@@ -297,6 +317,42 @@ export default function SellerDashboard() {
           className="w-full bg-blue-600 text-white rounded-xl py-2.5 text-sm font-semibold hover:bg-blue-700 active:scale-95 transition-all disabled:opacity-50"
         >
           {broadcasting ? 'Sending…' : 'Send SMS to All Customers'}
+        </button>
+      </section>
+
+      {/* Email Broadcast */}
+      <section className="bg-white rounded-2xl shadow-sm p-4 space-y-3">
+        <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Send Email to Customers</h2>
+        <input
+          type="text"
+          value={emailSubject}
+          onChange={e => { setEmailSubject(e.target.value); setEmailResult(null) }}
+          placeholder="Subject line"
+          className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+        <textarea
+          value={emailMsg}
+          onChange={e => { setEmailMsg(e.target.value); setEmailResult(null) }}
+          placeholder="e.g. We're open this Saturday 9am–2pm at the usual spot. Lots of fresh strawberries!"
+          rows={3}
+          className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+        />
+        <div className="flex items-center justify-between">
+          <span className="text-xs text-gray-400"> </span>
+          {emailResult && (
+            <span className={`text-xs font-medium ${emailResult.failed > 0 ? 'text-red-500' : 'text-green-600'}`}>
+              {emailResult.failed > 0
+                ? `${emailResult.failed} failed`
+                : `Sent to ${emailResult.sent} customer${emailResult.sent !== 1 ? 's' : ''}`}
+            </span>
+          )}
+        </div>
+        <button
+          onClick={sendEmail}
+          disabled={emailing || !emailSubject.trim() || !emailMsg.trim()}
+          className="w-full bg-blue-600 text-white rounded-xl py-2.5 text-sm font-semibold hover:bg-blue-700 active:scale-95 transition-all disabled:opacity-50"
+        >
+          {emailing ? 'Sending…' : 'Send Email to All Customers'}
         </button>
       </section>
 
