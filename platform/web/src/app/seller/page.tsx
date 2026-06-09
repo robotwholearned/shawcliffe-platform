@@ -22,7 +22,7 @@ export default function SellerDashboard() {
   const [lastSaved, setLastSaved] = useState<string | null>(null)
   const [broadcastMsg, setBroadcastMsg] = useState('')
   const [broadcasting, setBroadcasting] = useState(false)
-  const [broadcastResult, setBroadcastResult] = useState<{ sent: number; failed: number } | null>(null)
+  const [broadcastResult, setBroadcastResult] = useState<{ sent: number; failed: number; errors?: string[] } | null>(null)
   const [showAddProduct, setShowAddProduct] = useState(false)
   const [newProductName, setNewProductName] = useState('')
   const [newProductPrice, setNewProductPrice] = useState('')
@@ -156,8 +156,8 @@ export default function SellerDashboard() {
       body: JSON.stringify({ message: broadcastMsg }),
     })
     const data = await res.json()
-    setBroadcastResult(res.ok ? { sent: data.sent, failed: data.failed } : { sent: 0, failed: 1 })
-    if (res.ok) setBroadcastMsg('')
+    setBroadcastResult(res.ok ? { sent: data.sent, failed: data.failed, errors: data.errors } : { sent: 0, failed: 1, errors: [data.error] })
+    if (res.ok && data.failed === 0) setBroadcastMsg('')
     setBroadcasting(false)
   }, [broadcastMsg])
 
@@ -306,7 +306,7 @@ export default function SellerDashboard() {
           {broadcastResult && (
             <span className={`text-xs font-medium ${broadcastResult.failed > 0 ? 'text-red-500' : 'text-green-600'}`}>
               {broadcastResult.failed > 0
-                ? `${broadcastResult.failed} failed`
+                ? broadcastResult.errors?.[0] ?? `${broadcastResult.failed} failed`
                 : `Sent to ${broadcastResult.sent} customer${broadcastResult.sent !== 1 ? 's' : ''}`}
             </span>
           )}

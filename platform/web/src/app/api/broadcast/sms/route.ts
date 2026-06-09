@@ -67,13 +67,19 @@ export async function POST(req: NextRequest) {
 
   const results = await Promise.allSettled(
     customers.map(async (customer) => {
-      const msg = await twilioClient.messages.create({
-        body: message,
-        to: customer.phone!,
-        ...(twilioAccount.messaging_service_sid
-          ? { messagingServiceSid: twilioAccount.messaging_service_sid }
-          : { from }),
-      })
+      let msg
+      try {
+        msg = await twilioClient.messages.create({
+          body: message,
+          to: customer.phone!,
+          ...(twilioAccount.messaging_service_sid
+            ? { messagingServiceSid: twilioAccount.messaging_service_sid }
+            : { from }),
+        })
+      } catch (err: any) {
+        console.error(`Twilio error for ${customer.phone}:`, err?.message, err?.code, err?.moreInfo)
+        throw err
+      }
 
       // Log to notification_log
       await admin.from('notification_log').insert({
@@ -92,6 +98,9 @@ export async function POST(req: NextRequest) {
 
   const sent = results.filter(r => r.status === 'fulfilled').length
   const failed = results.filter(r => r.status === 'rejected').length
+  const errors = results
+    .filter((r): r is PromiseRejectedResult => r.status === 'rejected')
+    .map(r => r.reason?.message ?? String(r.reason))
 
-  return NextResponse.json({ sent, failed, total: customers.length })
+  return NextResponse.json({ sent, failed, total: customers.length, errors })
 }
