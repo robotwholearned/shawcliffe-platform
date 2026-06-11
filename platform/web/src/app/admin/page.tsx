@@ -61,7 +61,11 @@ export default async function AdminDashboard() {
             <tbody className="divide-y divide-gray-50">
               {rows.map(c => (
                 <tr key={c.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-4 py-3 font-medium text-gray-900">{c.business_name}</td>
+                  <td className="px-4 py-3 font-medium text-gray-900">
+                    <Link href={`/admin/clients/${c.id}`} className="hover:text-blue-600 hover:underline">
+                      {c.business_name}
+                    </Link>
+                  </td>
                   <td className="px-4 py-3">
                     <span className="font-mono text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded">
                       {c.slug}
