@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient, createServiceClient } from '@/lib/supabase/server'
+import { getAuthedUser, createServiceClient } from '@/lib/supabase/server'
 import twilio from 'twilio'
 
 export async function POST(req: NextRequest) {
   // Verify caller is client_staff or shawcliffe_admin
-  const supabase = createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const user = await getAuthedUser(req)
   const role = user?.app_metadata?.role
   const clientId = user?.app_metadata?.client_id
 
