@@ -1,0 +1,155 @@
+import Foundation
+
+enum FontTheme: String, Codable {
+    case modernSans = "modern_sans"
+    case farmhouse
+    case classicSerif = "classic_serif"
+    case minimal
+    case rustic
+}
+
+enum DailyStatusValue: String, Codable {
+    case open
+    case closed
+    case soldOut = "sold_out"
+    case backTomorrow = "back_tomorrow"
+    case weatherDelay = "weather_delay"
+    case openingSoon = "opening_soon"
+
+    var label: String {
+        switch self {
+        case .open: return "Open"
+        case .closed: return "Closed"
+        case .soldOut: return "Sold Out"
+        case .backTomorrow: return "Back Tomorrow"
+        case .weatherDelay: return "Weather Delay"
+        case .openingSoon: return "Opening Soon"
+        }
+    }
+
+    var color: (r: Double, g: Double, b: Double) {
+        switch self {
+        case .open: return (0.13, 0.55, 0.13)
+        case .closed, .soldOut: return (0.7, 0.15, 0.15)
+        case .backTomorrow, .openingSoon: return (0.85, 0.55, 0.1)
+        case .weatherDelay: return (0.3, 0.4, 0.6)
+        }
+    }
+}
+
+enum ProductStatus: String, Codable {
+    case available
+    case low
+    case soldOut = "sold_out"
+}
+
+struct ClientBranding: Codable {
+    let clientId: String
+    var primaryColor: String
+    var secondaryColor: String?
+    var accentColor: String?
+    var fontTheme: FontTheme
+    var logoUrl: String?
+    var appName: String?
+    var tagline: String?
+    var heroPhotoUrls: [String]
+
+    enum CodingKeys: String, CodingKey {
+        case clientId = "client_id"
+        case primaryColor = "primary_color"
+        case secondaryColor = "secondary_color"
+        case accentColor = "accent_color"
+        case fontTheme = "font_theme"
+        case logoUrl = "logo_url"
+        case appName = "app_name"
+        case tagline
+        case heroPhotoUrls = "hero_photo_urls"
+    }
+}
+
+struct Location: Codable, Identifiable {
+    let clientId: String
+    let id: String
+    let displayName: String
+    let address: String?
+    let mapUrl: String?
+    let parkingNotes: String?
+
+    enum CodingKeys: String, CodingKey {
+        case clientId = "client_id"
+        case id
+        case displayName = "display_name"
+        case address
+        case mapUrl = "map_url"
+        case parkingNotes = "parking_notes"
+    }
+}
+
+struct DailyStatus: Codable {
+    let clientId: String
+    let id: String
+    let date: String
+    var status: DailyStatusValue
+    var hoursOpen: String?
+    var hoursClose: String?
+    var locationId: String?
+    var customMessage: String?
+
+    enum CodingKeys: String, CodingKey {
+        case clientId = "client_id"
+        case id
+        case date
+        case status
+        case hoursOpen = "hours_open"
+        case hoursClose = "hours_close"
+        case locationId = "location_id"
+        case customMessage = "custom_message"
+    }
+}
+
+struct Product: Codable, Identifiable, Equatable {
+    let clientId: String
+    let id: String
+    var name: String
+    var price: Double?
+    var status: ProductStatus
+    var sortOrder: Int
+
+    enum CodingKeys: String, CodingKey {
+        case clientId = "client_id"
+        case id
+        case name
+        case price
+        case status
+        case sortOrder = "sort_order"
+    }
+}
+
+struct SignupRequest: Encodable {
+    let client_id: String
+    let name: String
+    let phone: String?
+    let email: String?
+    let sms_consent: Bool
+    let email_consent: Bool
+    let signup_source: String
+}
+
+struct PreorderItemRequest: Encodable {
+    let product_id: String
+    let quantity: Int
+}
+
+struct PreorderRequest: Encodable {
+    let client_id: String
+    let customer_name: String
+    let customer_phone: String?
+    let customer_email: String?
+    let items: [PreorderItemRequest]
+    let notes: String?
+}
+
+struct APIErrorBody: Decodable {
+    let error: String?
+    let product: String?
+}

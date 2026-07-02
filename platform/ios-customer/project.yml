@@ -1,0 +1,40 @@
+name: ShawcliffeCustomer
+options:
+  bundleIdPrefix: ca.shawcliffe
+  deploymentTarget:
+    iOS: "16.0"
+  createIntermediateGroups: true
+
+packages:
+  Supabase:
+    url: https://github.com/supabase/supabase-swift
+    from: 2.0.0
+
+targets:
+  ShawcliffeCustomer:
+    type: application
+    platform: iOS
+    sources:
+      - path: ShawcliffeCustomer
+    dependencies:
+      - package: Supabase
+        product: Supabase
+    info:
+      path: ShawcliffeCustomer/Info.plist
+      properties:
+        CFBundleDisplayName: Tom's Produce
+        UILaunchScreen: {}
+        UIApplicationSceneManifest:
+          UIApplicationSupportsMultipleScenes: false
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: ca.shawcliffe.tomsproduce
+        PRODUCT_NAME: ShawcliffeCustomer
+        MARKETING_VERSION: "1.0"
+        CURRENT_PROJECT_VERSION: "1"
+        SWIFT_VERSION: "5.0"
+        TARGETED_DEVICE_FAMILY: "1,2"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+        DEVELOPMENT_TEAM: ""
+        CODE_SIGN_STYLE: Automatic
