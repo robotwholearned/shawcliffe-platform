@@ -5,6 +5,7 @@ struct BroadcastView: View {
     @State private var smsMessage = ""
     @State private var emailSubject = ""
     @State private var emailMessage = ""
+    @State private var pushMessage = ""
 
     var body: some View {
         List {
@@ -67,6 +68,37 @@ struct BroadcastView: View {
                 )
             } header: {
                 Text("Send Email to Customers")
+            }
+
+            Section {
+                TextEditor(text: $pushMessage)
+                    .frame(minHeight: 70)
+                HStack {
+                    Text("Only reaches customers with the app installed")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    Spacer()
+                    if let result = viewModel.pushResult {
+                        ResultLabel(result: result)
+                    }
+                }
+                Button {
+                    Task { await viewModel.sendPushBroadcast(message: pushMessage) }
+                } label: {
+                    HStack {
+                        Spacer()
+                        if viewModel.isSendingPush {
+                            ProgressView().tint(.white)
+                        } else {
+                            Text("Send Push to All Customers").bold()
+                        }
+                        Spacer()
+                    }
+                }
+                .buttonStyle(.borderedProminent)
+                .disabled(viewModel.isSendingPush || pushMessage.trimmingCharacters(in: .whitespaces).isEmpty)
+            } header: {
+                Text("Send Push Notification")
             }
         }
         .listStyle(.insetGrouped)

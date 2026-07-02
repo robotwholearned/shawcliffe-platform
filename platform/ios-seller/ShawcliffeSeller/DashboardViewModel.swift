@@ -13,6 +13,8 @@ final class DashboardViewModel: ObservableObject {
     @Published var smsResult: BroadcastResponse?
     @Published var isSendingEmail = false
     @Published var emailResult: BroadcastResponse?
+    @Published var isSendingPush = false
+    @Published var pushResult: BroadcastResponse?
 
     private let clientId: String
     private let today: String = {
@@ -271,5 +273,21 @@ final class DashboardViewModel: ObservableObject {
             errorMessage = error.localizedDescription
         }
         isSendingEmail = false
+    }
+
+    func sendPushBroadcast(message: String) async {
+        let trimmed = message.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return }
+        isSendingPush = true
+        pushResult = nil
+        do {
+            pushResult = try await BroadcastService.send(
+                path: "api/broadcast/push",
+                body: SMSBroadcastRequest(message: trimmed)
+            )
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+        isSendingPush = false
     }
 }

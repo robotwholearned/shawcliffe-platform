@@ -42,6 +42,15 @@ it after pulling changes to `project.yml` or after adding/removing source files.
 - Signup form (name, phone/email, SMS/email consent) → `/api/signup`
 - Preorder form (product quantity steppers, contact details, notes) →
   `/api/preorder`, including the 409 "Reservation Full" case
+- Push notifications: on launch, requests permission and registers for
+  remote notifications (`AppDelegate` + `PushManager`); after a successful
+  signup, the returned `customer_id` is persisted (`UserDefaults`) and paired
+  with the device token via `POST /api/push/register`. Customers have no
+  session (see `platform/ARCHITECTURE-MAP.md`), so this pairing only happens
+  once the app has both pieces — deferred to the next launch if the token
+  arrives before signup does. Delivery is direct APNs (`apns2` on the
+  server), not Firebase — see the Notifications section of
+  `platform/ARCHITECTURE-MAP.md` for why.
 
 ## Known gaps / not yet built
 
@@ -52,6 +61,10 @@ it after pulling changes to `project.yml` or after adding/removing source files.
   `supabase-swift`'s Realtime API. Worth switching once the Realtime API
   surface has been checked against the installed SDK version.
 - No app icon / launch screen assets — placeholder only.
-- No offline cache (SwiftData), no push notifications.
+- No offline cache (SwiftData).
+- Push isn't verified end-to-end — needs a paid Apple Developer account (APNs
+  `.p8` key) and a real device; Simulator can't generate real device tokens.
+  Confirmed via `xcrun simctl push` that permission request, registration,
+  and foreground notification display all work client-side.
 - Single hardcoded client — not yet wired into a Fastlane multi-client build
   pipeline (PRD R9).

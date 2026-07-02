@@ -92,7 +92,7 @@ struct SignupView: View {
 
         submitting = true
         do {
-            _ = try await APIClient.post(
+            let response = try await APIClient.post(
                 path: "api/signup",
                 body: SignupRequest(
                     client_id: Config.clientId,
@@ -105,6 +105,7 @@ struct SignupView: View {
                 ),
                 as: SignupResponse.self
             )
+            PushManager.shared.didCompleteSignup(customerId: response.id)
             done = true
         } catch {
             self.error = error.localizedDescription

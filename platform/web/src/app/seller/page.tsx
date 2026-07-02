@@ -31,6 +31,9 @@ export default function SellerDashboard() {
   const [emailMsg, setEmailMsg] = useState('')
   const [emailing, setEmailing] = useState(false)
   const [emailResult, setEmailResult] = useState<{ sent: number; failed: number } | null>(null)
+  const [pushMsg, setPushMsg] = useState('')
+  const [pushing, setPushing] = useState(false)
+  const [pushResult, setPushResult] = useState<{ sent: number; failed: number; errors?: string[] } | null>(null)
 
   const today = new Date().toISOString().split('T')[0]
 
@@ -160,6 +163,22 @@ export default function SellerDashboard() {
     if (res.ok && data.failed === 0) setBroadcastMsg('')
     setBroadcasting(false)
   }, [broadcastMsg])
+
+  const sendPush = useCallback(async () => {
+    if (!pushMsg.trim()) return
+    if (!confirm(`Send a push notification to all customers with the app installed?\n\n"${pushMsg}"`)) return
+    setPushing(true)
+    setPushResult(null)
+    const res = await fetch('/api/broadcast/push', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: pushMsg }),
+    })
+    const data = await res.json()
+    setPushResult(res.ok ? { sent: data.sent ?? 0, failed: data.failed ?? 0, errors: data.errors } : { sent: 0, failed: 1, errors: [data.error] })
+    if (res.ok && !data.failed) setPushMsg('')
+    setPushing(false)
+  }, [pushMsg])
 
   if (clientId === undefined) {
     return (
@@ -353,6 +372,35 @@ export default function SellerDashboard() {
           className="w-full bg-blue-600 text-white rounded-xl py-2.5 text-sm font-semibold hover:bg-blue-700 active:scale-95 transition-all disabled:opacity-50"
         >
           {emailing ? 'Sending…' : 'Send Email to All Customers'}
+        </button>
+      </section>
+
+      {/* Push Broadcast */}
+      <section className="bg-white rounded-2xl shadow-sm p-4 space-y-3">
+        <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Send Push Notification</h2>
+        <textarea
+          value={pushMsg}
+          onChange={e => { setPushMsg(e.target.value); setPushResult(null) }}
+          placeholder="e.g. We just opened! Come get it while it's fresh."
+          rows={2}
+          className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+        />
+        <div className="flex items-center justify-between">
+          <span className="text-xs text-gray-400">Only reaches customers with the app installed</span>
+          {pushResult && (
+            <span className={`text-xs font-medium ${pushResult.failed > 0 ? 'text-red-500' : 'text-green-600'}`}>
+              {pushResult.failed > 0
+                ? pushResult.errors?.[0] ?? `${pushResult.failed} failed`
+                : `Sent to ${pushResult.sent} customer${pushResult.sent !== 1 ? 's' : ''}`}
+            </span>
+          )}
+        </div>
+        <button
+          onClick={sendPush}
+          disabled={pushing || !pushMsg.trim()}
+          className="w-full bg-blue-600 text-white rounded-xl py-2.5 text-sm font-semibold hover:bg-blue-700 active:scale-95 transition-all disabled:opacity-50"
+        >
+          {pushing ? 'Sending…' : 'Send Push to All Customers'}
         </button>
       </section>
 

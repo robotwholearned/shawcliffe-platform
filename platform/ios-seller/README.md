@@ -33,17 +33,19 @@ where `client_id` matches their `app_metadata.client_id` and
 - Preorder list (read + confirm/cancel) — joined client-side across
   `preorders` / `preorder_items` / `customers` since the composite FKs on
   those tables make PostgREST's automatic embed resolution unreliable
-- SMS + email broadcast (`BroadcastView`), calling the deployed
-  `/api/broadcast/sms` and `/api/broadcast/email` Next.js routes with the
-  session's access token as a Bearer header. Those routes previously only
-  accepted cookie auth (`@supabase/ssr`) — added `getAuthedUser()` in
-  `platform/web/src/lib/supabase/server.ts` to accept either, so this works
-  without touching Twilio/Resend secrets on-device.
+- SMS + email + push broadcast (`BroadcastView`), calling the deployed
+  `/api/broadcast/sms`, `/api/broadcast/email`, and `/api/broadcast/push`
+  Next.js routes with the session's access token as a Bearer header. Those
+  routes previously only accepted cookie auth (`@supabase/ssr`) — added
+  `getAuthedUser()` in `platform/web/src/lib/supabase/server.ts` to accept
+  either, so this works without touching Twilio/Resend/APNs secrets on-device.
 
 ## Known gaps / not yet built
 
-- No offline cache (SwiftData), no push notifications (APNs) yet — later PRD
-  Phase 3 items.
+- No offline cache (SwiftData).
+- Push send is unverified end-to-end — needs `APNS_TEAM_ID`/`APNS_KEY_ID`/
+  `APNS_PRIVATE_KEY` set on the server (paid Apple Developer account
+  required) and a real device with the customer app installed to receive it.
 - No app icon / launch screen assets — placeholder only.
 - Not yet tested against a real signed-in seller session (need seller
   credentials to exercise the full login → dashboard flow on device/simulator).

@@ -153,3 +153,13 @@ struct APIErrorBody: Decodable {
     let error: String?
     let product: String?
 }
+
+struct PushRegisterRequest: Encodable {
+    let client_id: String
+    let customer_id: String
+    let token: String
+}
+
+struct PushRegisterResponse: Decodable {
+    let ok: Bool
+}
