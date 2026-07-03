@@ -22,22 +22,26 @@ sealed class BroadcastError(message: String) : Exception(message) {
     class Server(message: String) : BroadcastError(message)
 }
 
+// internal (not private) because BroadcastService.send is inline — its body is
+// inlined into callers, which can't reference private declarations.
 @Serializable
-private data class BroadcastErrorBody(val error: String? = null)
+internal data class BroadcastErrorBody(val error: String? = null)
 
 /**
- * Calls the Next.js /api/broadcast/* routes on the deployed web backend.
- * Those routes hold the Twilio/Resend/APNs secrets, so the app never talks
- * to those providers directly — it authenticates with a Bearer access token
+ * Calls the Next.js /api/broadcast/sms, /email, and /push routes on the deployed
+ * web backend. Those routes hold the Twilio/Resend/APNs secrets, so the app never
+ * talks to those providers directly — it authenticates with a Bearer access token
  * instead of the cookie session the web app uses (see getAuthedUser in
  * platform/web/src/lib/supabase/server.ts). Mirrors ios-seller/BroadcastService.swift.
  */
+
 object BroadcastService {
-    private val client = HttpClient(OkHttp) {
+    // internal for the same inline-visibility reason as BroadcastErrorBody.
+    internal val client = HttpClient(OkHttp) {
         install(ContentNegotiation) { json(Json { ignoreUnknownKeys = true }) }
     }
 
-    suspend inline fun <reified Body> send(path: String, body: Body): BroadcastResponse {
+    internal suspend inline fun <reified Body> send(path: String, body: Body): BroadcastResponse {
         val token = supabase.auth.currentAccessTokenOrNull() ?: throw BroadcastError.NotAuthenticated
 
         val response: HttpResponse = client.post("${Config.API_BASE_URL}/$path") {

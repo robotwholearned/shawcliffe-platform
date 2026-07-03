@@ -24,7 +24,7 @@ object APIClient {
         install(ContentNegotiation) { json(Json { ignoreUnknownKeys = true }) }
     }
 
-    suspend inline fun <reified Body, reified Response> post(path: String, body: Body): Response {
+    internal suspend inline fun <reified Body, reified Response> post(path: String, body: Body): Response {
         val response: HttpResponse = client.post("${Config.API_BASE_URL}/$path") {
             contentType(ContentType.Application.Json)
             setBody(body)

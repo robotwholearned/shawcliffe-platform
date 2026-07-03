@@ -5,8 +5,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import io.github.jan.supabase.auth.SessionStatus
 import io.github.jan.supabase.auth.auth
+import io.github.jan.supabase.auth.status.SessionStatus
 import io.github.jan.supabase.exceptions.RestException
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -37,7 +37,7 @@ class AuthViewModel : ViewModel() {
             // (Initializing) before deciding whether we're authenticated.
             val status = supabase.auth.sessionStatus.first { it !is SessionStatus.Initializing }
             if (status is SessionStatus.Authenticated) {
-                apply(status.session.user?.appMetadata)
+                apply(status.session.user.appMetadata)
             } else {
                 isAuthenticated = false
             }
