@@ -3,8 +3,10 @@ import SwiftUI
 struct DashboardView: View {
     @EnvironmentObject private var auth: AuthViewModel
     @StateObject private var viewModel: DashboardViewModel
+    private let clientId: String
 
     init(clientId: String) {
+        self.clientId = clientId
         _viewModel = StateObject(wrappedValue: DashboardViewModel(clientId: clientId))
     }
 
@@ -32,6 +34,12 @@ struct DashboardView: View {
                     .navigationTitle("Broadcast")
             }
             .tabItem { Label("Broadcast", systemImage: "megaphone") }
+
+            NavigationStack {
+                PreviewView(clientId: clientId)
+                    .navigationTitle("Preview")
+            }
+            .tabItem { Label("Preview", systemImage: "storefront") }
         }
         .task {
             await viewModel.loadAll()

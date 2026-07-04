@@ -30,6 +30,17 @@ enum DailyStatusValue: String, Codable, CaseIterable, Identifiable {
         case .openingSoon: return "⏱"
         }
     }
+
+    /// Matches ios-customer's status badge colors — used by the seller app's
+    /// customer-preview tab, which shows the same badge customers see.
+    var color: (r: Double, g: Double, b: Double) {
+        switch self {
+        case .open: return (0.13, 0.55, 0.13)
+        case .closed, .soldOut: return (0.7, 0.15, 0.15)
+        case .backTomorrow, .openingSoon: return (0.85, 0.55, 0.1)
+        case .weatherDelay: return (0.3, 0.4, 0.6)
+        }
+    }
 }
 
 enum ProductStatus: String, Codable, CaseIterable {
@@ -42,6 +53,16 @@ enum ProductStatus: String, Codable, CaseIterable {
         case .available: return "✓"
         case .low: return "Low"
         case .soldOut: return "Out"
+        }
+    }
+
+    /// Customer-facing wording — deliberately not `label`, which is the
+    /// compact glyph the seller's own action buttons use.
+    var customerLabel: String {
+        switch self {
+        case .available: return "Available"
+        case .low: return "Low"
+        case .soldOut: return "Sold Out"
         }
     }
 }
