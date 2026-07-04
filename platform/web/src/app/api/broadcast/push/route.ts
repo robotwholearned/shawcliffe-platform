@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'client_id required' }, { status: 400 })
   }
 
-  const { message, product_tags } = body
+  const { message, product_tags, test } = body
   if (!message || typeof message !== 'string' || message.trim().length === 0) {
     return NextResponse.json({ error: 'message is required' }, { status: 400 })
   }
@@ -36,21 +36,49 @@ export async function POST(req: NextRequest) {
     .eq('client_id', targetClientId)
     .single()
 
-  // Load opted-in customers with a registered device token
-  let query = admin
-    .from('customers')
-    .select('id, apns_token')
-    .eq('client_id', targetClientId)
-    .not('apns_token', 'is', null)
+  let customers: { id: string | null; apns_token: string | null }[]
 
-  if (product_tags?.length) {
-    query = query.overlaps('product_interests', product_tags)
-  }
+  if (test) {
+    const { data: client } = await admin
+      .from('clients')
+      .select('operator_email, operator_phone')
+      .eq('id', targetClientId)
+      .single()
 
-  const { data: customers } = await query
+    const { data: selfCustomer } = await admin
+      .from('customers')
+      .select('id, apns_token')
+      .eq('client_id', targetClientId)
+      .not('apns_token', 'is', null)
+      .or(`email.eq.${client?.operator_email ?? ''},phone.eq.${client?.operator_phone ?? ''}`)
+      .limit(1)
+      .maybeSingle()
 
-  if (!customers || customers.length === 0) {
-    return NextResponse.json({ sent: 0, message: 'No customers with a registered device' })
+    if (!selfCustomer) {
+      return NextResponse.json(
+        { error: 'No test device found. Sign up for the app yourself using your operator email or phone, then try again.' },
+        { status: 400 }
+      )
+    }
+    customers = [selfCustomer]
+  } else {
+    // Load opted-in customers with a registered device token
+    let query = admin
+      .from('customers')
+      .select('id, apns_token')
+      .eq('client_id', targetClientId)
+      .not('apns_token', 'is', null)
+
+    if (product_tags?.length) {
+      query = query.overlaps('product_interests', product_tags)
+    }
+
+    const { data } = await query
+    customers = data ?? []
+
+    if (customers.length === 0) {
+      return NextResponse.json({ sent: 0, message: 'No customers with a registered device' })
+    }
   }
 
   const results = await sendPush(
@@ -67,7 +95,7 @@ export async function POST(req: NextRequest) {
         client_id: targetClientId,
         customer_id: tokenToCustomer.get(r.token) ?? null,
         channel: 'push',
-        message_preview: message.substring(0, 50),
+        message_preview: (test ? '[TEST] ' : '') + message.substring(0, 50),
         status: r.ok ? 'sent' : 'failed',
       })
     )

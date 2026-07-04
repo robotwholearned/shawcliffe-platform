@@ -1,8 +1,17 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
+import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import type { DailyStatus, Product, DailyStatusValue, ProductStatus } from '@/lib/supabase/types'
+
+const MESSAGE_TEMPLATES: { label: string; sms: string; subject: string; email: string }[] = [
+  { label: "We're open", sms: "We're open today! Come see us at the usual spot.", subject: "We're open today!", email: "We're open today! Come see us at the usual spot." },
+  { label: 'Fresh stock today', sms: 'Fresh stock just arrived — come grab some while it lasts!', subject: 'Fresh stock today', email: 'Fresh stock just arrived today. Come grab some while it lasts!' },
+  { label: 'Closing soon', sms: 'Closing soon today — last call if you want to stop by!', subject: 'Closing soon today', email: "We're closing soon today — last call if you want to stop by!" },
+  { label: 'Sold out', sms: "We're sold out for today. Thanks for a great day — see you next time!", subject: 'Sold out for today', email: "We're sold out for today. Thanks for a great day — see you next time!" },
+  { label: 'Restocked', sms: 'Just restocked! Fresh items now available.', subject: 'We just restocked!', email: 'Just restocked! Fresh items are now available.' },
+]
 
 const STATUS_OPTIONS: { value: DailyStatusValue; label: string; emoji: string }[] = [
   { value: 'open',          label: 'Open',          emoji: '✓'  },
@@ -34,6 +43,9 @@ export default function SellerDashboard() {
   const [pushMsg, setPushMsg] = useState('')
   const [pushing, setPushing] = useState(false)
   const [pushResult, setPushResult] = useState<{ sent: number; failed: number; errors?: string[] } | null>(null)
+  const [testingChannel, setTestingChannel] = useState<'sms' | 'email' | 'push' | null>(null)
+  const [testResult, setTestResult] = useState<{ channel: string; ok: boolean; message: string } | null>(null)
+  const [smsUsage, setSmsUsage] = useState<{ used: number; limit: number } | null>(null)
 
   const today = new Date().toISOString().split('T')[0]
 
@@ -54,6 +66,14 @@ export default function SellerDashboard() {
 
       setTodayStatus(statusRes.data)
       setProducts(productsRes.data ?? [])
+
+      const { data: { session } } = await supabase.auth.getSession()
+      if (session) {
+        const res = await fetch('/api/broadcast/sms/usage', {
+          headers: { Authorization: `Bearer ${session.access_token}` },
+        })
+        if (res.ok) setSmsUsage(await res.json())
+      }
     }
     load()
   }, [today])
@@ -159,10 +179,18 @@ export default function SellerDashboard() {
       body: JSON.stringify({ message: broadcastMsg }),
     })
     const data = await res.json()
-    setBroadcastResult(res.ok ? { sent: data.sent, failed: data.failed, errors: data.errors } : { sent: 0, failed: 1, errors: [data.error] })
+    setBroadcastResult(
+      res.ok
+        ? { sent: data.sent, failed: data.failed, errors: data.capped ? ['Monthly SMS limit reached — not everyone was sent to'] : data.errors }
+        : { sent: 0, failed: 1, errors: [data.error] }
+    )
     if (res.ok && data.failed === 0) setBroadcastMsg('')
     setBroadcasting(false)
-  }, [broadcastMsg])
+    if (smsUsage) {
+      const res2 = await fetch('/api/broadcast/sms/usage', { headers: await authHeader() })
+      if (res2.ok) setSmsUsage(await res2.json())
+    }
+  }, [broadcastMsg, smsUsage])
 
   const sendPush = useCallback(async () => {
     if (!pushMsg.trim()) return
@@ -179,6 +207,34 @@ export default function SellerDashboard() {
     if (res.ok && !data.failed) setPushMsg('')
     setPushing(false)
   }, [pushMsg])
+
+  const authHeader = useCallback(async (): Promise<Record<string, string>> => {
+    const { data: { session } } = await supabase.auth.getSession()
+    return session ? { Authorization: `Bearer ${session.access_token}` } : {}
+  }, [])
+
+  const sendTest = useCallback(async (channel: 'sms' | 'email' | 'push') => {
+    setTestingChannel(channel)
+    setTestResult(null)
+    const route = `/api/broadcast/${channel}`
+    const body =
+      channel === 'sms' ? { message: broadcastMsg || 'Test message from your dashboard.', test: true }
+      : channel === 'email' ? { subject: emailSubject || 'Test notification', message: emailMsg || 'Test message from your dashboard.', test: true }
+      : { message: pushMsg || 'Test push from your dashboard.', test: true }
+
+    const res = await fetch(route, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    })
+    const data = await res.json()
+    setTestResult({
+      channel,
+      ok: res.ok && data.sent > 0,
+      message: res.ok && data.sent > 0 ? 'Test sent — check your phone/inbox.' : (data.error ?? 'Test send failed'),
+    })
+    setTestingChannel(null)
+  }, [broadcastMsg, emailSubject, emailMsg, pushMsg])
 
   if (clientId === undefined) {
     return (
@@ -208,6 +264,10 @@ export default function SellerDashboard() {
           {lastSaved && <p className="text-xs text-green-600">Saved {lastSaved}</p>}
         </div>
       </header>
+
+      <Link href="/seller/notifications" className="block text-xs text-blue-600 hover:text-blue-700 -mt-3">
+        View sent notifications →
+      </Link>
 
       {/* Status */}
       <section className="bg-white rounded-2xl shadow-sm p-4 space-y-3">
@@ -311,7 +371,25 @@ export default function SellerDashboard() {
 
       {/* SMS Broadcast */}
       <section className="bg-white rounded-2xl shadow-sm p-4 space-y-3">
-        <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Send Update to Customers</h2>
+        <div className="flex items-center justify-between">
+          <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Send Update to Customers</h2>
+          {smsUsage && (
+            <span className={`text-xs ${smsUsage.used >= smsUsage.limit ? 'text-red-500' : 'text-gray-400'}`}>
+              {smsUsage.used}/{smsUsage.limit} SMS this month
+            </span>
+          )}
+        </div>
+        <div className="flex flex-wrap gap-1.5">
+          {MESSAGE_TEMPLATES.map(t => (
+            <button
+              key={t.label}
+              onClick={() => { setBroadcastMsg(t.sms); setBroadcastResult(null) }}
+              className="text-xs px-2.5 py-1 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200"
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
         <textarea
           value={broadcastMsg}
           onChange={e => { setBroadcastMsg(e.target.value); setBroadcastResult(null) }}
@@ -329,19 +407,42 @@ export default function SellerDashboard() {
                 : `Sent to ${broadcastResult.sent} customer${broadcastResult.sent !== 1 ? 's' : ''}`}
             </span>
           )}
+          {testResult?.channel === 'sms' && (
+            <span className={`text-xs font-medium ${testResult.ok ? 'text-green-600' : 'text-red-500'}`}>{testResult.message}</span>
+          )}
         </div>
-        <button
-          onClick={sendBroadcast}
-          disabled={broadcasting || !broadcastMsg.trim()}
-          className="w-full bg-blue-600 text-white rounded-xl py-2.5 text-sm font-semibold hover:bg-blue-700 active:scale-95 transition-all disabled:opacity-50"
-        >
-          {broadcasting ? 'Sending…' : 'Send SMS to All Customers'}
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={sendBroadcast}
+            disabled={broadcasting || !broadcastMsg.trim()}
+            className="flex-1 bg-blue-600 text-white rounded-xl py-2.5 text-sm font-semibold hover:bg-blue-700 active:scale-95 transition-all disabled:opacity-50"
+          >
+            {broadcasting ? 'Sending…' : 'Send SMS to All Customers'}
+          </button>
+          <button
+            onClick={() => sendTest('sms')}
+            disabled={testingChannel === 'sms'}
+            className="px-3 rounded-xl border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 disabled:opacity-50"
+          >
+            {testingChannel === 'sms' ? '…' : 'Test'}
+          </button>
+        </div>
       </section>
 
       {/* Email Broadcast */}
       <section className="bg-white rounded-2xl shadow-sm p-4 space-y-3">
         <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Send Email to Customers</h2>
+        <div className="flex flex-wrap gap-1.5">
+          {MESSAGE_TEMPLATES.map(t => (
+            <button
+              key={t.label}
+              onClick={() => { setEmailSubject(t.subject); setEmailMsg(t.email); setEmailResult(null) }}
+              className="text-xs px-2.5 py-1 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200"
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
         <input
           type="text"
           value={emailSubject}
@@ -365,14 +466,26 @@ export default function SellerDashboard() {
                 : `Sent to ${emailResult.sent} customer${emailResult.sent !== 1 ? 's' : ''}`}
             </span>
           )}
+          {testResult?.channel === 'email' && (
+            <span className={`text-xs font-medium ${testResult.ok ? 'text-green-600' : 'text-red-500'}`}>{testResult.message}</span>
+          )}
         </div>
-        <button
-          onClick={sendEmail}
-          disabled={emailing || !emailSubject.trim() || !emailMsg.trim()}
-          className="w-full bg-blue-600 text-white rounded-xl py-2.5 text-sm font-semibold hover:bg-blue-700 active:scale-95 transition-all disabled:opacity-50"
-        >
-          {emailing ? 'Sending…' : 'Send Email to All Customers'}
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={sendEmail}
+            disabled={emailing || !emailSubject.trim() || !emailMsg.trim()}
+            className="flex-1 bg-blue-600 text-white rounded-xl py-2.5 text-sm font-semibold hover:bg-blue-700 active:scale-95 transition-all disabled:opacity-50"
+          >
+            {emailing ? 'Sending…' : 'Send Email to All Customers'}
+          </button>
+          <button
+            onClick={() => sendTest('email')}
+            disabled={testingChannel === 'email'}
+            className="px-3 rounded-xl border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 disabled:opacity-50"
+          >
+            {testingChannel === 'email' ? '…' : 'Test'}
+          </button>
+        </div>
       </section>
 
       {/* Push Broadcast */}
@@ -394,14 +507,26 @@ export default function SellerDashboard() {
                 : `Sent to ${pushResult.sent} customer${pushResult.sent !== 1 ? 's' : ''}`}
             </span>
           )}
+          {testResult?.channel === 'push' && (
+            <span className={`text-xs font-medium ${testResult.ok ? 'text-green-600' : 'text-red-500'}`}>{testResult.message}</span>
+          )}
         </div>
-        <button
-          onClick={sendPush}
-          disabled={pushing || !pushMsg.trim()}
-          className="w-full bg-blue-600 text-white rounded-xl py-2.5 text-sm font-semibold hover:bg-blue-700 active:scale-95 transition-all disabled:opacity-50"
-        >
-          {pushing ? 'Sending…' : 'Send Push to All Customers'}
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={sendPush}
+            disabled={pushing || !pushMsg.trim()}
+            className="flex-1 bg-blue-600 text-white rounded-xl py-2.5 text-sm font-semibold hover:bg-blue-700 active:scale-95 transition-all disabled:opacity-50"
+          >
+            {pushing ? 'Sending…' : 'Send Push to All Customers'}
+          </button>
+          <button
+            onClick={() => sendTest('push')}
+            disabled={testingChannel === 'push'}
+            className="px-3 rounded-xl border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 disabled:opacity-50"
+          >
+            {testingChannel === 'push' ? '…' : 'Test'}
+          </button>
+        </div>
       </section>
 
       {/* End of Day */}

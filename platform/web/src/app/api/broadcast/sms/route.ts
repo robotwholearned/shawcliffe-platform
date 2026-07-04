@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getAuthedUser, createServiceClient } from '@/lib/supabase/server'
+import { SMS_MONTHLY_ALLOTMENT, getSmsUsageThisMonth } from '@/lib/sms-limits'
 import twilio from 'twilio'
 
 export async function POST(req: NextRequest) {
@@ -19,7 +20,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'client_id required' }, { status: 400 })
   }
 
-  const { message, product_tags } = body
+  const { message, product_tags, test } = body
   if (!message || typeof message !== 'string' || message.trim().length === 0) {
     return NextResponse.json({ error: 'message is required' }, { status: 400 })
   }
@@ -40,22 +41,57 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'SMS not configured for this client' }, { status: 404 })
   }
 
-  // Load opted-in customers (optionally filtered by product_interests)
-  let query = admin
-    .from('customers')
-    .select('id, phone')
-    .eq('client_id', targetClientId)
-    .eq('sms_consent', true)
-    .not('phone', 'is', null)
+  let customers: { id: string | null; phone: string | null }[]
+  let capped = false
 
-  if (product_tags?.length) {
-    query = query.overlaps('product_interests', product_tags)
-  }
+  if (test) {
+    const { data: client } = await admin
+      .from('clients')
+      .select('operator_phone')
+      .eq('id', targetClientId)
+      .single()
 
-  const { data: customers } = await query
+    if (!client?.operator_phone) {
+      return NextResponse.json({ error: 'No operator phone number on file to send a test to' }, { status: 400 })
+    }
+    customers = [{ id: null, phone: client.operator_phone }]
+  } else {
+    const { data: client } = await admin.from('clients').select('tier').eq('id', targetClientId).single()
+    const tier = (client?.tier ?? 1) as 1 | 2 | 3
+    const allotment = SMS_MONTHLY_ALLOTMENT[tier]
+    const used = await getSmsUsageThisMonth(admin, targetClientId)
+    const remaining = Math.max(0, allotment - used)
 
-  if (!customers || customers.length === 0) {
-    return NextResponse.json({ sent: 0, message: 'No opted-in customers with phone numbers' })
+    if (remaining === 0) {
+      return NextResponse.json(
+        { error: `Monthly SMS limit reached (${allotment} included on this plan)`, limit: allotment, used },
+        { status: 429 }
+      )
+    }
+
+    // Load opted-in customers (optionally filtered by product_interests)
+    let query = admin
+      .from('customers')
+      .select('id, phone')
+      .eq('client_id', targetClientId)
+      .eq('sms_consent', true)
+      .not('phone', 'is', null)
+
+    if (product_tags?.length) {
+      query = query.overlaps('product_interests', product_tags)
+    }
+
+    const { data } = await query
+    customers = data ?? []
+
+    if (customers.length === 0) {
+      return NextResponse.json({ sent: 0, message: 'No opted-in customers with phone numbers' })
+    }
+
+    if (customers.length > remaining) {
+      customers = customers.slice(0, remaining)
+      capped = true
+    }
   }
 
   // Send via Twilio subaccount
@@ -85,7 +121,7 @@ export async function POST(req: NextRequest) {
         client_id: targetClientId,
         customer_id: customer.id,
         channel: 'sms',
-        message_preview: message.substring(0, 50),
+        message_preview: (test ? '[TEST] ' : '') + message.substring(0, 50),
         status: msg.status,
         provider_message_id: msg.sid,
         twilio_subaccount_sid: twilioAccount.account_sid,
@@ -101,5 +137,5 @@ export async function POST(req: NextRequest) {
     .filter((r): r is PromiseRejectedResult => r.status === 'rejected')
     .map(r => r.reason?.message ?? String(r.reason))
 
-  return NextResponse.json({ sent, failed, total: customers.length, errors })
+  return NextResponse.json({ sent, failed, total: customers.length, errors, capped })
 }

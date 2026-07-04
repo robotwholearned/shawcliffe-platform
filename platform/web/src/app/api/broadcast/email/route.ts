@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'client_id required' }, { status: 400 })
   }
 
-  const { subject, message, product_tags } = body
+  const { subject, message, product_tags, test } = body
   if (!subject?.trim() || !message?.trim()) {
     return NextResponse.json({ error: 'subject and message are required' }, { status: 400 })
   }
@@ -37,22 +37,38 @@ export async function POST(req: NextRequest) {
 
   const fromName = branding?.app_name ?? 'Your Local Seller'
 
-  // Load opted-in customers with email
-  let query = admin
-    .from('customers')
-    .select('id, name, email')
-    .eq('client_id', targetClientId)
-    .eq('email_consent', true)
-    .not('email', 'is', null)
+  let customers: { id: string | null; name: string | null; email: string | null }[]
 
-  if (product_tags?.length) {
-    query = query.overlaps('product_interests', product_tags)
-  }
+  if (test) {
+    const { data: client } = await admin
+      .from('clients')
+      .select('operator_email')
+      .eq('id', targetClientId)
+      .single()
 
-  const { data: customers } = await query
+    if (!client?.operator_email) {
+      return NextResponse.json({ error: 'No operator email on file to send a test to' }, { status: 400 })
+    }
+    customers = [{ id: null, name: null, email: client.operator_email }]
+  } else {
+    // Load opted-in customers with email
+    let query = admin
+      .from('customers')
+      .select('id, name, email')
+      .eq('client_id', targetClientId)
+      .eq('email_consent', true)
+      .not('email', 'is', null)
 
-  if (!customers || customers.length === 0) {
-    return NextResponse.json({ sent: 0, message: 'No opted-in customers with email addresses' })
+    if (product_tags?.length) {
+      query = query.overlaps('product_interests', product_tags)
+    }
+
+    const { data } = await query
+    customers = data ?? []
+
+    if (customers.length === 0) {
+      return NextResponse.json({ sent: 0, message: 'No opted-in customers with email addresses' })
+    }
   }
 
   const resend = new Resend(process.env.RESEND_API_KEY)
@@ -62,7 +78,7 @@ export async function POST(req: NextRequest) {
       const { data, error } = await resend.emails.send({
         from: `${fromName} <${FROM_ADDRESS}>`,
         to: customer.email!,
-        subject,
+        subject: (test ? '[TEST] ' : '') + subject,
         html: emailTemplate(fromName, message),
         text: message,
       })
@@ -73,7 +89,7 @@ export async function POST(req: NextRequest) {
         client_id: targetClientId,
         customer_id: customer.id,
         channel: 'email',
-        message_preview: subject.substring(0, 50),
+        message_preview: (test ? '[TEST] ' : '') + subject.substring(0, 50),
         status: 'sent',
         provider_message_id: data?.id ?? null,
       })
