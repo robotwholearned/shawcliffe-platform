@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -52,7 +52,7 @@ fun BroadcastScreen(viewModel: DashboardViewModel, modifier: Modifier = Modifier
             }
         }
 
-        item { Divider() }
+        item { HorizontalDivider() }
 
         item {
             Text("Send Email to Customers", style = MaterialTheme.typography.titleSmall)
@@ -78,7 +78,7 @@ fun BroadcastScreen(viewModel: DashboardViewModel, modifier: Modifier = Modifier
             }
         }
 
-        item { Divider() }
+        item { HorizontalDivider() }
 
         item {
             Text("Send Push Notification", style = MaterialTheme.typography.titleSmall)

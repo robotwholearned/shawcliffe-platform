@@ -18,7 +18,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -75,7 +75,7 @@ fun StatusAndProductsScreen(viewModel: DashboardViewModel, modifier: Modifier = 
                 }
             }
 
-            item { Divider() }
+            item { HorizontalDivider() }
 
             item {
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
@@ -121,7 +121,7 @@ fun StatusAndProductsScreen(viewModel: DashboardViewModel, modifier: Modifier = 
                 }
             }
 
-            item { Divider() }
+            item { HorizontalDivider() }
 
             item {
                 OutlinedButton(
