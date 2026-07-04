@@ -8,6 +8,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Campaign
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.ShoppingBag
+import androidx.compose.material.icons.filled.Storefront
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -55,7 +56,7 @@ fun DashboardScreen(clientId: String, authViewModel: AuthViewModel) {
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Text(listOf("Dashboard", "Preorders", "Broadcast")[tab], style = MaterialTheme.typography.titleLarge)
+                    Text(listOf("Dashboard", "Preorders", "Broadcast", "Preview")[tab], style = MaterialTheme.typography.titleLarge)
                     if (tab == 0) {
                         TextButton(onClick = { authViewModel.signOut() }) { Text("Sign Out") }
                     }
@@ -82,13 +83,20 @@ fun DashboardScreen(clientId: String, authViewModel: AuthViewModel) {
                     icon = { Icon(Icons.Filled.Campaign, contentDescription = null) },
                     label = { Text("Broadcast") },
                 )
+                NavigationBarItem(
+                    selected = tab == 3,
+                    onClick = { tab = 3 },
+                    icon = { Icon(Icons.Filled.Storefront, contentDescription = null) },
+                    label = { Text("Preview") },
+                )
             }
         },
     ) { padding ->
         when (tab) {
             0 -> StatusAndProductsScreen(viewModel, Modifier.padding(padding))
             1 -> PreordersScreen(viewModel, Modifier.padding(padding))
-            else -> BroadcastScreen(viewModel, Modifier.padding(padding))
+            2 -> BroadcastScreen(viewModel, Modifier.padding(padding))
+            else -> PreviewScreen(clientId, Modifier.padding(padding))
         }
     }
 
