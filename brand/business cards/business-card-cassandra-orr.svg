@@ -37,26 +37,27 @@
 
       <!-- Blue rules flanking DIGITAL -->
       <line x1="455" y1="1072" x2="575" y2="1072" class="blue-stroke"/>
-      <text x="895" y="1100" class="blue semi" font-size="82" text-anchor="middle"><tspan letter-spacing="38">DIGITA</tspan><tspan>L</tspan></text>
+      <text x="609" y="1100" class="blue semi" font-size="82" letter-spacing="38" text-anchor="start">DIGITAL</text>
       <line x1="1215" y1="1072" x2="1340" y2="1072" class="blue-stroke"/>
 
       <!-- Gray separator before tagline -->
       <line x1="505" y1="1185" x2="1290" y2="1185" stroke="#D3D6DC" stroke-width="3"/>
 
-      <text x="895" y="1320" class="navy semi" font-size="64" letter-spacing="7">CUSTOM BRANDED APPS FOR</text>
-      <text x="895" y="1438" class="blue semi" font-size="64" letter-spacing="7">LOCAL CONTRACTORS</text>
-      <text x="895" y="1556" class="blue semi" font-size="64" letter-spacing="7">&amp; OWNER OPERATORS</text>
+      <text x="895" y="1320" class="navy semi" font-size="76" letter-spacing="7">BRANDED LEAD CAPTURE</text>
+      <text x="895" y="1456" class="navy semi" font-size="76" letter-spacing="7">SYSTEMS FOR</text>
+      <text x="895" y="1592" class="blue semi" font-size="76" letter-spacing="7">LOCAL CONTRACTORS &amp;</text>
+      <text x="895" y="1728" class="blue semi" font-size="76" letter-spacing="7">OWNER OPERATORS</text>
     </g>
 
     <!-- Right contact block -->
     <g id="contact-block" class="txt">
-      <text x="2015" y="620" class="navy bold" font-size="152" letter-spacing="7">CASSANDRA ORR</text>
+      <text x="2015" y="620" class="navy bold" font-size="130" letter-spacing="7">CASSANDRA ORR</text>
       <!-- Blue rule below name -->
       <line x1="2015" y1="700" x2="2200" y2="700" class="blue-stroke"/>
 
-      <text x="2015" y="870" class="navy regular inter" font-size="70">403-629-5874</text>
-      <text x="2015" y="1140" class="navy regular inter" font-size="70">cassandra@shawcliffedigital.com</text>
-      <text x="2015" y="1410" class="navy regular inter" font-size="70">shawcliffedigital.com</text>
+      <text x="2015" y="870" class="navy regular inter" font-size="88">403-629-5874</text>
+      <text x="2015" y="1140" class="navy regular inter" font-size="88">cassandra@shawcliffedigital.com</text>
+      <text x="2015" y="1410" class="navy regular inter" font-size="88">shawcliffedigital.com</text>
     </g>
 
   </g>

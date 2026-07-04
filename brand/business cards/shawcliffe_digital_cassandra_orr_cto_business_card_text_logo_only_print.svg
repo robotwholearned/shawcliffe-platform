@@ -28,19 +28,20 @@
     <g id="brand-block" class="txt" text-anchor="middle">
       <use href="#sd-mark" transform="translate(755 335) scale(2.2)"/>
       <text x="895" y="955" class="navy bold" font-size="142" letter-spacing="13">SHAWCLIFFE</text>
-      <text x="895" y="1095" class="blue semi" font-size="82" letter-spacing="38">DIGITAL</text>
-      <text x="895" y="1360" class="navy semi" font-size="64" letter-spacing="7">CUSTOM BRANDED APPS FOR</text>
-      <text x="895" y="1478" class="blue semi" font-size="64" letter-spacing="7">LOCAL CONTRACTORS &amp;</text>
-      <text x="895" y="1596" class="blue semi" font-size="64" letter-spacing="7">OWNER OPERATORS</text>
+      <text x="609" y="1095" class="blue semi" font-size="82" letter-spacing="38" text-anchor="start">DIGITAL</text>
+      <text x="895" y="1360" class="navy semi" font-size="76" letter-spacing="7">BRANDED LEAD CAPTURE</text>
+      <text x="895" y="1496" class="navy semi" font-size="76" letter-spacing="7">SYSTEMS FOR</text>
+      <text x="895" y="1632" class="blue semi" font-size="76" letter-spacing="7">LOCAL CONTRACTORS &amp;</text>
+      <text x="895" y="1768" class="blue semi" font-size="76" letter-spacing="7">OWNER OPERATORS</text>
     </g>
 
     <g id="contact-block" class="txt">
       <text x="2015" y="620" class="navy bold" font-size="120" letter-spacing="7">CASSANDRA ORR</text>
       <text x="2015" y="775" class="blue semi" font-size="76" letter-spacing="22">CTO</text>
-      <text x="2265" y="1040" class="navy regular" font-size="68">(403) 629-5874</text>
-      <text x="2265" y="1225" class="navy regular" font-size="58">cassandra@shawcliffedigital.com</text>
-      <text x="2265" y="1410" class="navy regular" font-size="68">shawcliffedigital.com</text>
-      <text x="2265" y="1595" class="navy regular" font-size="68">Serving Local Businesses</text>
+      <text x="2015" y="1040" class="navy regular" font-size="88">(403) 629-5874</text>
+      <text x="2015" y="1225" class="navy regular" font-size="88">cassandra@shawcliffedigital.com</text>
+      <text x="2015" y="1410" class="navy regular" font-size="88">shawcliffedigital.com</text>
+      <text x="2015" y="1595" class="navy regular" font-size="88">Serving Local Businesses</text>
     </g>
   </g>
 </svg>
