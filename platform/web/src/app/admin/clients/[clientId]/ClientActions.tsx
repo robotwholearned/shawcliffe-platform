@@ -7,11 +7,13 @@ interface Props {
   clientId: string
   businessName: string
   isActive: boolean
+  isPaused: boolean
 }
 
-export default function ClientActions({ clientId, businessName, isActive }: Props) {
+export default function ClientActions({ clientId, businessName, isActive, isPaused }: Props) {
   const router = useRouter()
   const [suspending, setSuspending] = useState(false)
+  const [pausing, setPausing] = useState(false)
   const [deprovisioning, setDeprovisioning] = useState(false)
   const [log, setLog] = useState<string[]>([])
   const [errors, setErrors] = useState<string[]>([])
@@ -26,6 +28,19 @@ export default function ClientActions({ clientId, businessName, isActive }: Prop
     else {
       const data = await res.json().catch(() => ({}))
       alert(data.error ?? 'Suspend failed')
+    }
+  }
+
+  async function handlePauseToggle() {
+    const action = isPaused ? 'resume' : 'pause'
+    if (!isPaused && !confirm(`Mark ${businessName} as paused for the season?\n\nThe storefront stays live — this only flags reduced-billing/off-season status.`)) return
+    setPausing(true)
+    const res = await fetch(`/api/admin/clients/${clientId}/${action}`, { method: 'POST' })
+    setPausing(false)
+    if (res.ok) router.refresh()
+    else {
+      const data = await res.json().catch(() => ({}))
+      alert(data.error ?? `${action === 'pause' ? 'Pause' : 'Resume'} failed`)
     }
   }
 
@@ -77,6 +92,14 @@ export default function ClientActions({ clientId, businessName, isActive }: Prop
             className="bg-yellow-50 text-yellow-700 border border-yellow-200 px-4 py-2 rounded-lg text-sm font-medium hover:bg-yellow-100 disabled:opacity-50"
           >
             {suspending ? 'Suspending…' : isActive ? 'Suspend Account' : 'Account Suspended'}
+          </button>
+
+          <button
+            onClick={handlePauseToggle}
+            disabled={pausing || !isActive}
+            className="bg-amber-50 text-amber-700 border border-amber-200 px-4 py-2 rounded-lg text-sm font-medium hover:bg-amber-100 disabled:opacity-50"
+          >
+            {pausing ? 'Updating…' : isPaused ? 'Resume from Seasonal Pause' : 'Pause for Season'}
           </button>
 
           <button

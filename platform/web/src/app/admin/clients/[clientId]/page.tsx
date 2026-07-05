@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { createServiceClient } from '@/lib/supabase/server'
+import { clientStatusLabel, clientStatusClass } from '@/lib/client-status'
 import ClientActions from './ClientActions'
 import type { Client } from '@/lib/supabase/types'
 
@@ -31,8 +32,8 @@ export default async function ClientDetailPage({ params }: Props) {
 
       <div className="bg-white rounded-xl shadow-sm p-5 grid grid-cols-2 gap-4 text-sm">
         <div><p className="text-xs text-gray-400 mb-0.5">Status</p>
-          <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${c.active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'}`}>
-            {c.active ? 'Active' : 'Suspended'}
+          <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${clientStatusClass(c)}`}>
+            {clientStatusLabel(c)}
           </span>
         </div>
         <div><p className="text-xs text-gray-400 mb-0.5">Tier</p><p className="font-medium">{c.tier}</p></div>
@@ -57,9 +58,15 @@ export default async function ClientDetailPage({ params }: Props) {
         >
           View Storefront →
         </a>
+        <Link
+          href={`/admin/clients/${c.id}/toll-free`}
+          className="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200"
+        >
+          Toll-Free SMS Verification
+        </Link>
       </div>
 
-      <ClientActions clientId={c.id} businessName={c.business_name} isActive={c.active} />
+      <ClientActions clientId={c.id} businessName={c.business_name} isActive={c.active} isPaused={c.paused} />
     </div>
   )
 }

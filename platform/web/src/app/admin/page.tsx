@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { createServiceClient } from '@/lib/supabase/server'
+import { clientStatusLabel, clientStatusClass } from '@/lib/client-status'
 import type { Client, Tier } from '@/lib/supabase/types'
 
 const TIER_LABEL: Record<Tier, string> = {
@@ -74,10 +75,8 @@ export default async function AdminDashboard() {
                   <td className="px-4 py-3 text-gray-600">{TIER_LABEL[c.tier]}</td>
                   <td className="px-4 py-3 text-gray-500 capitalize">{c.vertical.replace('_', ' ')}</td>
                   <td className="px-4 py-3">
-                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
-                      c.active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'
-                    }`}>
-                      {c.active ? 'Active' : 'Suspended'}
+                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${clientStatusClass(c)}`}>
+                      {clientStatusLabel(c)}
                     </span>
                   </td>
                   <td className="px-4 py-3 text-gray-400 text-xs">

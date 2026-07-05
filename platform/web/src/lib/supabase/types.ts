@@ -6,6 +6,7 @@ export type DailyStatusValue = 'open' | 'closed' | 'sold_out' | 'back_tomorrow' 
 export type SignupSource = 'qr' | 'website' | 'app'
 export type NotificationChannel = 'sms' | 'email' | 'push' | 'whatsapp'
 export type PreorderStatus = 'pending' | 'confirmed' | 'cancelled' | 'completed'
+export type TollFreeVerificationStatus = 'not_started' | 'pending_review' | 'in_review' | 'approved' | 'rejected'
 
 export interface Client {
   id: string
@@ -16,6 +17,7 @@ export interface Client {
   operator_email: string
   operator_phone: string | null
   active: boolean
+  paused: boolean
   region: string
   created_at: string
 }
@@ -135,6 +137,21 @@ export interface NotificationLog {
   status: string
   provider_message_id: string | null
   twilio_subaccount_sid: string | null
+}
+
+export interface TwilioSubaccount {
+  client_id: string
+  account_sid: string
+  auth_token: string
+  phone_number: string | null
+  phone_number_sid: string | null
+  messaging_service_sid: string | null
+  toll_free_verification_sid: string | null
+  verification_status: TollFreeVerificationStatus
+  verification_submitted_at: string | null
+  verification_updated_at: string | null
+  verification_detail: Record<string, unknown> | null
+  created_at: string
 }
 
 export interface ClientWithBranding extends Client {
