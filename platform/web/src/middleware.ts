@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
+import { RESERVED_SLUGS } from '@/lib/reserved-slugs'
 
 const BASE_DOMAIN = process.env.NEXT_PUBLIC_BASE_DOMAIN ?? 'shawcliffe.ca'
 
@@ -32,14 +33,17 @@ export async function middleware(req: NextRequest) {
   // Subdomain routing: tomsproduce.shawcliffe.ca → rewrite to /tomsproduce
   const hostname = req.headers.get('host') ?? ''
   const hostWithoutPort = hostname.replace(/:\d+$/, '')
+  const subdomain = hostWithoutPort.endsWith(`.${BASE_DOMAIN}`)
+    ? hostWithoutPort.slice(0, -(`.${BASE_DOMAIN}`.length))
+    : null
 
   const isClientSubdomain =
     hostWithoutPort !== BASE_DOMAIN &&
-    hostWithoutPort !== `www.${BASE_DOMAIN}` &&
-    hostWithoutPort.endsWith(`.${BASE_DOMAIN}`)
+    subdomain !== null &&
+    !RESERVED_SLUGS.has(subdomain)
 
   if (isClientSubdomain) {
-    const slug = hostWithoutPort.replace(`.${BASE_DOMAIN}`, '')
+    const slug = subdomain!
     const url = req.nextUrl.clone()
     const originalPath = url.pathname === '/' ? '' : url.pathname
     url.pathname = `/${slug}${originalPath}`

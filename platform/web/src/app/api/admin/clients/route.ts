@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient, createServiceClient } from '@/lib/supabase/server'
+import { RESERVED_SLUGS } from '@/lib/reserved-slugs'
 
 export async function POST(req: NextRequest) {
   // Verify caller is a Shawcliffe admin
@@ -14,6 +15,10 @@ export async function POST(req: NextRequest) {
 
   if (!slug || !business_name || !vertical || !tier || !operator_email) {
     return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
+  }
+
+  if (RESERVED_SLUGS.has(slug)) {
+    return NextResponse.json({ error: `"${slug}" is reserved and can't be used as a client slug` }, { status: 400 })
   }
 
   const admin = createServiceClient()
