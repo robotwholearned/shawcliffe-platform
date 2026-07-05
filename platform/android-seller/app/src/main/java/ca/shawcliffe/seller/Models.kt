@@ -115,14 +115,25 @@ data class PreorderDetail(
 }
 
 @Serializable
-data class SMSBroadcastRequest(val message: String)
+data class SMSBroadcastRequest(val message: String, val test: Boolean = false)
 
 @Serializable
-data class EmailBroadcastRequest(val subject: String, val message: String)
+data class EmailBroadcastRequest(val subject: String, val message: String, val test: Boolean = false)
 
 @Serializable
 data class BroadcastResponse(
     val sent: Int = 0,
     val failed: Int = 0,
     val errors: List<String>? = null,
+)
+
+data class TestSendResult(val channel: String, val ok: Boolean, val message: String)
+
+@Serializable
+data class NotificationLogEntry(
+    val id: String,
+    val channel: String,
+    @SerialName("message_preview") val messagePreview: String? = null,
+    val status: String,
+    @SerialName("sent_at") val sentAt: String,
 )

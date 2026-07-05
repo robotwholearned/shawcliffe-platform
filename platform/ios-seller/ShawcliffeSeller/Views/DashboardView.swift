@@ -30,7 +30,7 @@ struct DashboardView: View {
             .tabItem { Label("Preorders", systemImage: "bag") }
 
             NavigationStack {
-                BroadcastView(viewModel: viewModel)
+                BroadcastView(viewModel: viewModel, clientId: clientId)
                     .navigationTitle("Broadcast")
             }
             .tabItem { Label("Broadcast", systemImage: "megaphone") }

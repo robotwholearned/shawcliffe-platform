@@ -95,7 +95,7 @@ fun DashboardScreen(clientId: String, authViewModel: AuthViewModel) {
         when (tab) {
             0 -> StatusAndProductsScreen(viewModel, Modifier.padding(padding))
             1 -> PreordersScreen(viewModel, Modifier.padding(padding))
-            2 -> BroadcastScreen(viewModel, Modifier.padding(padding))
+            2 -> BroadcastScreen(viewModel, clientId, Modifier.padding(padding))
             else -> PreviewScreen(clientId, Modifier.padding(padding))
         }
     }

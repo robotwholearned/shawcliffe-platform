@@ -43,6 +43,10 @@ class DashboardViewModel(private val clientId: String) : ViewModel() {
         private set
     var pushResult by mutableStateOf<BroadcastResponse?>(null)
         private set
+    var isSendingTest by mutableStateOf(false)
+        private set
+    var testResult by mutableStateOf<TestSendResult?>(null)
+        private set
 
     private val today: String = SimpleDateFormat("yyyy-MM-dd", Locale.US).apply {
         timeZone = TimeZone.getDefault()
@@ -296,6 +300,38 @@ class DashboardViewModel(private val clientId: String) : ViewModel() {
                 errorMessage = e.message
             }
             isSendingPush = false
+        }
+    }
+
+    fun sendTest(channel: String, smsMessage: String, emailSubject: String, emailMessage: String, pushMessage: String) {
+        viewModelScope.launch {
+            isSendingTest = true
+            testResult = null
+            try {
+                val response: BroadcastResponse = when (channel) {
+                    "sms" -> {
+                        val message = smsMessage.trim().ifEmpty { "Test message from your dashboard." }
+                        BroadcastService.send("api/broadcast/sms", SMSBroadcastRequest(message, test = true))
+                    }
+                    "email" -> {
+                        val subject = emailSubject.trim().ifEmpty { "Test notification" }
+                        val message = emailMessage.trim().ifEmpty { "Test message from your dashboard." }
+                        BroadcastService.send("api/broadcast/email", EmailBroadcastRequest(subject, message, test = true))
+                    }
+                    else -> {
+                        val message = pushMessage.trim().ifEmpty { "Test push from your dashboard." }
+                        BroadcastService.send("api/broadcast/push", SMSBroadcastRequest(message, test = true))
+                    }
+                }
+                testResult = TestSendResult(
+                    channel = channel,
+                    ok = response.sent > 0,
+                    message = if (response.sent > 0) "Test sent — check your phone/inbox." else (response.errors?.firstOrNull() ?: "Test send failed"),
+                )
+            } catch (e: Exception) {
+                testResult = TestSendResult(channel = channel, ok = false, message = e.message ?: "Test send failed")
+            }
+            isSendingTest = false
         }
     }
 }

@@ -15,6 +15,8 @@ final class DashboardViewModel: ObservableObject {
     @Published var emailResult: BroadcastResponse?
     @Published var isSendingPush = false
     @Published var pushResult: BroadcastResponse?
+    @Published var isSendingTest = false
+    @Published var testResult: TestSendResult?
 
     private let clientId: String
     private let today: String = {
@@ -289,5 +291,46 @@ final class DashboardViewModel: ObservableObject {
             errorMessage = error.localizedDescription
         }
         isSendingPush = false
+    }
+
+    func sendTest(channel: String, smsMessage: String, emailSubject: String, emailMessage: String, pushMessage: String) async {
+        isSendingTest = true
+        testResult = nil
+        do {
+            let response: BroadcastResponse
+            switch channel {
+            case "sms":
+                let message = smsMessage.trimmingCharacters(in: .whitespacesAndNewlines)
+                response = try await BroadcastService.send(
+                    path: "api/broadcast/sms",
+                    body: SMSBroadcastRequest(message: message.isEmpty ? "Test message from your dashboard." : message, test: true)
+                )
+            case "email":
+                let subject = emailSubject.trimmingCharacters(in: .whitespacesAndNewlines)
+                let message = emailMessage.trimmingCharacters(in: .whitespacesAndNewlines)
+                response = try await BroadcastService.send(
+                    path: "api/broadcast/email",
+                    body: EmailBroadcastRequest(
+                        subject: subject.isEmpty ? "Test notification" : subject,
+                        message: message.isEmpty ? "Test message from your dashboard." : message,
+                        test: true
+                    )
+                )
+            default:
+                let message = pushMessage.trimmingCharacters(in: .whitespacesAndNewlines)
+                response = try await BroadcastService.send(
+                    path: "api/broadcast/push",
+                    body: SMSBroadcastRequest(message: message.isEmpty ? "Test push from your dashboard." : message, test: true)
+                )
+            }
+            testResult = TestSendResult(
+                channel: channel,
+                ok: response.sent > 0,
+                message: response.sent > 0 ? "Test sent — check your phone/inbox." : (response.errors?.first ?? "Test send failed")
+            )
+        } catch {
+            testResult = TestSendResult(channel: channel, ok: false, message: error.localizedDescription)
+        }
+        isSendingTest = false
     }
 }

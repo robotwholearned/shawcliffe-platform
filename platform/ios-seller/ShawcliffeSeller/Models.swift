@@ -183,15 +183,39 @@ struct PreorderDetail: Identifiable {
 
 struct SMSBroadcastRequest: Encodable {
     let message: String
+    var test: Bool = false
 }
 
 struct EmailBroadcastRequest: Encodable {
     let subject: String
     let message: String
+    var test: Bool = false
 }
 
 struct BroadcastResponse: Decodable {
     let sent: Int
     let failed: Int
     let errors: [String]?
+}
+
+struct TestSendResult {
+    let channel: String
+    let ok: Bool
+    let message: String
+}
+
+struct NotificationLogEntry: Codable, Identifiable {
+    let id: String
+    let channel: String
+    let messagePreview: String?
+    let status: String
+    let sentAt: String
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case channel
+        case messagePreview = "message_preview"
+        case status
+        case sentAt = "sent_at"
+    }
 }
