@@ -83,9 +83,17 @@ export default async function AdminDashboard() {
                     {new Date(c.created_at).toLocaleDateString('en-CA')}
                   </td>
                   <td className="px-4 py-3">
-                    <Link href={`/admin/clients/${c.id}/products`} className="text-xs text-blue-600 hover:underline">
-                      Products →
-                    </Link>
+                    <div className="flex gap-3">
+                      <Link href={`/admin/clients/${c.id}/products`} className="text-xs text-blue-600 hover:underline">
+                        Products
+                      </Link>
+                      <Link href={`/admin/clients/${c.id}/toll-free`} className="text-xs text-blue-600 hover:underline">
+                        Toll-Free SMS
+                      </Link>
+                      <Link href={`/admin/clients/${c.id}/custom-domain`} className="text-xs text-blue-600 hover:underline">
+                        Domain
+                      </Link>
+                    </div>
                   </td>
                 </tr>
               ))}

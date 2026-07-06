@@ -64,6 +64,12 @@ export default async function ClientDetailPage({ params }: Props) {
         >
           Toll-Free SMS Verification
         </Link>
+        <Link
+          href={`/admin/clients/${c.id}/custom-domain`}
+          className="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200"
+        >
+          Custom Domain
+        </Link>
       </div>
 
       <ClientActions clientId={c.id} businessName={c.business_name} isActive={c.active} isPaused={c.paused} />

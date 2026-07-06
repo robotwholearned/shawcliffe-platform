@@ -35,6 +35,11 @@ export interface ClientBranding {
   tagline: string | null
   hero_photo_urls: string[]
   custom_domain: string | null
+  custom_hostname_id: string | null
+  custom_domain_status: 'not_started' | 'pending' | 'active' | 'error'
+  custom_domain_ssl_status: string | null
+  custom_domain_verification: Record<string, unknown> | null
+  custom_domain_updated_at: string | null
   apple_bundle_id: string | null
   android_package: string | null
   theme_version: number

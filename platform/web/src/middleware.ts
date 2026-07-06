@@ -50,6 +50,23 @@ export async function middleware(req: NextRequest) {
     return NextResponse.rewrite(url)
   }
 
+  // Client custom domain (e.g. tomsproduce.com), routed to us via Cloudflare
+  // for SaaS once verified — look up which client it belongs to.
+  if (subdomain === null && hostWithoutPort !== BASE_DOMAIN && hostWithoutPort !== `www.${BASE_DOMAIN}`) {
+    const { data: match } = await supabase
+      .from('custom_domain_lookup')
+      .select('slug, active')
+      .eq('custom_domain', hostWithoutPort)
+      .maybeSingle()
+
+    if (match?.active) {
+      const url = req.nextUrl.clone()
+      const originalPath = url.pathname === '/' ? '' : url.pathname
+      url.pathname = `/${match.slug}${originalPath}`
+      return NextResponse.rewrite(url)
+    }
+  }
+
   return res
 }
 
