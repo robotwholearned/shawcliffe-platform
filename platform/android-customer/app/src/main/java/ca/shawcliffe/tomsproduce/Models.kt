@@ -100,7 +100,12 @@ data class PreorderRequest(
 data class ApiErrorBody(val error: String? = null, val product: String? = null)
 
 @Serializable
-data class PushRegisterRequest(val client_id: String, val customer_id: String, val token: String)
+data class PushRegisterRequest(
+    val client_id: String,
+    val customer_id: String,
+    val token: String,
+    val platform: String = "android",
+)
 
 @Serializable
 data class PushRegisterResponse(val ok: Boolean = false)

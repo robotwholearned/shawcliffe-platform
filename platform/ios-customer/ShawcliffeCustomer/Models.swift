@@ -158,6 +158,12 @@ struct PushRegisterRequest: Encodable {
     let client_id: String
     let customer_id: String
     let token: String
+    let platform = "ios"
+    // Every build so far is a Simulator/dev build under Shawcliffe's single
+    // Apple Developer account (no TestFlight/App Store submission yet) — the
+    // real distinguishing signal is the app's aps-environment entitlement,
+    // not this hardcoded value. Revisit once Fastlane/TestFlight exist.
+    let environment = "sandbox"
 }
 
 struct PushRegisterResponse: Decodable {

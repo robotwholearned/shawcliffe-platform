@@ -7,6 +7,8 @@ export type SignupSource = 'qr' | 'website' | 'app'
 export type NotificationChannel = 'sms' | 'email' | 'push' | 'whatsapp'
 export type PreorderStatus = 'pending' | 'confirmed' | 'cancelled' | 'completed'
 export type TollFreeVerificationStatus = 'not_started' | 'pending_review' | 'in_review' | 'approved' | 'rejected'
+export type PushPlatform = 'ios' | 'android'
+export type PushEnvironment = 'sandbox' | 'production'
 
 export interface Client {
   id: string
@@ -92,8 +94,7 @@ export interface Customer {
   email: string | null
   sms_consent: boolean
   email_consent: boolean
-  apns_token: string | null
-  fcm_token: string | null
+  push_consent: boolean
   whatsapp_consent: boolean
   signup_source: SignupSource | null
   consent_timestamp: string
@@ -130,6 +131,18 @@ export interface Announcement {
   channels: string[]
   product_tags: string[]
   sent: boolean
+}
+
+export interface PushToken {
+  client_id: string
+  id: string
+  customer_id: string
+  platform: PushPlatform
+  token: string
+  environment: PushEnvironment | null
+  created_at: string
+  last_seen_at: string
+  invalidated_at: string | null
 }
 
 export interface NotificationLog {

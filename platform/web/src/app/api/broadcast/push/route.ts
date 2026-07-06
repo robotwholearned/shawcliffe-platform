@@ -1,6 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getAuthedUser, createServiceClient } from '@/lib/supabase/server'
-import { sendPush, isConfigured } from '@/lib/apns'
+import { sendPush, isConfigured as apnsConfigured, isInvalidTokenError } from '@/lib/apns'
+import { sendFcmPush, isConfigured as fcmConfigured, isUnregisteredError } from '@/lib/fcm'
+import type { PushToken } from '@/lib/supabase/types'
+
+interface DispatchResult {
+  token: string
+  ok: boolean
+  error?: string
+}
 
 export async function POST(req: NextRequest) {
   // Verify caller is client_staff or shawcliffe_admin
@@ -24,10 +32,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'message is required' }, { status: 400 })
   }
 
-  if (!isConfigured()) {
-    return NextResponse.json({ error: 'Push notifications are not configured on this server' }, { status: 503 })
-  }
-
   const admin = createServiceClient()
 
   const { data: branding } = await admin
@@ -36,7 +40,7 @@ export async function POST(req: NextRequest) {
     .eq('client_id', targetClientId)
     .single()
 
-  let customers: { id: string | null; apns_token: string | null }[]
+  let customerIds: string[]
 
   if (test) {
     const { data: client } = await admin
@@ -47,9 +51,8 @@ export async function POST(req: NextRequest) {
 
     const { data: selfCustomer } = await admin
       .from('customers')
-      .select('id, apns_token')
+      .select('id')
       .eq('client_id', targetClientId)
-      .not('apns_token', 'is', null)
       .or(`email.eq.${client?.operator_email ?? ''},phone.eq.${client?.operator_phone ?? ''}`)
       .limit(1)
       .maybeSingle()
@@ -60,50 +63,86 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       )
     }
-    customers = [selfCustomer]
+    customerIds = [selfCustomer.id]
   } else {
-    // Load opted-in customers with a registered device token
     let query = admin
       .from('customers')
-      .select('id, apns_token')
+      .select('id')
       .eq('client_id', targetClientId)
-      .not('apns_token', 'is', null)
+      .eq('push_consent', true)
 
     if (product_tags?.length) {
       query = query.overlaps('product_interests', product_tags)
     }
 
     const { data } = await query
-    customers = data ?? []
+    customerIds = (data ?? []).map((c) => c.id)
 
-    if (customers.length === 0) {
-      return NextResponse.json({ sent: 0, message: 'No customers with a registered device' })
+    if (customerIds.length === 0) {
+      return NextResponse.json({ sent: 0, message: 'No customers with push notifications enabled' })
     }
   }
 
-  const results = await sendPush(
-    customers.map((c) => c.apns_token as string),
-    message,
-    branding?.apple_bundle_id ?? undefined
-  )
+  const { data: tokenRows } = await admin
+    .from('push_tokens')
+    .select('*')
+    .eq('client_id', targetClientId)
+    .in('customer_id', customerIds)
+    .is('invalidated_at', null)
 
-  const tokenToCustomer = new Map(customers.map((c) => [c.apns_token, c.id]))
+  const tokens = (tokenRows ?? []) as PushToken[]
+
+  if (tokens.length === 0) {
+    return NextResponse.json({ sent: 0, message: 'No customers with a registered device' })
+  }
+
+  const tokenById = new Map(tokens.map((t) => [t.token, t]))
+  const dispatched: DispatchResult[] = []
+
+  const iosTokens = tokens.filter((t) => t.platform === 'ios')
+  if (iosTokens.length > 0) {
+    if (!apnsConfigured()) {
+      return NextResponse.json({ error: 'APNs is not configured on this server' }, { status: 503 })
+    }
+    for (const environment of ['sandbox', 'production'] as const) {
+      const group = iosTokens.filter((t) => (t.environment ?? 'sandbox') === environment)
+      if (group.length === 0) continue
+      const results = await sendPush(group.map((t) => t.token), message, branding?.apple_bundle_id ?? undefined, environment)
+      dispatched.push(...results)
+    }
+  }
+
+  const androidTokens = tokens.filter((t) => t.platform === 'android')
+  if (androidTokens.length > 0) {
+    if (!fcmConfigured()) {
+      return NextResponse.json({ error: 'FCM is not configured on this server' }, { status: 503 })
+    }
+    const results = await sendFcmPush(androidTokens.map((t) => t.token), message)
+    dispatched.push(...results)
+  }
 
   await Promise.all(
-    results.map((r) =>
-      admin.from('notification_log').insert({
+    dispatched.map(async (r) => {
+      const row = tokenById.get(r.token)
+      if (!r.ok && row) {
+        const invalid = row.platform === 'ios' ? isInvalidTokenError(r.error) : isUnregisteredError(r.error)
+        if (invalid) {
+          await admin.from('push_tokens').update({ invalidated_at: new Date().toISOString() }).eq('client_id', targetClientId).eq('id', row.id)
+        }
+      }
+      await admin.from('notification_log').insert({
         client_id: targetClientId,
-        customer_id: tokenToCustomer.get(r.token) ?? null,
+        customer_id: row?.customer_id ?? null,
         channel: 'push',
         message_preview: (test ? '[TEST] ' : '') + message.substring(0, 50),
         status: r.ok ? 'sent' : 'failed',
       })
-    )
+    })
   )
 
-  const sent = results.filter((r) => r.ok).length
-  const failed = results.filter((r) => !r.ok).length
-  const errors = results.filter((r) => !r.ok).map((r) => r.error ?? 'Unknown error')
+  const sent = dispatched.filter((r) => r.ok).length
+  const failed = dispatched.filter((r) => !r.ok).length
+  const errors = dispatched.filter((r) => !r.ok).map((r) => r.error ?? 'Unknown error')
 
-  return NextResponse.json({ sent, failed, total: customers.length, errors })
+  return NextResponse.json({ sent, failed, total: tokens.length, errors })
 }
