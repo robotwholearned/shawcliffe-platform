@@ -16,8 +16,19 @@ enum Config {
     // build per client with its tenant baked in at compile time, rather than
     // a slug picker at runtime — `clients` is service_role_only in RLS, so
     // the app has no way to resolve a slug to a client_id on its own anyway.
-    static let clientId = "c40569c6-1324-47a9-979f-6d076c4b67fc" // Tom's Produce
-    static let slug = "toms-produce"
+    // Set via project.yml's CLIENT_ID/CLIENT_SLUG Info.plist keys, which
+    // Fastlane overrides per client build (see ios-customer/fastlane/Fastfile).
+    static let clientId = Bundle.main.requiredInfoValue(for: "CLIENT_ID")
+    static let slug = Bundle.main.requiredInfoValue(for: "CLIENT_SLUG")
+}
+
+private extension Bundle {
+    func requiredInfoValue(for key: String) -> String {
+        guard let value = object(forInfoDictionaryKey: key) as? String, !value.isEmpty else {
+            fatalError("\(key) missing from Info.plist — check project.yml's CLIENT_* variables were set before `xcodegen generate`")
+        }
+        return value
+    }
 }
 
 let supabase = SupabaseClient(

@@ -1,0 +1,35 @@
+default_platform(:android)
+
+# Phase 1 model: one whitelabeled build per client, tenant baked in at build
+# time via Gradle properties (see Config.kt/build.gradle.kts and the PRD's
+# ARCHITECTURE-MAP Decision 2). Defaults below are Tom's Produce, the only
+# client provisioned so far.
+DEFAULT_CLIENT = {
+  client_id: "c40569c6-1324-47a9-979f-6d076c4b67fc",
+  slug: "toms-produce",
+  application_id: "ca.shawcliffe.tomsproduce",
+  app_name: "Tom's Produce",
+}.freeze
+
+def client_properties(options)
+  {
+    "clientId" => options[:client_id] || DEFAULT_CLIENT[:client_id],
+    "clientSlug" => options[:slug] || DEFAULT_CLIENT[:slug],
+    "clientApplicationId" => options[:application_id] || DEFAULT_CLIENT[:application_id],
+    "clientAppName" => options[:app_name] || DEFAULT_CLIENT[:app_name],
+  }
+end
+
+platform :android do
+  desc "Build a per-client debug APK — no signing needed. Verifies the per-client pipeline works end-to-end. Params: client_id:, slug:, application_id:, app_name:"
+  lane :build_debug do |options|
+    gradle(task: "assembleDebug", properties: client_properties(options))
+  end
+
+  desc "Build a signed, distributable per-client AAB. Same params as build_debug. " \
+       "NOT yet usable for Play Store submission — needs a configured Google Play " \
+       "Organization account and a release signing key, both blocked on D-U-N-S verification."
+  lane :build do |options|
+    gradle(task: "bundle", build_type: "Release", properties: client_properties(options))
+  end
+end

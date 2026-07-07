@@ -20,6 +20,10 @@
 	<string>1.0</string>
 	<key>CFBundleVersion</key>
 	<string>1</string>
+	<key>CLIENT_ID</key>
+	<string>c40569c6-1324-47a9-979f-6d076c4b67fc</string>
+	<key>CLIENT_SLUG</key>
+	<string>toms-produce</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

@@ -1,0 +1,5 @@
+# package_name is overridden per client build via the clientApplicationId
+# Gradle property (see Fastfile) — this default matters only for Play Store
+# API calls (supply/upload), not yet configured (json_key_file needed once
+# there's a Google Play Console service account — blocked on D-U-N-S).
+package_name("ca.shawcliffe.tomsproduce")

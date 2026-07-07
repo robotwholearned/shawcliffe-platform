@@ -5,16 +5,30 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
 }
 
+// Per-client values, overridden by Fastlane via -P Gradle properties (see
+// android-customer/fastlane/Fastfile). `namespace` above stays fixed — that's
+// the Kotlin package structure, distinct from `applicationId` (the Play
+// Store identity), which Android lets you override freely per build.
+val clientApplicationId = (project.findProperty("clientApplicationId") as String?) ?: "ca.shawcliffe.tomsproduce"
+val clientAppName = (project.findProperty("clientAppName") as String?) ?: "Tom's Produce"
+val clientId = (project.findProperty("clientId") as String?) ?: "c40569c6-1324-47a9-979f-6d076c4b67fc"
+val clientSlug = (project.findProperty("clientSlug") as String?) ?: "toms-produce"
+
 android {
     namespace = "ca.shawcliffe.tomsproduce"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "ca.shawcliffe.tomsproduce"
+        applicationId = clientApplicationId
         minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
+        // Android string resources need apostrophes escaped; resValue doesn't
+        // do this automatically the way a literal strings.xml entry would.
+        resValue("string", "app_name", clientAppName.replace("'", "\\'"))
+        buildConfigField("String", "CLIENT_ID", "\"$clientId\"")
+        buildConfigField("String", "CLIENT_SLUG", "\"$clientSlug\"")
     }
 
     buildTypes {
@@ -31,6 +45,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 

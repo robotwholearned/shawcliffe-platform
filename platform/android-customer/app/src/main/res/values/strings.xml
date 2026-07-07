@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">Tom\'s Produce</string>
+    <!-- app_name is generated per-client build (see build.gradle.kts resValue,
+         set via the `clientAppName` Gradle property) instead of a static value here. -->
 </resources>

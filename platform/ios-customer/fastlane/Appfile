@@ -1,0 +1,6 @@
+# app_identifier is overridden per client build via project.yml's
+# CLIENT_BUNDLE_ID (see Fastfile) — this default matters only for the
+# App Store Connect API calls in the `build`/upload lanes.
+app_identifier(ENV["CLIENT_BUNDLE_ID"] || "ca.shawcliffe.tomsproduce")
+apple_id("cassandra@shawcliffedigital.com")
+team_id("M5SD2YQ3QM")

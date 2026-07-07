@@ -1,0 +1,51 @@
+default_platform(:ios)
+
+# Phase 1 model: one whitelabeled build per client, tenant baked in at build
+# time via project.yml's CLIENT_* env vars (see SupabaseClient.swift and the
+# PRD's ARCHITECTURE-MAP Decision 2). Defaults below are Tom's Produce, the
+# only client provisioned so far.
+DEFAULT_CLIENT = {
+  client_id: "c40569c6-1324-47a9-979f-6d076c4b67fc",
+  slug: "toms-produce",
+  bundle_id: "ca.shawcliffe.tomsproduce",
+  app_name: "Tom's Produce",
+}.freeze
+
+def set_client_env(options)
+  ENV["CLIENT_ID"] = options[:client_id] || DEFAULT_CLIENT[:client_id]
+  ENV["CLIENT_SLUG"] = options[:slug] || DEFAULT_CLIENT[:slug]
+  ENV["CLIENT_BUNDLE_ID"] = options[:bundle_id] || DEFAULT_CLIENT[:bundle_id]
+  ENV["CLIENT_APP_NAME"] = options[:app_name] || DEFAULT_CLIENT[:app_name]
+end
+
+platform :ios do
+  desc "Regenerate the Xcode project for one client's build. Params: client_id:, slug:, bundle_id:, app_name:"
+  lane :generate do |options|
+    set_client_env(options)
+    sh("xcodegen generate", chdir: "..")
+  end
+
+  desc "Build for the iOS Simulator — no code signing needed. Verifies the per-client pipeline works end-to-end. Same params as generate."
+  lane :build_simulator do |options|
+    generate(options)
+    sh(
+      "xcodebuild -project ShawcliffeCustomer.xcodeproj -scheme ShawcliffeCustomer " \
+      "-sdk iphonesimulator -destination 'generic/platform=iOS Simulator' build",
+      chdir: ".."
+    )
+  end
+
+  desc "Build a signed, distributable per-client IPA. Same params as generate. " \
+       "NOT yet usable — needs a configured Apple Developer Organization account " \
+       "and code signing (certs/provisioning profiles), both blocked on D-U-N-S verification."
+  lane :build do |options|
+    generate(options)
+    build_app(
+      project: "ShawcliffeCustomer.xcodeproj",
+      scheme: "ShawcliffeCustomer",
+      export_method: "app-store",
+      output_directory: "./build",
+      output_name: "#{ENV['CLIENT_SLUG']}.ipa"
+    )
+  end
+end

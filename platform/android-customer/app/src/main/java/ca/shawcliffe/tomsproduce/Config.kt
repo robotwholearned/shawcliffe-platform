@@ -17,6 +17,8 @@ object Config {
     // build per client with its tenant baked in at compile time, rather than
     // a slug picker at runtime — `clients` is service_role_only in RLS, so
     // the app has no way to resolve a slug to a client_id on its own anyway.
-    const val CLIENT_ID = "c40569c6-1324-47a9-979f-6d076c4b67fc" // Tom's Produce
-    const val SLUG = "toms-produce"
+    // Set via the clientId/clientSlug Gradle properties (see build.gradle.kts),
+    // which Fastlane overrides per client build (see fastlane/Fastfile).
+    val CLIENT_ID: String = BuildConfig.CLIENT_ID
+    val SLUG: String = BuildConfig.CLIENT_SLUG
 }
