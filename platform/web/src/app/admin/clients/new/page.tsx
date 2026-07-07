@@ -70,10 +70,18 @@ export default function NewClientPage() {
               required
               className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              <option value="produce_seller">Produce Seller</option>
-              <option value="baker">Baker</option>
-              <option value="cleaner">Cleaner</option>
-              <option value="welder">Welder</option>
+              <option value="personal_care_appointment">Personal Care Appointment Businesses</option>
+              <option value="home_service_trades">Home Service Trades</option>
+              <option value="home_property_maintenance">Home &amp; Property Maintenance</option>
+              <option value="food_producers_specialty_makers">Food Producers &amp; Specialty Makers</option>
+              <option value="mobile_popup_sellers">Mobile / Pop-Up Sellers</option>
+              <option value="pet_animal_services">Pet &amp; Animal Services</option>
+              <option value="vehicle_equipment_services">Vehicle &amp; Equipment Services</option>
+              <option value="creative_event_services">Creative &amp; Event Services</option>
+              <option value="education_coaching_instruction">Education, Coaching &amp; Instruction</option>
+              <option value="health_adjacent_professionals">Health-Adjacent Local Professionals</option>
+              <option value="local_retail_boutique">Local Retail / Boutique Shops</option>
+              <option value="professional_local_services">Professional Local Services</option>
             </select>
           </div>
           <div>

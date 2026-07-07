@@ -1,4 +1,16 @@
-export type Vertical = 'produce_seller' | 'baker' | 'cleaner' | 'welder'
+export type Vertical =
+  | 'personal_care_appointment'
+  | 'home_service_trades'
+  | 'home_property_maintenance'
+  | 'food_producers_specialty_makers'
+  | 'mobile_popup_sellers'
+  | 'pet_animal_services'
+  | 'vehicle_equipment_services'
+  | 'creative_event_services'
+  | 'education_coaching_instruction'
+  | 'health_adjacent_professionals'
+  | 'local_retail_boutique'
+  | 'professional_local_services'
 export type Tier = 1 | 2 | 3
 export type FontTheme = 'modern_sans' | 'farmhouse' | 'classic_serif' | 'minimal' | 'rustic'
 export type ProductStatus = 'available' | 'low' | 'sold_out'

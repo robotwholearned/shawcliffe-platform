@@ -37,7 +37,7 @@ export default async function ClientDetailPage({ params }: Props) {
           </span>
         </div>
         <div><p className="text-xs text-gray-400 mb-0.5">Tier</p><p className="font-medium">{c.tier}</p></div>
-        <div><p className="text-xs text-gray-400 mb-0.5">Vertical</p><p className="font-medium capitalize">{c.vertical.replace('_', ' ')}</p></div>
+        <div><p className="text-xs text-gray-400 mb-0.5">Vertical</p><p className="font-medium capitalize">{c.vertical.replaceAll('_', ' ')}</p></div>
         <div><p className="text-xs text-gray-400 mb-0.5">Email</p><p className="font-medium">{c.operator_email}</p></div>
         <div><p className="text-xs text-gray-400 mb-0.5">Phone</p><p className="font-medium">{c.operator_phone ?? '—'}</p></div>
         <div><p className="text-xs text-gray-400 mb-0.5">Created</p><p className="font-medium">{new Date(c.created_at).toLocaleDateString('en-CA')}</p></div>

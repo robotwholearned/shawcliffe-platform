@@ -2,8 +2,8 @@
 -- NEVER run this in production.
 
 insert into clients (id, slug, business_name, vertical, tier, operator_email, active) values
-  ('00000000-0000-0000-0000-000000000001', 'test-client-a', 'Test Client A', 'produce_seller', 1, 'a@test.internal', true),
-  ('00000000-0000-0000-0000-000000000002', 'test-client-b', 'Test Client B', 'produce_seller', 1, 'b@test.internal', true)
+  ('00000000-0000-0000-0000-000000000001', 'test-client-a', 'Test Client A', 'mobile_popup_sellers', 1, 'a@test.internal', true),
+  ('00000000-0000-0000-0000-000000000002', 'test-client-b', 'Test Client B', 'mobile_popup_sellers', 1, 'b@test.internal', true)
 on conflict (id) do nothing;
 
 insert into client_branding (client_id, app_name, primary_color) values
