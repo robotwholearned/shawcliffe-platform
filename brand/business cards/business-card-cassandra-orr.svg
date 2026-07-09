@@ -28,7 +28,7 @@
   <g id="live-artwork-within-trim" clip-path="url(#trim-clip)">
 
     <!-- Vertical centre divider -->
-    <line x1="1810" y1="410" x2="1810" y2="1710" stroke="#C9CDD4" stroke-width="3"/>
+    <line x1="1810" y1="410" x2="1810" y2="1710" stroke="#C9CDD4" stroke-width="13.89"/>
 
     <!-- Left brand block -->
     <g id="brand-block" class="txt" text-anchor="middle">
@@ -41,12 +41,12 @@
       <line x1="1215" y1="1072" x2="1340" y2="1072" class="blue-stroke"/>
 
       <!-- Gray separator before tagline -->
-      <line x1="505" y1="1185" x2="1290" y2="1185" stroke="#D3D6DC" stroke-width="3"/>
+      <line x1="505" y1="1185" x2="1290" y2="1185" stroke="#D3D6DC" stroke-width="13.89"/>
 
       <text x="895" y="1320" class="navy semi" font-size="76" letter-spacing="7">BRANDED LEAD CAPTURE</text>
       <text x="895" y="1456" class="navy semi" font-size="76" letter-spacing="7">SYSTEMS FOR</text>
-      <text x="895" y="1592" class="blue semi" font-size="76" letter-spacing="7">LOCAL CONTRACTORS &amp;</text>
-      <text x="895" y="1728" class="blue semi" font-size="76" letter-spacing="7">OWNER OPERATORS</text>
+      <text x="895" y="1592" class="blue semi" font-size="76" letter-spacing="7">SMALL &amp; INDEPENDENT</text>
+      <text x="895" y="1728" class="blue semi" font-size="76" letter-spacing="7">BUSINESSES</text>
     </g>
 
     <!-- Right contact block -->
