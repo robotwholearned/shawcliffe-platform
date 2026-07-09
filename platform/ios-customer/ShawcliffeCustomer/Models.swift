@@ -154,6 +154,10 @@ struct APIErrorBody: Decodable {
     let product: String?
 }
 
+struct EnabledComponentsResponse: Decodable {
+    let enabled_components: [String]
+}
+
 struct PushRegisterRequest: Encodable {
     let client_id: String
     let customer_id: String

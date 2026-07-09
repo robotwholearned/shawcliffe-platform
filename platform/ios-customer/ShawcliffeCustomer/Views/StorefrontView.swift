@@ -60,7 +60,7 @@ struct StorefrontView: View {
 
     @ViewBuilder
     private var statusBadge: some View {
-        if let status = viewModel.status?.status {
+        if viewModel.enabledComponents.contains(ComponentKeys.statusTracker), let status = viewModel.status?.status {
             HStack {
                 Circle()
                     .fill(Color(red: status.color.r, green: status.color.g, blue: status.color.b))

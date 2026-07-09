@@ -6,6 +6,7 @@ final class StorefrontViewModel: ObservableObject {
     @Published var status: DailyStatus?
     @Published var location: Location?
     @Published var products: [Product] = []
+    @Published var enabledComponents: [String] = []
     @Published var isLoading = true
     @Published var errorMessage: String?
 
@@ -45,7 +46,20 @@ final class StorefrontViewModel: ObservableObject {
         async let brandingTask: Void = loadBranding()
         async let statusTask: Void = loadStatus()
         async let productsTask: Void = loadProducts()
-        _ = await (brandingTask, statusTask, productsTask)
+        async let componentsTask: Void = loadComponents()
+        _ = await (brandingTask, statusTask, productsTask, componentsTask)
+    }
+
+    private func loadComponents() async {
+        do {
+            let url = Config.apiBaseURL.appendingPathComponent("api/client/\(clientId)/components")
+            let (data, _) = try await URLSession.shared.data(from: url)
+            enabledComponents = try JSONDecoder().decode(EnabledComponentsResponse.self, from: data).enabled_components
+        } catch {
+            // Fail closed — status tracker just stays hidden.
+            enabledComponents = []
+            print("Failed to load enabled components: \(error)")
+        }
     }
 
     private func loadBranding() async {
