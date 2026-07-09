@@ -27,8 +27,9 @@ export async function GET(req: NextRequest, { params }: { params: { clientId: st
   return NextResponse.json({ branding })
 }
 
-// Visual identity fields only — custom_domain*, apple_bundle_id, android_package,
-// theme_version are owned by the custom-domain wizard / native build tooling.
+// Visual identity + review-request fields — custom_domain*, apple_bundle_id,
+// android_package, theme_version are owned by the custom-domain wizard /
+// native build tooling.
 export async function PATCH(req: NextRequest, { params }: { params: { clientId: string } }) {
   if (!(await requireAdmin())) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -42,6 +43,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { clientId: 
   const {
     primary_color, secondary_color, accent_color, font_theme,
     logo_url, app_icon_url, splash_url, app_name, tagline, hero_photo_urls,
+    google_review_url, review_request_message,
   } = body
 
   if (font_theme !== undefined && !FONT_THEMES.includes(font_theme)) {
@@ -53,6 +55,9 @@ export async function PATCH(req: NextRequest, { params }: { params: { clientId: 
   if (typeof tagline === 'string' && tagline.length > 80) {
     return NextResponse.json({ error: 'tagline must be 80 characters or fewer' }, { status: 400 })
   }
+  if (typeof review_request_message === 'string' && review_request_message.length > 300) {
+    return NextResponse.json({ error: 'review_request_message must be 300 characters or fewer' }, { status: 400 })
+  }
 
   const admin = createServiceClient()
   const { error } = await admin
@@ -60,6 +65,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { clientId: 
     .update({
       primary_color, secondary_color, accent_color, font_theme,
       logo_url, app_icon_url, splash_url, app_name, tagline, hero_photo_urls,
+      google_review_url, review_request_message,
     })
     .eq('client_id', params.clientId)
 

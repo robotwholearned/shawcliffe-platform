@@ -8,6 +8,7 @@ import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.parameter
+import io.ktor.client.request.post
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.isSuccess
 import io.ktor.serialization.kotlinx.json.json
@@ -41,5 +42,16 @@ object CustomersService {
             throw BroadcastError.Server("Couldn't load customers.")
         }
         return response.body<Response>()
+    }
+
+    suspend fun requestReview(customerId: String) {
+        val token = supabase.auth.currentAccessTokenOrNull() ?: throw BroadcastError.NotAuthenticated
+
+        val response: HttpResponse = client.post("${Config.API_BASE_URL}/api/seller/customers/$customerId/request-review") {
+            header("Authorization", "Bearer $token")
+        }
+        if (!response.status.isSuccess()) {
+            throw BroadcastError.Server("Couldn't send review request.")
+        }
     }
 }

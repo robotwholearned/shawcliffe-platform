@@ -37,4 +37,30 @@ enum CustomersService {
         }
         return try JSONDecoder().decode(Response.self, from: data)
     }
+
+    private struct ErrorBody: Decodable {
+        let error: String?
+    }
+
+    static func requestReview(customerId: String) async throws {
+        guard let token = try? await supabase.auth.session.accessToken else {
+            throw BroadcastError.notAuthenticated
+        }
+
+        var request = URLRequest(
+            url: Config.apiBaseURL.appendingPathComponent("api/seller/customers/\(customerId)/request-review")
+        )
+        request.httpMethod = "POST"
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+
+        let (data, response) = try await URLSession.shared.data(for: request)
+        guard let http = response as? HTTPURLResponse else {
+            throw BroadcastError.server("No response from server.")
+        }
+        guard (200..<300).contains(http.statusCode) else {
+            let message = (try? JSONDecoder().decode(ErrorBody.self, from: data))?.error
+                ?? "Couldn't send review request (\(http.statusCode))."
+            throw BroadcastError.server(message)
+        }
+    }
 }

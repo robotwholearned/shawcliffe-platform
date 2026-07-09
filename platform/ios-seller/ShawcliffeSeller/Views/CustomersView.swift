@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct CustomersView: View {
+    @EnvironmentObject private var auth: AuthViewModel
     @State private var customers: [Customer] = []
     @State private var total = 0
     @State private var page = 0
@@ -8,7 +9,12 @@ struct CustomersView: View {
     @State private var isLoading = false
     @State private var errorMessage: String?
     @State private var loadTask: Task<Void, Never>?
+    @State private var reviewRequestStatus: [String: ReviewRequestStatus] = [:]
     private let pageSize = 25
+
+    private enum ReviewRequestStatus {
+        case sending, sent, failed
+    }
 
     var body: some View {
         List {
@@ -25,6 +31,10 @@ struct CustomersView: View {
                     }
                     if let email = customer.email {
                         Text(email).font(.caption).foregroundStyle(.secondary)
+                    }
+                    if auth.enabledComponents.contains(ComponentKeys.reviewRequestSystem),
+                       customer.smsConsent == true || customer.emailConsent == true {
+                        reviewRequestButton(for: customer)
                     }
                 }
                 .padding(.vertical, 4)
@@ -61,6 +71,33 @@ struct CustomersView: View {
         }
     }
 
+    @ViewBuilder
+    private func reviewRequestButton(for customer: Customer) -> some View {
+        switch reviewRequestStatus[customer.id] {
+        case .sent:
+            Text("Review request sent ✓").font(.caption).foregroundStyle(.secondary)
+        case .sending:
+            Text("Sending…").font(.caption).foregroundStyle(.secondary)
+        case .failed:
+            Button("Failed — try again") { Task { await requestReview(customer) } }
+                .font(.caption)
+        case nil:
+            Button("Request Review") { Task { await requestReview(customer) } }
+                .font(.caption)
+        }
+    }
+
+    private func requestReview(_ customer: Customer) async {
+        reviewRequestStatus[customer.id] = .sending
+        do {
+            try await CustomersService.requestReview(customerId: customer.id)
+            reviewRequestStatus[customer.id] = .sent
+        } catch {
+            print("CustomersView requestReview failed: \(error)")
+            reviewRequestStatus[customer.id] = .failed
+        }
+    }
+
     // Cancels any in-flight load before starting a new one so a slow, superseded
     // request can't land after a newer one and overwrite the list with stale results.
     private func reload() {
@@ -89,4 +126,5 @@ struct CustomersView: View {
         CustomersView()
             .navigationTitle("Customers")
     }
+    .environmentObject(AuthViewModel())
 }

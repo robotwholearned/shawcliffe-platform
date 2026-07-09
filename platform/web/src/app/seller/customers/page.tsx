@@ -24,7 +24,14 @@ export default function CustomersPage() {
   const [total, setTotal] = useState(0)
   const [page, setPage] = useState(0)
   const [q, setQ] = useState('')
+  const [reviewStatus, setReviewStatus] = useState<Record<string, 'sending' | 'sent' | 'error'>>({})
   const pageSize = 25
+
+  async function requestReview(customerId: string) {
+    setReviewStatus(prev => ({ ...prev, [customerId]: 'sending' }))
+    const res = await fetch(`/api/seller/customers/${customerId}/request-review`, { method: 'POST' })
+    setReviewStatus(prev => ({ ...prev, [customerId]: res.ok ? 'sent' : 'error' }))
+  }
 
   useEffect(() => {
     if (gateLoading || !has('customer_database')) return
@@ -86,6 +93,18 @@ export default function CustomersPage() {
               {c.push_consent && <span className="px-1.5 py-0.5 bg-gray-100 rounded-full">Push</span>}
               {c.whatsapp_consent && <span className="px-1.5 py-0.5 bg-gray-100 rounded-full">WhatsApp</span>}
             </div>
+            {has('review_request_system') && (c.sms_consent || c.email_consent) && (
+              <button
+                onClick={() => requestReview(c.id)}
+                disabled={reviewStatus[c.id] === 'sending'}
+                className="mt-1 text-xs text-blue-600 hover:text-blue-700 disabled:opacity-50"
+              >
+                {reviewStatus[c.id] === 'sent' ? 'Review request sent ✓'
+                  : reviewStatus[c.id] === 'error' ? 'Failed — try again'
+                  : reviewStatus[c.id] === 'sending' ? 'Sending…'
+                  : 'Request Review'}
+              </button>
+            )}
           </div>
         ))}
       </section>

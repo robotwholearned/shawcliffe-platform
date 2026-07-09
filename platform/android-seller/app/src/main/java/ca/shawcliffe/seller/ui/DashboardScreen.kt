@@ -54,6 +54,7 @@ fun DashboardScreen(clientId: String, authViewModel: AuthViewModel) {
     val showCustomers = ComponentKeys.CUSTOMER_DATABASE in authViewModel.enabledComponents
     val showInquiries = ComponentKeys.INQUIRY_QUOTE_FORM in authViewModel.enabledComponents
     val showBookings = ComponentKeys.BOOKING_REQUEST_SYSTEM in authViewModel.enabledComponents
+    val showReviewRequest = ComponentKeys.REVIEW_REQUEST_SYSTEM in authViewModel.enabledComponents
 
     androidx.compose.runtime.LaunchedEffect(clientId) {
         viewModel.loadAll()
@@ -64,7 +65,7 @@ fun DashboardScreen(clientId: String, authViewModel: AuthViewModel) {
         add(DashboardTab("Preorders", Icons.Filled.ShoppingBag) { m -> PreordersScreen(viewModel, m) })
         add(DashboardTab("Broadcast", Icons.Filled.Campaign) { m -> BroadcastScreen(viewModel, clientId, m) })
         add(DashboardTab("Preview", Icons.Filled.Storefront) { m -> PreviewScreen(clientId, m) })
-        if (showCustomers) add(DashboardTab("Customers", Icons.Filled.People) { m -> CustomersScreen(m) })
+        if (showCustomers) add(DashboardTab("Customers", Icons.Filled.People) { m -> CustomersScreen(m, showReviewRequest) })
         if (showInquiries) add(DashboardTab("Inquiries", Icons.Filled.QuestionAnswer) { m -> InquiriesScreen(m) })
         if (showBookings) add(DashboardTab("Bookings", Icons.Filled.CalendarMonth) { m -> BookingsScreen(m) })
     }

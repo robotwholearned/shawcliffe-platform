@@ -19,23 +19,30 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import ca.shawcliffe.seller.Customer
 import ca.shawcliffe.seller.CustomersService
+import kotlinx.coroutines.launch
+
+private enum class ReviewRequestStatus { SENDING, SENT, FAILED }
 
 @Composable
-fun CustomersScreen(modifier: Modifier = Modifier) {
+fun CustomersScreen(modifier: Modifier = Modifier, showReviewRequest: Boolean = false) {
     var query by remember { mutableStateOf("") }
     var page by remember { mutableIntStateOf(0) }
     var customers by remember { mutableStateOf<List<Customer>?>(null) }
     var total by remember { mutableIntStateOf(0) }
     var isLoading by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
+    val reviewRequestStatus = remember { mutableStateMapOf<String, ReviewRequestStatus>() }
+    val scope = rememberCoroutineScope()
     val pageSize = 25
 
     LaunchedEffect(query, page) {
@@ -71,7 +78,22 @@ fun CustomersScreen(modifier: Modifier = Modifier) {
                     item { Text("No customers found.", color = MaterialTheme.colorScheme.onSurfaceVariant) }
                 }
                 items(customers ?: emptyList(), key = { it.id }) { customer ->
-                    CustomerRow(customer)
+                    CustomerRow(
+                        customer = customer,
+                        showReviewRequest = showReviewRequest,
+                        reviewStatus = reviewRequestStatus[customer.id],
+                        onRequestReview = {
+                            reviewRequestStatus[customer.id] = ReviewRequestStatus.SENDING
+                            scope.launch {
+                                try {
+                                    CustomersService.requestReview(customer.id)
+                                    reviewRequestStatus[customer.id] = ReviewRequestStatus.SENT
+                                } catch (e: Exception) {
+                                    reviewRequestStatus[customer.id] = ReviewRequestStatus.FAILED
+                                }
+                            }
+                        },
+                    )
                     HorizontalDivider()
                 }
             }
@@ -100,12 +122,25 @@ fun CustomersScreen(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun CustomerRow(customer: Customer) {
+private fun CustomerRow(
+    customer: Customer,
+    showReviewRequest: Boolean,
+    reviewStatus: ReviewRequestStatus?,
+    onRequestReview: () -> Unit,
+) {
     Column(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
         Text(customer.name, style = MaterialTheme.typography.titleSmall)
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             customer.phone?.let { Text(it, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant) }
             customer.email?.let { Text(it, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant) }
+        }
+        if (showReviewRequest && (customer.smsConsent || customer.emailConsent)) {
+            when (reviewStatus) {
+                ReviewRequestStatus.SENT -> Text("Review request sent ✓", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                ReviewRequestStatus.SENDING -> Text("Sending…", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                ReviewRequestStatus.FAILED -> TextButton(onClick = onRequestReview) { Text("Failed — try again", style = MaterialTheme.typography.labelSmall) }
+                null -> TextButton(onClick = onRequestReview) { Text("Request Review", style = MaterialTheme.typography.labelSmall) }
+            }
         }
     }
 }

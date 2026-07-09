@@ -41,6 +41,8 @@ export default function BrandingForm({ clientId, branding }: Props) {
   const [appIconUrl, setAppIconUrl] = useState(branding?.app_icon_url ?? '')
   const [splashUrl, setSplashUrl] = useState(branding?.splash_url ?? '')
   const [heroPhotoUrls, setHeroPhotoUrls] = useState<string[]>(branding?.hero_photo_urls ?? [])
+  const [googleReviewUrl, setGoogleReviewUrl] = useState(branding?.google_review_url ?? '')
+  const [reviewRequestMessage, setReviewRequestMessage] = useState(branding?.review_request_message ?? '')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -79,6 +81,7 @@ export default function BrandingForm({ clientId, branding }: Props) {
     if (accentColor && !HEX_RE.test(accentColor)) return setError('Accent color must be a hex value like #2563eb')
     if (appName.length > 30) return setError('App name must be 30 characters or fewer')
     if (tagline.length > 80) return setError('Tagline must be 80 characters or fewer')
+    if (reviewRequestMessage.length > 300) return setError('Review request message must be 300 characters or fewer')
 
     setBusy(true)
     setError(null)
@@ -96,6 +99,8 @@ export default function BrandingForm({ clientId, branding }: Props) {
         app_icon_url: appIconUrl || null,
         splash_url: splashUrl || null,
         hero_photo_urls: heroPhotoUrls,
+        google_review_url: googleReviewUrl || null,
+        review_request_message: reviewRequestMessage || null,
       }),
     })
     const data = await res.json().catch(() => ({}))
@@ -170,6 +175,28 @@ export default function BrandingForm({ clientId, branding }: Props) {
           ))}
         </div>
         <input type="file" accept="image/*" onChange={handleHeroUpload} className="text-sm" />
+      </div>
+
+      <div>
+        <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Google Review Link</label>
+        <input
+          value={googleReviewUrl}
+          placeholder="https://g.page/r/.../review"
+          onChange={e => setGoogleReviewUrl(e.target.value)}
+          className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
+
+      <div>
+        <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Review Request Message</label>
+        <textarea
+          value={reviewRequestMessage}
+          maxLength={300}
+          rows={2}
+          placeholder="Thanks for stopping by! We'd really appreciate a quick review."
+          onChange={e => setReviewRequestMessage(e.target.value)}
+          className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
       </div>
 
       <button

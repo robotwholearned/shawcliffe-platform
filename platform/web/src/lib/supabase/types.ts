@@ -58,6 +58,8 @@ export interface ClientBranding {
   apple_bundle_id: string | null
   android_package: string | null
   theme_version: number
+  google_review_url: string | null
+  review_request_message: string | null
 }
 
 export interface Location {
