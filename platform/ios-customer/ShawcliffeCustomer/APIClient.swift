@@ -38,6 +38,38 @@ enum APIClient {
 
         return try JSONDecoder().decode(Response.self, from: data)
     }
+
+    static func uploadPhoto(path: String, clientId: String, fileData: Data, mimeType: String) async throws -> String {
+        let boundary = UUID().uuidString
+        var request = URLRequest(url: Config.apiBaseURL.appendingPathComponent(path))
+        request.httpMethod = "POST"
+        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+
+        var body = Data()
+        body.append("--\(boundary)\r\n".data(using: .utf8)!)
+        body.append("Content-Disposition: form-data; name=\"client_id\"\r\n\r\n".data(using: .utf8)!)
+        body.append("\(clientId)\r\n".data(using: .utf8)!)
+        body.append("--\(boundary)\r\n".data(using: .utf8)!)
+        body.append("Content-Disposition: form-data; name=\"file\"; filename=\"photo.jpg\"\r\n".data(using: .utf8)!)
+        body.append("Content-Type: \(mimeType)\r\n\r\n".data(using: .utf8)!)
+        body.append(fileData)
+        body.append("\r\n--\(boundary)--\r\n".data(using: .utf8)!)
+        request.httpBody = body
+
+        let (data, response) = try await URLSession.shared.data(for: request)
+        guard let http = response as? HTTPURLResponse else {
+            throw APIError.server("No response from server.")
+        }
+        guard (200..<300).contains(http.statusCode) else {
+            let body = try? JSONDecoder().decode(APIErrorBody.self, from: data)
+            throw APIError.server(body?.error ?? "Photo upload failed. Please try again.")
+        }
+        return try JSONDecoder().decode(PhotoUploadResponse.self, from: data).url
+    }
+}
+
+struct PhotoUploadResponse: Decodable {
+    let url: String
 }
 
 struct SignupResponse: Decodable {

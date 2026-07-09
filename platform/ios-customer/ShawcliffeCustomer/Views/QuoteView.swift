@@ -1,4 +1,6 @@
 import SwiftUI
+import PhotosUI
+import UIKit
 
 private enum Urgency: String, CaseIterable, Identifiable {
     case asap, thisWeek = "this_week", thisMonth = "this_month", flexible
@@ -19,6 +21,14 @@ private enum PreferredContact: String, CaseIterable, Identifiable {
     var label: String { rawValue.capitalized }
 }
 
+private struct QuotePhoto: Identifiable {
+    let id = UUID()
+    var thumbnail: Image?
+    var url: String?
+    var uploading = true
+    var error: String?
+}
+
 struct QuoteView: View {
     let businessName: String
 
@@ -32,6 +42,8 @@ struct QuoteView: View {
     @State private var preferredContact: PreferredContact = .phone
     @State private var smsConsent = false
     @State private var emailConsent = false
+    @State private var photoSelections: [PhotosPickerItem] = []
+    @State private var photos: [QuotePhoto] = []
     @State private var submitting = false
     @State private var done = false
     @State private var error: String?
@@ -77,6 +89,24 @@ struct QuoteView: View {
                     }
                 }
                 .pickerStyle(.segmented)
+
+                PhotosPicker(selection: $photoSelections, maxSelectionCount: 5, matching: .images) {
+                    Text("Add Photos (\(photos.count)/5)")
+                }
+                .disabled(photos.count >= 5)
+                .onChange(of: photoSelections) { newSelections in
+                    Task { await addPhotos(newSelections) }
+                }
+
+                if !photos.isEmpty {
+                    ScrollView(.horizontal) {
+                        HStack(spacing: 8) {
+                            ForEach(photos) { photo in
+                                photoThumbnail(photo)
+                            }
+                        }
+                    }
+                }
             }
 
             Section("How should we reach you?") {
@@ -121,6 +151,88 @@ struct QuoteView: View {
         }
     }
 
+    @ViewBuilder
+    private func photoThumbnail(_ photo: QuotePhoto) -> some View {
+        ZStack(alignment: .topTrailing) {
+            Group {
+                if let thumbnail = photo.thumbnail {
+                    thumbnail.resizable().scaledToFill()
+                } else {
+                    Rectangle().fill(.gray.opacity(0.2))
+                }
+            }
+            .frame(width: 60, height: 60)
+            .clipped()
+            .cornerRadius(6)
+
+            if photo.uploading {
+                ProgressView()
+                    .frame(width: 60, height: 60)
+                    .background(.black.opacity(0.2))
+                    .cornerRadius(6)
+            }
+
+            Button {
+                photos.removeAll { $0.id == photo.id }
+            } label: {
+                Image(systemName: "xmark.circle.fill")
+                    .foregroundStyle(.white, .black.opacity(0.6))
+            }
+            .offset(x: 6, y: -6)
+        }
+        .overlay(alignment: .bottom) {
+            if photo.error != nil {
+                Image(systemName: "exclamationmark.triangle.fill")
+                    .foregroundStyle(.red)
+                    .font(.caption2)
+                    .padding(2)
+                    .background(.white, in: Circle())
+                    .offset(y: 6)
+            }
+        }
+    }
+
+    private func addPhotos(_ items: [PhotosPickerItem]) async {
+        for item in items {
+            let newPhoto = QuotePhoto()
+            let photoId = newPhoto.id
+            photos.append(newPhoto)
+
+            // Re-resolve by id (not a captured index) after each await — the
+            // user can remove an earlier photo mid-loop via its × button,
+            // which would shift array positions out from under a stale index.
+            guard let data = try? await item.loadTransferable(type: Data.self) else {
+                if let i = photos.firstIndex(where: { $0.id == photoId }) {
+                    photos[i].uploading = false
+                    photos[i].error = "Couldn't load photo."
+                }
+                continue
+            }
+            if let uiImage = UIImage(data: data), let i = photos.firstIndex(where: { $0.id == photoId }) {
+                photos[i].thumbnail = Image(uiImage: uiImage)
+            }
+
+            do {
+                let url = try await APIClient.uploadPhoto(
+                    path: "api/inquiry/photos",
+                    clientId: Config.clientId,
+                    fileData: data,
+                    mimeType: item.supportedContentTypes.first?.preferredMIMEType ?? "image/jpeg"
+                )
+                if let i = photos.firstIndex(where: { $0.id == photoId }) {
+                    photos[i].url = url
+                    photos[i].uploading = false
+                }
+            } catch {
+                if let i = photos.firstIndex(where: { $0.id == photoId }) {
+                    photos[i].uploading = false
+                    photos[i].error = error.localizedDescription
+                }
+            }
+        }
+        photoSelections = []
+    }
+
     private func submit() async {
         error = nil
         guard !phone.isEmpty || !email.isEmpty else {
@@ -148,7 +260,8 @@ struct QuoteView: View {
                     job_location: jobLocation.isEmpty ? nil : jobLocation,
                     urgency: urgency.rawValue,
                     description: description.isEmpty ? nil : description,
-                    preferred_contact_method: preferredContact.rawValue
+                    preferred_contact_method: preferredContact.rawValue,
+                    photo_urls: photos.compactMap(\.url)
                 ),
                 as: InquiryResponse.self
             )

@@ -1,28 +1,44 @@
 package ca.shawcliffe.tomsproduce.ui
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import ca.shawcliffe.tomsproduce.APIClient
@@ -30,10 +46,20 @@ import ca.shawcliffe.tomsproduce.Config
 import ca.shawcliffe.tomsproduce.InquiryRequest
 import ca.shawcliffe.tomsproduce.InquiryResponse
 import ca.shawcliffe.tomsproduce.Phone
+import coil.compose.AsyncImage
 import kotlinx.coroutines.launch
 
 private val URGENCY_OPTIONS = listOf("asap" to "ASAP", "this_week" to "This week", "this_month" to "This month", "flexible" to "Flexible")
 private val CONTACT_OPTIONS = listOf("phone" to "Phone", "email" to "Email", "sms" to "Text")
+private const val MAX_PHOTOS = 5
+
+private data class PhotoUpload(
+    val id: Long,
+    val uri: Uri,
+    val url: String? = null,
+    val uploading: Boolean = true,
+    val error: String? = null,
+)
 
 @Composable
 fun QuoteScreen(onDone: () -> Unit, businessName: String = "Tom's Produce") {
@@ -51,6 +77,30 @@ fun QuoteScreen(onDone: () -> Unit, businessName: String = "Tom's Produce") {
     var done by remember { mutableStateOf(false) }
     var error by remember { mutableStateOf<String?>(null) }
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
+    val photos = remember { mutableStateListOf<PhotoUpload>() }
+
+    val photoPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickMultipleVisualMedia(maxItems = MAX_PHOTOS),
+    ) { uris ->
+        uris.take(MAX_PHOTOS - photos.size).forEach { uri ->
+            val entry = PhotoUpload(id = System.nanoTime(), uri = uri)
+            photos.add(entry)
+            scope.launch {
+                try {
+                    val bytes = context.contentResolver.openInputStream(uri)?.use { it.readBytes() }
+                        ?: throw IllegalStateException("Could not read photo")
+                    val contentType = context.contentResolver.getType(uri) ?: "image/jpeg"
+                    val url = APIClient.uploadPhoto(Config.CLIENT_ID, bytes, "photo_${entry.id}.jpg", contentType)
+                    val i = photos.indexOfFirst { it.id == entry.id }
+                    if (i >= 0) photos[i] = photos[i].copy(url = url, uploading = false)
+                } catch (e: Exception) {
+                    val i = photos.indexOfFirst { it.id == entry.id }
+                    if (i >= 0) photos[i] = photos[i].copy(uploading = false, error = e.message ?: "Upload failed")
+                }
+            }
+        }
+    }
 
     if (done) {
         ConfirmationScreen(
@@ -128,6 +178,39 @@ fun QuoteScreen(onDone: () -> Unit, businessName: String = "Tom's Produce") {
             Text("Yes, send me email updates")
         }
 
+        Text("Photos (optional)", style = MaterialTheme.typography.titleSmall)
+        Button(
+            onClick = { photoPickerLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)) },
+            enabled = photos.size < MAX_PHOTOS,
+        ) { Text("Add Photos (${photos.size}/$MAX_PHOTOS)") }
+
+        if (photos.isNotEmpty()) {
+            Row(
+                modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                photos.forEach { photo ->
+                    Box(modifier = Modifier.size(72.dp)) {
+                        AsyncImage(
+                            model = photo.uri,
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.size(72.dp).clip(RoundedCornerShape(8.dp)),
+                        )
+                        if (photo.uploading) {
+                            CircularProgressIndicator(modifier = Modifier.size(24.dp).align(Alignment.Center))
+                        }
+                        IconButton(onClick = { photos.remove(photo) }, modifier = Modifier.align(Alignment.TopEnd).size(24.dp)) {
+                            Icon(Icons.Filled.Close, contentDescription = "Remove photo")
+                        }
+                    }
+                }
+            }
+            photos.mapNotNull { it.error }.forEach {
+                Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
+            }
+        }
+
         error?.let { Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall) }
 
         Button(
@@ -158,6 +241,7 @@ fun QuoteScreen(onDone: () -> Unit, businessName: String = "Tom's Produce") {
                                 urgency = urgency,
                                 description = description.ifEmpty { null },
                                 preferred_contact_method = preferredContact,
+                                photo_urls = photos.mapNotNull { it.url },
                             ),
                         )
                         done = true

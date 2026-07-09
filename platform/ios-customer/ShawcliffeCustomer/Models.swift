@@ -162,6 +162,7 @@ struct InquiryRequest: Encodable {
     let urgency: String?
     let description: String?
     let preferred_contact_method: String?
+    let photo_urls: [String]
 }
 
 struct APIErrorBody: Decodable {

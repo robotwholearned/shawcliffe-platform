@@ -130,7 +130,11 @@ data class InquiryRequest(
     val urgency: String?,
     val description: String?,
     val preferred_contact_method: String?,
+    val photo_urls: List<String> = emptyList(),
 )
 
 @Serializable
 data class InquiryResponse(val inquiry_id: String)
+
+@Serializable
+data class PhotoUploadResponse(val url: String)

@@ -4,10 +4,14 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.request.forms.formData
+import io.ktor.client.request.forms.submitFormWithBinaryData
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.ContentType
+import io.ktor.http.Headers
+import io.ktor.http.HttpHeaders
 import io.ktor.http.contentType
 import io.ktor.http.isSuccess
 import io.ktor.serialization.kotlinx.json.json
@@ -38,5 +42,24 @@ object APIClient {
             throw ApiException.Server(errorBody?.error ?: "Something went wrong. Please try again.")
         }
         return response.body()
+    }
+
+    suspend fun uploadPhoto(clientId: String, bytes: ByteArray, filename: String, contentType: String): String {
+        val response: HttpResponse = client.submitFormWithBinaryData(
+            url = "${Config.API_BASE_URL}/api/inquiry/photos",
+            formData = formData {
+                append("client_id", clientId)
+                append("file", bytes, Headers.build {
+                    append(HttpHeaders.ContentType, contentType)
+                    append(HttpHeaders.ContentDisposition, "filename=\"$filename\"")
+                })
+            },
+        )
+
+        if (!response.status.isSuccess()) {
+            val errorBody = runCatching { response.body<ApiErrorBody>() }.getOrNull()
+            throw ApiException.Server(errorBody?.error ?: "Photo upload failed. Please try again.")
+        }
+        return response.body<PhotoUploadResponse>().url
     }
 }
