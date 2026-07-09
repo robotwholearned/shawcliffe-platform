@@ -21,13 +21,13 @@ enum DailyStatusValue: String, Codable, CaseIterable, Identifiable {
         }
     }
 
-    var emoji: String {
+    var systemImage: String {
         switch self {
-        case .open: return "✓"
-        case .closed, .soldOut: return "✕"
-        case .backTomorrow: return "↺"
-        case .weatherDelay: return "⛈"
-        case .openingSoon: return "⏱"
+        case .open: return "checkmark.circle.fill"
+        case .closed, .soldOut: return "xmark.circle.fill"
+        case .backTomorrow: return "arrow.counterclockwise"
+        case .weatherDelay: return "cloud.rain.fill"
+        case .openingSoon: return "clock.fill"
         }
     }
 
@@ -50,9 +50,17 @@ enum ProductStatus: String, Codable, CaseIterable {
 
     var label: String {
         switch self {
-        case .available: return "✓"
+        case .available: return "Available"
         case .low: return "Low"
         case .soldOut: return "Out"
+        }
+    }
+
+    var systemImage: String {
+        switch self {
+        case .available: return "checkmark"
+        case .low: return "exclamationmark.triangle"
+        case .soldOut: return "xmark.circle"
         }
     }
 

@@ -14,7 +14,7 @@ struct StatusAndProductsView: View {
                         Button {
                             Task { await viewModel.setStatus(option) }
                         } label: {
-                            Text("\(option.emoji) \(option.label)")
+                            Label(option.label, systemImage: option.systemImage)
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 10)
                         }
@@ -108,8 +108,10 @@ private struct ProductRow: View {
             }
             Spacer()
             ForEach(ProductStatus.allCases, id: \.self) { status in
-                Button(status.label) {
+                Button {
                     Task { await viewModel.setProductStatus(product, status: status) }
+                } label: {
+                    Image(systemName: status.systemImage)
                 }
                 .buttonStyle(.bordered)
                 .tint(product.status == status ? color(for: status) : Color(.systemGray5))

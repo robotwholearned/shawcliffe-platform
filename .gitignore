@@ -3,3 +3,4 @@
 .DS_Store
 website/.env
 website/node_modules
+platform/android-customer/.kotlin
