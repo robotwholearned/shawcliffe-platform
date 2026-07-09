@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import { createServiceClient } from '@/lib/supabase/server'
 import { clientStatusLabel, clientStatusClass } from '@/lib/client-status'
 import ClientActions from './ClientActions'
+import ComponentToggles from './ComponentToggles'
 import type { Client } from '@/lib/supabase/types'
 
 interface Props {
@@ -71,6 +72,8 @@ export default async function ClientDetailPage({ params }: Props) {
           Custom Domain
         </Link>
       </div>
+
+      <ComponentToggles clientId={c.id} initial={c.enabled_components ?? []} />
 
       <ClientActions clientId={c.id} businessName={c.business_name} isActive={c.active} isPaused={c.paused} />
     </div>

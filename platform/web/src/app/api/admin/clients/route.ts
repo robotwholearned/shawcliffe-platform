@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { RESERVED_SLUGS } from '@/lib/reserved-slugs'
+import { DEFAULT_COMPONENTS } from '@/lib/components'
+import type { Vertical } from '@/lib/supabase/types'
 
 export async function POST(req: NextRequest) {
   // Verify caller is a Shawcliffe admin
@@ -25,7 +27,10 @@ export async function POST(req: NextRequest) {
 
   const { data: client, error: clientError } = await admin
     .from('clients')
-    .insert({ slug, business_name, vertical, tier, operator_email, operator_phone })
+    .insert({
+      slug, business_name, vertical, tier, operator_email, operator_phone,
+      enabled_components: DEFAULT_COMPONENTS[vertical as Vertical] ?? [],
+    })
     .select()
     .single()
 
