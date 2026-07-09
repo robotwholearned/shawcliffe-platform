@@ -93,6 +93,9 @@ export default async function AdminDashboard() {
                       <Link href={`/admin/clients/${c.id}/custom-domain`} className="text-xs text-blue-600 hover:underline">
                         Domain
                       </Link>
+                      <Link href={`/admin/clients/${c.id}#components`} className="text-xs text-blue-600 hover:underline">
+                        Components
+                      </Link>
                     </div>
                   </td>
                 </tr>

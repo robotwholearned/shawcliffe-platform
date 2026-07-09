@@ -73,7 +73,9 @@ export default async function ClientDetailPage({ params }: Props) {
         </Link>
       </div>
 
-      <ComponentToggles clientId={c.id} initial={c.enabled_components ?? []} />
+      <div id="components">
+        <ComponentToggles clientId={c.id} initial={c.enabled_components ?? []} />
+      </div>
 
       <ClientActions clientId={c.id} businessName={c.business_name} isActive={c.active} isPaused={c.paused} />
     </div>

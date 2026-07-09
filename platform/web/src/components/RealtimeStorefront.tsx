@@ -9,11 +9,12 @@ import type { DailyStatusValue, Product } from '@/lib/supabase/types'
 interface Props {
   clientId: string
   slug: string
+  showStatus: boolean
   initialStatus: { status: DailyStatusValue; custom_message: string | null } | null
   initialProducts: Product[]
 }
 
-export default function RealtimeStorefront({ clientId, slug, initialStatus, initialProducts }: Props) {
+export default function RealtimeStorefront({ clientId, slug, showStatus, initialStatus, initialProducts }: Props) {
   const [status, setStatus] = useState(initialStatus)
   const [products, setProducts] = useState(initialProducts)
   const [connected, setConnected] = useState(true)
@@ -99,7 +100,9 @@ export default function RealtimeStorefront({ clientId, slug, initialStatus, init
         <p className="text-xs text-center text-gray-400">Live updates paused — checking every 5 seconds</p>
       )}
 
-      <StatusBadge status={status?.status ?? null} customMessage={status?.custom_message} />
+      {showStatus && (
+        <StatusBadge status={status?.status ?? null} customMessage={status?.custom_message} />
+      )}
 
       {products.length > 0 && (
         <section className="space-y-2">

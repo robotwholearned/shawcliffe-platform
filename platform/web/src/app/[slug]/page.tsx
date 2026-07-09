@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation'
 import { createServiceClient } from '@/lib/supabase/server'
 import RealtimeStorefront from '@/components/RealtimeStorefront'
+import { hasComponent } from '@/lib/components'
 import type { DailyStatusWithLocation, DailyStatusValue, Product, ClientBranding } from '@/lib/supabase/types'
 
 interface Props {
@@ -16,7 +17,7 @@ export default async function ClientPage({ params }: Props) {
 
   const { data: client } = await supabase
     .from('clients')
-    .select('id, business_name, active, client_branding(logo_url, tagline, hero_photo_urls)')
+    .select('id, business_name, active, enabled_components, client_branding(logo_url, tagline, hero_photo_urls)')
     .eq('slug', params.slug)
     .eq('active', true)
     .single()
@@ -91,6 +92,7 @@ export default async function ClientPage({ params }: Props) {
       <RealtimeStorefront
         clientId={client.id}
         slug={params.slug}
+        showStatus={hasComponent(client.enabled_components, 'status_tracker')}
         initialStatus={status ? { status: status.status as DailyStatusValue, custom_message: status.custom_message } : null}
         initialProducts={products}
       />
