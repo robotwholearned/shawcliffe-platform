@@ -8,6 +8,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Campaign
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.People
+import androidx.compose.material.icons.filled.QuestionAnswer
 import androidx.compose.material.icons.filled.ShoppingBag
 import androidx.compose.material.icons.filled.Storefront
 import androidx.compose.material3.AlertDialog
@@ -39,14 +40,30 @@ private class DashboardViewModelFactory(private val clientId: String) :
         DashboardViewModel(clientId) as T
 }
 
+private data class DashboardTab(
+    val title: String,
+    val icon: androidx.compose.ui.graphics.vector.ImageVector,
+    val content: @Composable (Modifier) -> Unit,
+)
+
 @Composable
 fun DashboardScreen(clientId: String, authViewModel: AuthViewModel) {
     val viewModel: DashboardViewModel = viewModel(factory = DashboardViewModelFactory(clientId))
     var tab by remember { mutableIntStateOf(0) }
     val showCustomers = ComponentKeys.CUSTOMER_DATABASE in authViewModel.enabledComponents
+    val showInquiries = ComponentKeys.INQUIRY_QUOTE_FORM in authViewModel.enabledComponents
 
     androidx.compose.runtime.LaunchedEffect(clientId) {
         viewModel.loadAll()
+    }
+
+    val tabs = buildList {
+        add(DashboardTab("Dashboard", Icons.Filled.Home) { m -> StatusAndProductsScreen(viewModel, m) })
+        add(DashboardTab("Preorders", Icons.Filled.ShoppingBag) { m -> PreordersScreen(viewModel, m) })
+        add(DashboardTab("Broadcast", Icons.Filled.Campaign) { m -> BroadcastScreen(viewModel, clientId, m) })
+        add(DashboardTab("Preview", Icons.Filled.Storefront) { m -> PreviewScreen(clientId, m) })
+        if (showCustomers) add(DashboardTab("Customers", Icons.Filled.People) { m -> CustomersScreen(m) })
+        if (showInquiries) add(DashboardTab("Inquiries", Icons.Filled.QuestionAnswer) { m -> InquiriesScreen(m) })
     }
 
     Scaffold(
@@ -59,8 +76,7 @@ fun DashboardScreen(clientId: String, authViewModel: AuthViewModel) {
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    val titles = listOf("Dashboard", "Preorders", "Broadcast", "Preview") + if (showCustomers) listOf("Customers") else emptyList()
-                    Text(titles[tab], style = MaterialTheme.typography.titleLarge)
+                    Text(tabs[tab].title, style = MaterialTheme.typography.titleLarge)
                     if (tab == 0) {
                         TextButton(onClick = { authViewModel.signOut() }) { Text("Sign Out") }
                     }
@@ -69,48 +85,18 @@ fun DashboardScreen(clientId: String, authViewModel: AuthViewModel) {
         },
         bottomBar = {
             NavigationBar {
-                NavigationBarItem(
-                    selected = tab == 0,
-                    onClick = { tab = 0 },
-                    icon = { Icon(Icons.Filled.Home, contentDescription = null) },
-                    label = { Text("Dashboard") },
-                )
-                NavigationBarItem(
-                    selected = tab == 1,
-                    onClick = { tab = 1 },
-                    icon = { Icon(Icons.Filled.ShoppingBag, contentDescription = null) },
-                    label = { Text("Preorders") },
-                )
-                NavigationBarItem(
-                    selected = tab == 2,
-                    onClick = { tab = 2 },
-                    icon = { Icon(Icons.Filled.Campaign, contentDescription = null) },
-                    label = { Text("Broadcast") },
-                )
-                NavigationBarItem(
-                    selected = tab == 3,
-                    onClick = { tab = 3 },
-                    icon = { Icon(Icons.Filled.Storefront, contentDescription = null) },
-                    label = { Text("Preview") },
-                )
-                if (showCustomers) {
+                tabs.forEachIndexed { index, dashboardTab ->
                     NavigationBarItem(
-                        selected = tab == 4,
-                        onClick = { tab = 4 },
-                        icon = { Icon(Icons.Filled.People, contentDescription = null) },
-                        label = { Text("Customers") },
+                        selected = tab == index,
+                        onClick = { tab = index },
+                        icon = { Icon(dashboardTab.icon, contentDescription = null) },
+                        label = { Text(dashboardTab.title) },
                     )
                 }
             }
         },
     ) { padding ->
-        when (tab) {
-            0 -> StatusAndProductsScreen(viewModel, Modifier.padding(padding))
-            1 -> PreordersScreen(viewModel, Modifier.padding(padding))
-            2 -> BroadcastScreen(viewModel, clientId, Modifier.padding(padding))
-            3 -> PreviewScreen(clientId, Modifier.padding(padding))
-            else -> CustomersScreen(Modifier.padding(padding))
-        }
+        tabs[tab].content(Modifier.padding(padding))
     }
 
     viewModel.errorMessage?.let { error ->

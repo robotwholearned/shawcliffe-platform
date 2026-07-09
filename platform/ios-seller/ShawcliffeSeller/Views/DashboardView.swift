@@ -48,6 +48,14 @@ struct DashboardView: View {
                 }
                 .tabItem { Label("Customers", systemImage: "person.2") }
             }
+
+            if auth.enabledComponents.contains(ComponentKeys.inquiryQuoteForm) {
+                NavigationStack {
+                    InquiriesView()
+                        .navigationTitle("Inquiries")
+                }
+                .tabItem { Label("Inquiries", systemImage: "envelope") }
+            }
         }
         .task {
             await viewModel.loadAll()

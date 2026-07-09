@@ -43,6 +43,7 @@ import ca.shawcliffe.tomsproduce.colorFromHex
 fun StorefrontScreen(
     onGetUpdates: () -> Unit,
     onReserve: () -> Unit,
+    onGetQuote: () -> Unit,
     viewModel: StorefrontViewModel = activityScopedViewModel(),
 ) {
     LaunchedEffect(Unit) { viewModel.start() }
@@ -70,6 +71,11 @@ fun StorefrontScreen(
                 }
                 OutlinedButton(onClick = onReserve, modifier = Modifier.weight(1f)) {
                     Text("Reserve an Order")
+                }
+            }
+            if (ComponentKeys.INQUIRY_QUOTE_FORM in viewModel.enabledComponents) {
+                OutlinedButton(onClick = onGetQuote, modifier = Modifier.fillMaxWidth()) {
+                    Text("Get a Quote")
                 }
             }
         }

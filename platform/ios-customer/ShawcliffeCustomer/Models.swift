@@ -149,6 +149,21 @@ struct PreorderRequest: Encodable {
     let notes: String?
 }
 
+struct InquiryRequest: Encodable {
+    let client_id: String
+    let name: String
+    let phone: String?
+    let email: String?
+    let sms_consent: Bool
+    let email_consent: Bool
+    let signup_source: String
+    let service_category: String?
+    let job_location: String?
+    let urgency: String?
+    let description: String?
+    let preferred_contact_method: String?
+}
+
 struct APIErrorBody: Decodable {
     let error: String?
     let product: String?

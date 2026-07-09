@@ -47,3 +47,7 @@ struct SignupResponse: Decodable {
 struct PreorderResponse: Decodable {
     let preorder_id: String
 }
+
+struct InquiryResponse: Decodable {
+    let inquiry_id: String
+}

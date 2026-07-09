@@ -115,3 +115,22 @@ data class SignupResponse(val id: String)
 
 @Serializable
 data class PreorderResponse(val preorder_id: String)
+
+@Serializable
+data class InquiryRequest(
+    val client_id: String,
+    val name: String,
+    val phone: String?,
+    val email: String?,
+    val sms_consent: Boolean,
+    val email_consent: Boolean,
+    val signup_source: String = "app",
+    val service_category: String?,
+    val job_location: String?,
+    val urgency: String?,
+    val description: String?,
+    val preferred_contact_method: String?,
+)
+
+@Serializable
+data class InquiryResponse(val inquiry_id: String)

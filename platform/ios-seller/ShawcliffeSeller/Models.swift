@@ -251,3 +251,35 @@ struct Customer: Codable, Identifiable {
         case consentTimestamp = "consent_timestamp"
     }
 }
+
+struct InquiryCustomer: Codable {
+    let name: String
+    let phone: String?
+    let email: String?
+}
+
+struct Inquiry: Codable, Identifiable {
+    let id: String
+    let serviceCategory: String?
+    let jobLocation: String?
+    let urgency: String?
+    let description: String?
+    let photoUrls: [String]
+    let preferredContactMethod: String?
+    let status: String
+    let createdAt: String
+    let customer: InquiryCustomer?
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case serviceCategory = "service_category"
+        case jobLocation = "job_location"
+        case urgency
+        case description
+        case photoUrls = "photo_urls"
+        case preferredContactMethod = "preferred_contact_method"
+        case status
+        case createdAt = "created_at"
+        case customer
+    }
+}

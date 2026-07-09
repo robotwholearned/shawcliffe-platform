@@ -153,6 +153,15 @@ struct StorefrontView: View {
                 Text("Reserve an Order").bold().frame(maxWidth: .infinity)
             }
             .buttonStyle(.bordered)
+
+            if viewModel.enabledComponents.contains(ComponentKeys.inquiryQuoteForm) {
+                NavigationLink {
+                    QuoteView(businessName: viewModel.branding?.appName ?? "Tom's Produce")
+                } label: {
+                    Text("Get a Quote").bold().frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.bordered)
+            }
         }
         .padding(.top, 8)
     }

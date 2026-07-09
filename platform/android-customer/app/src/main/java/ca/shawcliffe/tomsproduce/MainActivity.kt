@@ -10,6 +10,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import ca.shawcliffe.tomsproduce.ui.PreorderScreen
+import ca.shawcliffe.tomsproduce.ui.QuoteScreen
 import ca.shawcliffe.tomsproduce.ui.SignupScreen
 import ca.shawcliffe.tomsproduce.ui.StorefrontScreen
 import ca.shawcliffe.tomsproduce.ui.theme.ShawcliffeCustomerTheme
@@ -35,10 +36,12 @@ class MainActivity : ComponentActivity() {
                             StorefrontScreen(
                                 onGetUpdates = { navController.navigate("signup") },
                                 onReserve = { navController.navigate("preorder") },
+                                onGetQuote = { navController.navigate("quote") },
                             )
                         }
                         composable("signup") { SignupScreen(onDone = { navController.popBackStack() }) }
                         composable("preorder") { PreorderScreen(onDone = { navController.popBackStack() }) }
+                        composable("quote") { QuoteScreen(onDone = { navController.popBackStack() }) }
                     }
                 }
             }
