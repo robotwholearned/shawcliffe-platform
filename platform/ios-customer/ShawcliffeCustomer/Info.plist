@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>${CLIENT_APP_NAME}</string>
+	<string>Tom's Produce</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -21,9 +21,9 @@
 	<key>CFBundleVersion</key>
 	<string>1</string>
 	<key>CLIENT_ID</key>
-	<string>${CLIENT_ID}</string>
+	<string>c40569c6-1324-47a9-979f-6d076c4b67fc</string>
 	<key>CLIENT_SLUG</key>
-	<string>${CLIENT_SLUG}</string>
+	<string>toms-produce</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

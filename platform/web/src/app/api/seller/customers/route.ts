@@ -44,7 +44,10 @@ export async function GET(req: NextRequest) {
     .range(from, to)
 
   if (q) {
-    query = query.or(`name.ilike.%${q}%,phone.ilike.%${q}%,email.ilike.%${q}%`)
+    // Strip PostgREST filter-syntax metacharacters so a search term can't break
+    // out of this .or() clause into an injected condition.
+    const safeQ = q.replace(/[,()]/g, '')
+    query = query.or(`name.ilike.%${safeQ}%,phone.ilike.%${safeQ}%,email.ilike.%${safeQ}%`)
   }
 
   const { data, error, count } = await query
