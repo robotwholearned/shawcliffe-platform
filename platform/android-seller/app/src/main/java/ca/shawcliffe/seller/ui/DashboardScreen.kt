@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Campaign
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.People
 import androidx.compose.material.icons.filled.ShoppingBag
 import androidx.compose.material.icons.filled.Storefront
 import androidx.compose.material3.AlertDialog
@@ -28,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ca.shawcliffe.seller.AuthViewModel
+import ca.shawcliffe.seller.ComponentKeys
 import ca.shawcliffe.seller.DashboardViewModel
 
 private class DashboardViewModelFactory(private val clientId: String) :
@@ -41,6 +43,7 @@ private class DashboardViewModelFactory(private val clientId: String) :
 fun DashboardScreen(clientId: String, authViewModel: AuthViewModel) {
     val viewModel: DashboardViewModel = viewModel(factory = DashboardViewModelFactory(clientId))
     var tab by remember { mutableIntStateOf(0) }
+    val showCustomers = ComponentKeys.CUSTOMER_DATABASE in authViewModel.enabledComponents
 
     androidx.compose.runtime.LaunchedEffect(clientId) {
         viewModel.loadAll()
@@ -56,7 +59,8 @@ fun DashboardScreen(clientId: String, authViewModel: AuthViewModel) {
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Text(listOf("Dashboard", "Preorders", "Broadcast", "Preview")[tab], style = MaterialTheme.typography.titleLarge)
+                    val titles = listOf("Dashboard", "Preorders", "Broadcast", "Preview") + if (showCustomers) listOf("Customers") else emptyList()
+                    Text(titles[tab], style = MaterialTheme.typography.titleLarge)
                     if (tab == 0) {
                         TextButton(onClick = { authViewModel.signOut() }) { Text("Sign Out") }
                     }
@@ -89,6 +93,14 @@ fun DashboardScreen(clientId: String, authViewModel: AuthViewModel) {
                     icon = { Icon(Icons.Filled.Storefront, contentDescription = null) },
                     label = { Text("Preview") },
                 )
+                if (showCustomers) {
+                    NavigationBarItem(
+                        selected = tab == 4,
+                        onClick = { tab = 4 },
+                        icon = { Icon(Icons.Filled.People, contentDescription = null) },
+                        label = { Text("Customers") },
+                    )
+                }
             }
         },
     ) { padding ->
@@ -96,7 +108,8 @@ fun DashboardScreen(clientId: String, authViewModel: AuthViewModel) {
             0 -> StatusAndProductsScreen(viewModel, Modifier.padding(padding))
             1 -> PreordersScreen(viewModel, Modifier.padding(padding))
             2 -> BroadcastScreen(viewModel, clientId, Modifier.padding(padding))
-            else -> PreviewScreen(clientId, Modifier.padding(padding))
+            3 -> PreviewScreen(clientId, Modifier.padding(padding))
+            else -> CustomersScreen(Modifier.padding(padding))
         }
     }
 

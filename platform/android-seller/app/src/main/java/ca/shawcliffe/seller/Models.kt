@@ -91,6 +91,16 @@ data class Customer(
     val name: String,
     val phone: String? = null,
     val email: String? = null,
+    // Below are only populated via CustomersService (GET /api/seller/customers);
+    // the preorders join in DashboardViewModel selects just id/name/phone/email,
+    // so these default for that call site.
+    @SerialName("sms_consent") val smsConsent: Boolean = false,
+    @SerialName("email_consent") val emailConsent: Boolean = false,
+    @SerialName("push_consent") val pushConsent: Boolean = false,
+    @SerialName("whatsapp_consent") val whatsappConsent: Boolean = false,
+    @SerialName("signup_source") val signupSource: String? = null,
+    @SerialName("product_interests") val productInterests: List<String> = emptyList(),
+    @SerialName("consent_timestamp") val consentTimestamp: String? = null,
 )
 
 @Serializable

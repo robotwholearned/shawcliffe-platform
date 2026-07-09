@@ -25,6 +25,10 @@ class AuthViewModel : ViewModel() {
         private set
     var role by mutableStateOf<String?>(null)
         private set
+    // Enabled component keys for this client (Tier 0 gating). Loaded once auth
+    // succeeds; gate UI with ComponentKeys.SOME_KEY in enabledComponents.
+    var enabledComponents by mutableStateOf<List<String>>(emptyList())
+        private set
     var errorMessage by mutableStateOf<String?>(null)
     var isLoading by mutableStateOf(false)
         private set
@@ -91,6 +95,15 @@ class AuthViewModel : ViewModel() {
             isAuthenticated = false
             clientId = null
             role = null
+            enabledComponents = emptyList()
+        }
+    }
+
+    private fun loadEnabledComponents() {
+        viewModelScope.launch {
+            enabledComponents = runCatching { ComponentsService.fetch() }
+                .onFailure { Log.e(TAG, "Failed to load enabled components", it) }
+                .getOrDefault(emptyList())
         }
     }
 
@@ -107,7 +120,10 @@ class AuthViewModel : ViewModel() {
                 errorMessage = "This account is not a seller account."
                 isAuthenticated = false
             }
-            else -> isAuthenticated = true
+            else -> {
+                isAuthenticated = true
+                loadEnabledComponents()
+            }
         }
     }
 }
