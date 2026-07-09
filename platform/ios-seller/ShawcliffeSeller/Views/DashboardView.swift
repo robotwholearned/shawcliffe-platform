@@ -56,6 +56,14 @@ struct DashboardView: View {
                 }
                 .tabItem { Label("Inquiries", systemImage: "envelope") }
             }
+
+            if auth.enabledComponents.contains(ComponentKeys.bookingRequestSystem) {
+                NavigationStack {
+                    BookingsView()
+                        .navigationTitle("Bookings")
+                }
+                .tabItem { Label("Bookings", systemImage: "calendar") }
+            }
         }
         .task {
             await viewModel.loadAll()

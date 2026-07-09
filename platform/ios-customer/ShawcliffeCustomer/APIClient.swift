@@ -83,3 +83,7 @@ struct PreorderResponse: Decodable {
 struct InquiryResponse: Decodable {
     let inquiry_id: String
 }
+
+struct BookingResponse: Decodable {
+    let booking_id: String
+}

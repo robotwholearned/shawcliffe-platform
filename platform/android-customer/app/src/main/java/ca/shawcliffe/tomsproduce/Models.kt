@@ -138,3 +138,21 @@ data class InquiryResponse(val inquiry_id: String)
 
 @Serializable
 data class PhotoUploadResponse(val url: String)
+
+@Serializable
+data class BookingRequest(
+    val client_id: String,
+    val name: String,
+    val phone: String?,
+    val email: String?,
+    val sms_consent: Boolean,
+    val email_consent: Boolean,
+    val signup_source: String = "app",
+    val service: String?,
+    val requested_date: String?,
+    val requested_time: String?,
+    val notes: String?,
+)
+
+@Serializable
+data class BookingResponse(val booking_id: String)

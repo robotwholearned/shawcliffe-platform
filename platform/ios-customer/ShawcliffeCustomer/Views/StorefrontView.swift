@@ -162,6 +162,15 @@ struct StorefrontView: View {
                 }
                 .buttonStyle(.bordered)
             }
+
+            if viewModel.enabledComponents.contains(ComponentKeys.bookingRequestSystem) {
+                NavigationLink {
+                    BookingView(businessName: viewModel.branding?.appName ?? "Tom's Produce")
+                } label: {
+                    Text("Request a Booking").bold().frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.bordered)
+            }
         }
         .padding(.top, 8)
     }

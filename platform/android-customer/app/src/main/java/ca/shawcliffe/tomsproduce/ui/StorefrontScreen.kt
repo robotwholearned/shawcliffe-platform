@@ -44,6 +44,7 @@ fun StorefrontScreen(
     onGetUpdates: () -> Unit,
     onReserve: () -> Unit,
     onGetQuote: () -> Unit,
+    onRequestBooking: () -> Unit,
     viewModel: StorefrontViewModel = activityScopedViewModel(),
 ) {
     LaunchedEffect(Unit) { viewModel.start() }
@@ -76,6 +77,11 @@ fun StorefrontScreen(
             if (ComponentKeys.INQUIRY_QUOTE_FORM in viewModel.enabledComponents) {
                 OutlinedButton(onClick = onGetQuote, modifier = Modifier.fillMaxWidth()) {
                     Text("Get a Quote")
+                }
+            }
+            if (ComponentKeys.BOOKING_REQUEST_SYSTEM in viewModel.enabledComponents) {
+                OutlinedButton(onClick = onRequestBooking, modifier = Modifier.fillMaxWidth()) {
+                    Text("Request a Booking")
                 }
             }
         }

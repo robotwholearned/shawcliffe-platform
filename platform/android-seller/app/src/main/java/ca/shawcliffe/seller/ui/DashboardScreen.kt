@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Campaign
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.People
@@ -52,6 +53,7 @@ fun DashboardScreen(clientId: String, authViewModel: AuthViewModel) {
     var tab by remember { mutableIntStateOf(0) }
     val showCustomers = ComponentKeys.CUSTOMER_DATABASE in authViewModel.enabledComponents
     val showInquiries = ComponentKeys.INQUIRY_QUOTE_FORM in authViewModel.enabledComponents
+    val showBookings = ComponentKeys.BOOKING_REQUEST_SYSTEM in authViewModel.enabledComponents
 
     androidx.compose.runtime.LaunchedEffect(clientId) {
         viewModel.loadAll()
@@ -64,6 +66,7 @@ fun DashboardScreen(clientId: String, authViewModel: AuthViewModel) {
         add(DashboardTab("Preview", Icons.Filled.Storefront) { m -> PreviewScreen(clientId, m) })
         if (showCustomers) add(DashboardTab("Customers", Icons.Filled.People) { m -> CustomersScreen(m) })
         if (showInquiries) add(DashboardTab("Inquiries", Icons.Filled.QuestionAnswer) { m -> InquiriesScreen(m) })
+        if (showBookings) add(DashboardTab("Bookings", Icons.Filled.CalendarMonth) { m -> BookingsScreen(m) })
     }
 
     Scaffold(

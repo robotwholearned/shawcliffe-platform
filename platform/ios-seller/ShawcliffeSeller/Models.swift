@@ -283,3 +283,31 @@ struct Inquiry: Codable, Identifiable {
         case customer
     }
 }
+
+struct BookingCustomer: Codable {
+    let name: String
+    let phone: String?
+    let email: String?
+}
+
+struct Booking: Codable, Identifiable {
+    let id: String
+    let service: String?
+    let requestedDate: String?
+    let requestedTime: String?
+    let notes: String?
+    let status: String
+    let createdAt: String
+    let customer: BookingCustomer?
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case service
+        case requestedDate = "requested_date"
+        case requestedTime = "requested_time"
+        case notes
+        case status
+        case createdAt = "created_at"
+        case customer
+    }
+}

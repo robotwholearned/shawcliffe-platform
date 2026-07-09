@@ -165,6 +165,20 @@ struct InquiryRequest: Encodable {
     let photo_urls: [String]
 }
 
+struct BookingRequest: Encodable {
+    let client_id: String
+    let name: String
+    let phone: String?
+    let email: String?
+    let sms_consent: Bool
+    let email_consent: Bool
+    let signup_source: String
+    let service: String?
+    let requested_date: String?
+    let requested_time: String?
+    let notes: String?
+}
+
 struct APIErrorBody: Decodable {
     let error: String?
     let product: String?
