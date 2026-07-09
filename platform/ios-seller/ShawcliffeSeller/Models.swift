@@ -150,13 +150,6 @@ struct PreorderStatusUpdate: Encodable {
     let status: String
 }
 
-struct Customer: Codable, Identifiable {
-    let id: String
-    let name: String
-    let phone: String?
-    let email: String?
-}
-
 struct PreorderItem: Codable {
     let preorderId: String
     let productId: String
@@ -217,5 +210,36 @@ struct NotificationLogEntry: Codable, Identifiable {
         case messagePreview = "message_preview"
         case status
         case sentAt = "sent_at"
+    }
+}
+
+// Optional beyond id/name/phone/email because DashboardViewModel's preorder
+// lookup selects only those four columns — a non-optional field would throw
+// a decoding error on that narrower response.
+struct Customer: Codable, Identifiable {
+    let id: String
+    let name: String
+    let phone: String?
+    let email: String?
+    let smsConsent: Bool?
+    let emailConsent: Bool?
+    let pushConsent: Bool?
+    let whatsappConsent: Bool?
+    let signupSource: String?
+    let productInterests: [String]?
+    let consentTimestamp: String?
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case name
+        case phone
+        case email
+        case smsConsent = "sms_consent"
+        case emailConsent = "email_consent"
+        case pushConsent = "push_consent"
+        case whatsappConsent = "whatsapp_consent"
+        case signupSource = "signup_source"
+        case productInterests = "product_interests"
+        case consentTimestamp = "consent_timestamp"
     }
 }

@@ -40,6 +40,14 @@ struct DashboardView: View {
                     .navigationTitle("Preview")
             }
             .tabItem { Label("Preview", systemImage: "storefront") }
+
+            if auth.enabledComponents.contains(ComponentKeys.customerDatabase) {
+                NavigationStack {
+                    CustomersView()
+                        .navigationTitle("Customers")
+                }
+                .tabItem { Label("Customers", systemImage: "person.2") }
+            }
         }
         .task {
             await viewModel.loadAll()

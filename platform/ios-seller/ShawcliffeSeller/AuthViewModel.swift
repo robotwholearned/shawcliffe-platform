@@ -6,6 +6,9 @@ final class AuthViewModel: ObservableObject {
     @Published var isAuthenticated = false
     @Published var clientId: String?
     @Published var role: String?
+    // Enabled component keys for this client (Tier 0 gating). Loaded once auth
+    // succeeds; gate UI with enabledComponents.contains(ComponentKeys.someKey).
+    @Published var enabledComponents: [String] = []
     @Published var errorMessage: String?
     @Published var isLoading = false
     @Published var isRestoringSession = true
@@ -41,6 +44,16 @@ final class AuthViewModel: ObservableObject {
         isAuthenticated = false
         clientId = nil
         role = nil
+        enabledComponents = []
+    }
+
+    func loadEnabledComponents() async {
+        do {
+            enabledComponents = try await ComponentsService.fetch()
+        } catch {
+            print("Failed to load enabled components: \(error)")
+            enabledComponents = []
+        }
     }
 
     private func apply(session: Session) {
@@ -64,6 +77,7 @@ final class AuthViewModel: ObservableObject {
             isAuthenticated = false
         } else {
             isAuthenticated = true
+            Task { await loadEnabledComponents() }
         }
     }
 }
