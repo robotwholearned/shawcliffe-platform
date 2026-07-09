@@ -33,6 +33,7 @@ export interface Client {
   active: boolean
   paused: boolean
   region: string
+  enabled_components: string[]
   created_at: string
 }
 
