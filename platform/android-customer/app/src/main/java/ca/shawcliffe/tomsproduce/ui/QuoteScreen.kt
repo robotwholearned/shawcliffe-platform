@@ -42,10 +42,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import ca.shawcliffe.tomsproduce.APIClient
+import ca.shawcliffe.tomsproduce.ComponentKeys
 import ca.shawcliffe.tomsproduce.Config
 import ca.shawcliffe.tomsproduce.InquiryRequest
 import ca.shawcliffe.tomsproduce.InquiryResponse
 import ca.shawcliffe.tomsproduce.Phone
+import ca.shawcliffe.tomsproduce.StorefrontViewModel
 import coil.compose.AsyncImage
 import kotlinx.coroutines.launch
 
@@ -62,7 +64,12 @@ private data class PhotoUpload(
 )
 
 @Composable
-fun QuoteScreen(onDone: () -> Unit, businessName: String = "Tom's Produce") {
+fun QuoteScreen(
+    onDone: () -> Unit,
+    businessName: String = "Tom's Produce",
+    storefrontViewModel: StorefrontViewModel = activityScopedViewModel(),
+) {
+    val showPhotoUpload = ComponentKeys.PHOTO_FILE_UPLOAD in storefrontViewModel.enabledComponents
     var name by remember { mutableStateOf("") }
     var phone by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
@@ -178,36 +185,38 @@ fun QuoteScreen(onDone: () -> Unit, businessName: String = "Tom's Produce") {
             Text("Yes, send me email updates")
         }
 
-        Text("Photos (optional)", style = MaterialTheme.typography.titleSmall)
-        Button(
-            onClick = { photoPickerLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)) },
-            enabled = photos.size < MAX_PHOTOS,
-        ) { Text("Add Photos (${photos.size}/$MAX_PHOTOS)") }
+        if (showPhotoUpload) {
+            Text("Photos (optional)", style = MaterialTheme.typography.titleSmall)
+            Button(
+                onClick = { photoPickerLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)) },
+                enabled = photos.size < MAX_PHOTOS,
+            ) { Text("Add Photos (${photos.size}/$MAX_PHOTOS)") }
 
-        if (photos.isNotEmpty()) {
-            Row(
-                modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                photos.forEach { photo ->
-                    Box(modifier = Modifier.size(72.dp)) {
-                        AsyncImage(
-                            model = photo.uri,
-                            contentDescription = null,
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier.size(72.dp).clip(RoundedCornerShape(8.dp)),
-                        )
-                        if (photo.uploading) {
-                            CircularProgressIndicator(modifier = Modifier.size(24.dp).align(Alignment.Center))
-                        }
-                        IconButton(onClick = { photos.remove(photo) }, modifier = Modifier.align(Alignment.TopEnd).size(24.dp)) {
-                            Icon(Icons.Filled.Close, contentDescription = "Remove photo")
+            if (photos.isNotEmpty()) {
+                Row(
+                    modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    photos.forEach { photo ->
+                        Box(modifier = Modifier.size(72.dp)) {
+                            AsyncImage(
+                                model = photo.uri,
+                                contentDescription = null,
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier.size(72.dp).clip(RoundedCornerShape(8.dp)),
+                            )
+                            if (photo.uploading) {
+                                CircularProgressIndicator(modifier = Modifier.size(24.dp).align(Alignment.Center))
+                            }
+                            IconButton(onClick = { photos.remove(photo) }, modifier = Modifier.align(Alignment.TopEnd).size(24.dp)) {
+                                Icon(Icons.Filled.Close, contentDescription = "Remove photo")
+                            }
                         }
                     }
                 }
-            }
-            photos.mapNotNull { it.error }.forEach {
-                Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
+                photos.mapNotNull { it.error }.forEach {
+                    Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
+                }
             }
         }
 

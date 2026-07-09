@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServiceClient } from '@/lib/supabase/server'
+import { hasComponent } from '@/lib/components'
 
 // Server-mediated upload for the anonymous customer-facing Inquiry / Quote
 // Form (photo_urls field) — anon can't write to the `assets` bucket directly
@@ -34,13 +35,16 @@ export async function POST(req: NextRequest) {
 
   const { data: client } = await admin
     .from('clients')
-    .select('id')
+    .select('id, enabled_components')
     .eq('id', clientId)
     .eq('active', true)
     .single()
 
   if (!client) {
     return NextResponse.json({ error: 'Client not found' }, { status: 404 })
+  }
+  if (!hasComponent(client.enabled_components, 'photo_file_upload')) {
+    return NextResponse.json({ error: 'Component not enabled' }, { status: 403 })
   }
 
   const ext = file.type.split('/')[1] === 'jpeg' ? 'jpg' : file.type.split('/')[1]

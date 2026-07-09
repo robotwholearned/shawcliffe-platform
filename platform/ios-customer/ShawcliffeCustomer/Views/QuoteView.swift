@@ -31,6 +31,7 @@ private struct QuotePhoto: Identifiable {
 
 struct QuoteView: View {
     let businessName: String
+    let showPhotoUpload: Bool
 
     @State private var name = ""
     @State private var phone = ""
@@ -90,19 +91,21 @@ struct QuoteView: View {
                 }
                 .pickerStyle(.segmented)
 
-                PhotosPicker(selection: $photoSelections, maxSelectionCount: 5, matching: .images) {
-                    Text("Add Photos (\(photos.count)/5)")
-                }
-                .disabled(photos.count >= 5)
-                .onChange(of: photoSelections) { newSelections in
-                    Task { await addPhotos(newSelections) }
-                }
+                if showPhotoUpload {
+                    PhotosPicker(selection: $photoSelections, maxSelectionCount: 5, matching: .images) {
+                        Text("Add Photos (\(photos.count)/5)")
+                    }
+                    .disabled(photos.count >= 5)
+                    .onChange(of: photoSelections) { newSelections in
+                        Task { await addPhotos(newSelections) }
+                    }
 
-                if !photos.isEmpty {
-                    ScrollView(.horizontal) {
-                        HStack(spacing: 8) {
-                            ForEach(photos) { photo in
-                                photoThumbnail(photo)
+                    if !photos.isEmpty {
+                        ScrollView(.horizontal) {
+                            HStack(spacing: 8) {
+                                ForEach(photos) { photo in
+                                    photoThumbnail(photo)
+                                }
                             }
                         }
                     }
@@ -274,5 +277,5 @@ struct QuoteView: View {
 }
 
 #Preview {
-    NavigationStack { QuoteView(businessName: "Tom's Produce") }
+    NavigationStack { QuoteView(businessName: "Tom's Produce", showPhotoUpload: true) }
 }
