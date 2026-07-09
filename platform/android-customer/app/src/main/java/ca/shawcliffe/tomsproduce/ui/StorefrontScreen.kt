@@ -31,6 +31,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
+import ca.shawcliffe.tomsproduce.ComponentKeys
 import ca.shawcliffe.tomsproduce.DailyStatusValue
 import ca.shawcliffe.tomsproduce.Location
 import ca.shawcliffe.tomsproduce.Product
@@ -96,6 +97,7 @@ private fun Header(viewModel: StorefrontViewModel) {
 
 @Composable
 private fun StatusBadge(viewModel: StorefrontViewModel) {
+    if (ComponentKeys.STATUS_TRACKER !in viewModel.enabledComponents) return
     val statusValue = viewModel.status?.status?.let { DailyStatusValue.fromValue(it) } ?: return
     Row(
         verticalAlignment = Alignment.CenterVertically,

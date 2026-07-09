@@ -24,6 +24,8 @@ class StorefrontViewModel : ViewModel() {
         private set
     var products by mutableStateOf<List<Product>>(emptyList())
         private set
+    var enabledComponents by mutableStateOf<List<String>>(emptyList())
+        private set
     var isLoading by mutableStateOf(true)
         private set
     var errorMessage by mutableStateOf<String?>(null)
@@ -64,6 +66,15 @@ class StorefrontViewModel : ViewModel() {
         loadBranding()
         loadStatus()
         loadProducts()
+        loadEnabledComponents()
+    }
+
+    private suspend fun loadEnabledComponents() {
+        enabledComponents = try {
+            ComponentsService.fetch()
+        } catch (e: Exception) {
+            emptyList()
+        }
     }
 
     private suspend fun loadBranding() {
