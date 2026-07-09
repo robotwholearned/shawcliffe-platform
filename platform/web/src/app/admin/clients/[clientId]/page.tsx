@@ -71,6 +71,12 @@ export default async function ClientDetailPage({ params }: Props) {
         >
           Custom Domain
         </Link>
+        <Link
+          href={`/admin/clients/${c.id}/branding`}
+          className="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200"
+        >
+          Branding
+        </Link>
       </div>
 
       <div id="components">
