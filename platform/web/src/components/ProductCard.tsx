@@ -1,9 +1,9 @@
 import type { Product } from '@/lib/supabase/types'
 
 const STATUS_STYLE = {
-  available: 'bg-green-100 text-green-700',
-  low:       'bg-yellow-100 text-yellow-700',
-  sold_out:  'bg-red-100 text-red-500 line-through',
+  available: 'bg-emerald-50 text-emerald-700 ring-emerald-600/20',
+  low:       'bg-amber-50 text-amber-700 ring-amber-600/20',
+  sold_out:  'bg-gray-100 text-gray-400 ring-gray-400/20',
 }
 
 const STATUS_LABEL = {
@@ -13,31 +13,45 @@ const STATUS_LABEL = {
 }
 
 export default function ProductCard({ product }: { product: Product }) {
+  const soldOut = product.status === 'sold_out'
+
   return (
-    <div className="flex items-center justify-between rounded-xl border border-gray-100 bg-white px-4 py-3 shadow-sm">
-      <div className="flex items-center gap-3 min-w-0">
-        {product.image_url && (
-          <img
-            src={product.image_url}
-            alt={product.name}
-            className="w-10 h-10 rounded-lg object-cover flex-shrink-0"
-          />
-        )}
-        <div className="min-w-0">
-          <p className={`font-medium text-sm text-gray-900 truncate ${product.status === 'sold_out' ? 'opacity-50' : ''}`}>
-            {product.name}
-          </p>
-          {product.bundle_description && (
-            <p className="text-xs text-gray-400 truncate">{product.bundle_description}</p>
-          )}
-          {product.price != null && (
-            <p className="text-xs text-gray-500">${product.price.toFixed(2)}</p>
-          )}
+    <div className={`flex items-center gap-3.5 px-4 py-3.5 ${soldOut ? 'opacity-60' : ''}`}>
+      {product.image_url ? (
+        <img
+          src={product.image_url}
+          alt={product.name}
+          className={`h-12 w-12 flex-shrink-0 rounded-lg object-cover ring-1 ring-black/5 ${soldOut ? 'grayscale' : ''}`}
+        />
+      ) : (
+        <div
+          aria-hidden
+          style={{ backgroundColor: 'color-mix(in srgb, var(--brand-primary, #2563eb) 10%, white)' }}
+          className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg text-sm font-bold text-[var(--brand-primary,#2563eb)]"
+        >
+          {product.name.charAt(0).toUpperCase()}
         </div>
+      )}
+
+      <div className="min-w-0 flex-1">
+        <p className={`truncate text-[15px] font-semibold text-gray-900 ${soldOut ? 'line-through decoration-gray-400' : ''}`}>
+          {product.name}
+        </p>
+        {product.bundle_description && (
+          <p className="truncate text-xs text-gray-500">{product.bundle_description}</p>
+        )}
       </div>
-      <span className={`ml-3 flex-shrink-0 text-xs px-2.5 py-1 rounded-full font-medium ${STATUS_STYLE[product.status]}`}>
-        {STATUS_LABEL[product.status]}
-      </span>
+
+      <div className="flex flex-shrink-0 flex-col items-end gap-1">
+        {product.price != null && (
+          <span className="text-sm font-semibold tabular-nums text-gray-900">
+            ${product.price.toFixed(2)}
+          </span>
+        )}
+        <span className={`rounded-full px-2 py-0.5 text-[11px] font-medium ring-1 ring-inset ${STATUS_STYLE[product.status]}`}>
+          {STATUS_LABEL[product.status]}
+        </span>
+      </div>
     </div>
   )
 }

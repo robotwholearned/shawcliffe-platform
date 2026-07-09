@@ -6,15 +6,24 @@ import StatusBadge from './StatusBadge'
 import ProductCard from './ProductCard'
 import type { DailyStatusValue, Product } from '@/lib/supabase/types'
 
+interface LocationInfo {
+  displayName: string
+  address: string | null
+  mapUrl: string | null
+  parkingNotes: string | null
+}
+
 interface Props {
   clientId: string
   slug: string
   showStatus: boolean
   initialStatus: { status: DailyStatusValue; custom_message: string | null } | null
   initialProducts: Product[]
+  hours?: string | null
+  location?: LocationInfo | null
 }
 
-export default function RealtimeStorefront({ clientId, slug, showStatus, initialStatus, initialProducts }: Props) {
+export default function RealtimeStorefront({ clientId, slug, showStatus, initialStatus, initialProducts, hours, location }: Props) {
   const [status, setStatus] = useState(initialStatus)
   const [products, setProducts] = useState(initialProducts)
   const [connected, setConnected] = useState(true)
@@ -94,43 +103,90 @@ export default function RealtimeStorefront({ clientId, slug, showStatus, initial
     }
   }, [clientId])
 
+  const showCard = showStatus || !!location || !!hours
+
   return (
-    <div className="space-y-5">
-      {!connected && (
-        <p className="text-xs text-center text-gray-400">Live updates paused — checking every 5 seconds</p>
+    <div className="space-y-6">
+      {showCard && (
+        <div className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-gray-900/5">
+          <div className="flex items-start justify-between gap-3">
+            {showStatus ? (
+              <StatusBadge status={status?.status ?? null} customMessage={status?.custom_message} />
+            ) : (
+              location && <p className="text-[15px] font-semibold text-gray-900">{location.displayName}</p>
+            )}
+            {hours && (
+              <span className="flex-shrink-0 pt-0.5 text-xs font-medium tabular-nums text-gray-500">
+                {hours}
+              </span>
+            )}
+          </div>
+
+          {location && (
+            <div className={`space-y-1 ${showStatus ? 'mt-4 border-t border-gray-100 pt-3.5' : 'mt-2'}`}>
+              {showStatus && (
+                <p className="text-sm font-semibold text-gray-900">{location.displayName}</p>
+              )}
+              {location.address && (
+                <a
+                  href={
+                    location.mapUrl ??
+                    `https://maps.google.com/?q=${encodeURIComponent(location.address)}`
+                  }
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 text-sm font-medium text-[var(--brand-primary,#2563eb)] hover:underline"
+                >
+                  {location.address}
+                  <span aria-hidden>→</span>
+                </a>
+              )}
+              {location.parkingNotes && (
+                <p className="text-xs text-gray-400">{location.parkingNotes}</p>
+              )}
+            </div>
+          )}
+        </div>
       )}
 
-      {showStatus && (
-        <StatusBadge status={status?.status ?? null} customMessage={status?.custom_message} />
+      {!connected && (
+        <p className="text-center text-xs text-gray-400">
+          Live updates paused — refreshing every 5 seconds
+        </p>
       )}
 
       {products.length > 0 && (
-        <section className="space-y-2">
-          <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
-            Today's Products
-          </h2>
-          {products.map(p => (
-            <ProductCard key={p.id} product={p} />
-          ))}
+        <section>
+          <div className="mb-3 flex items-center gap-3">
+            <h2 className="text-xs font-semibold uppercase tracking-[0.12em] text-gray-500">
+              Today&rsquo;s Products
+            </h2>
+            <div className="h-px flex-1 bg-gray-200" aria-hidden />
+          </div>
+          <div className="divide-y divide-gray-100 rounded-2xl bg-white shadow-sm ring-1 ring-gray-900/5">
+            {products.map(p => (
+              <ProductCard key={p.id} product={p} />
+            ))}
+          </div>
         </section>
       )}
 
       {products.length === 0 && status?.status === 'open' && (
-        <p className="text-sm text-gray-400 text-center py-8">No products listed yet.</p>
+        <p className="py-8 text-center text-sm text-gray-400">No products listed yet.</p>
       )}
 
-      <div className="pt-4 flex gap-3">
+      <div className="space-y-3 pt-2">
         <a
           href={`/${slug}/signup`}
-          className="flex-1 text-center bg-[var(--brand-primary,#2563eb)] text-white rounded-xl py-3 text-sm font-semibold hover:opacity-90"
+          className="block w-full rounded-xl bg-[var(--brand-primary,#2563eb)] py-3.5 text-center text-sm font-semibold text-white shadow-sm transition hover:brightness-110 active:scale-[0.99]"
         >
           Get updates
         </a>
         <a
           href={`/${slug}/preorder`}
-          className="flex-1 text-center bg-gray-100 text-gray-700 rounded-xl py-3 text-sm font-semibold hover:bg-gray-200"
+          className="block text-center text-sm font-semibold text-[var(--brand-primary,#2563eb)] hover:underline"
         >
-          Reserve an order
+          Reserve an order <span aria-hidden>→</span>
         </a>
       </div>
     </div>

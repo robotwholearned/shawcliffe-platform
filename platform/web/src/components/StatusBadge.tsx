@@ -1,12 +1,19 @@
 import type { DailyStatusValue } from '@/lib/supabase/types'
 
-const CONFIG: Record<DailyStatusValue, { label: string; bg: string; text: string; icon: string }> = {
-  open:          { label: 'Open',          bg: 'bg-green-100',  text: 'text-green-800', icon: '✓'  },
-  closed:        { label: 'Closed',        bg: 'bg-gray-100',   text: 'text-gray-600',  icon: '✕'  },
-  sold_out:      { label: 'Sold Out',      bg: 'bg-red-100',    text: 'text-red-700',   icon: '✕'  },
-  back_tomorrow: { label: 'Back Tomorrow', bg: 'bg-yellow-100', text: 'text-yellow-800',icon: '↺'  },
-  weather_delay: { label: 'Weather Delay', bg: 'bg-blue-100',   text: 'text-blue-700',  icon: '⛈' },
-  opening_soon:  { label: 'Opening Soon',  bg: 'bg-green-50',   text: 'text-green-700', icon: '⏱' },
+interface StatusConfig {
+  label: string
+  dot: string
+  text: string
+  live?: boolean
+}
+
+const CONFIG: Record<DailyStatusValue, StatusConfig> = {
+  open:          { label: 'Open Now',      dot: 'bg-emerald-500', text: 'text-emerald-700', live: true },
+  opening_soon:  { label: 'Opening Soon',  dot: 'bg-emerald-400', text: 'text-emerald-700', live: true },
+  closed:        { label: 'Closed',        dot: 'bg-gray-400',    text: 'text-gray-600' },
+  sold_out:      { label: 'Sold Out',      dot: 'bg-red-500',     text: 'text-red-700' },
+  back_tomorrow: { label: 'Back Tomorrow', dot: 'bg-amber-500',   text: 'text-amber-700' },
+  weather_delay: { label: 'Weather Delay', dot: 'bg-sky-500',     text: 'text-sky-700' },
 }
 
 interface Props {
@@ -17,22 +24,28 @@ interface Props {
 export default function StatusBadge({ status, customMessage }: Props) {
   if (!status) {
     return (
-      <div className="rounded-xl bg-gray-100 px-4 py-3 text-sm text-gray-400">
-        No update yet today
+      <div className="flex items-center gap-2.5">
+        <span className="h-2.5 w-2.5 flex-shrink-0 rounded-full bg-gray-300" />
+        <span className="text-[15px] font-semibold text-gray-400">No update yet today</span>
       </div>
     )
   }
 
   const cfg = CONFIG[status]
   return (
-    <div className={`rounded-xl px-4 py-3 ${cfg.bg} ${cfg.text} flex items-start gap-2.5`}>
-      <span className="text-lg leading-none mt-0.5">{cfg.icon}</span>
-      <div>
-        <span className="font-semibold">{cfg.label}</span>
-        {customMessage && (
-          <p className="text-sm opacity-80 mt-0.5">{customMessage}</p>
-        )}
+    <div className="min-w-0">
+      <div className="flex items-center gap-2.5">
+        <span className="relative flex h-2.5 w-2.5 flex-shrink-0">
+          {cfg.live && (
+            <span className={`absolute inline-flex h-full w-full animate-ping rounded-full opacity-60 ${cfg.dot}`} />
+          )}
+          <span className={`relative inline-flex h-2.5 w-2.5 rounded-full ${cfg.dot}`} />
+        </span>
+        <span className={`text-base font-bold tracking-tight ${cfg.text}`}>{cfg.label}</span>
       </div>
+      {customMessage && (
+        <p className="mt-1 pl-5 text-sm leading-relaxed text-gray-600">{customMessage}</p>
+      )}
     </div>
   )
 }
