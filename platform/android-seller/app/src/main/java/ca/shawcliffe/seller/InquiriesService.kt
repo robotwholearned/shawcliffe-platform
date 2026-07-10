@@ -41,6 +41,20 @@ object InquiriesService {
     )
 
     @Serializable
+    data class InquiryProperty(
+        val address: String? = null,
+        @SerialName("gate_code") val gateCode: String? = null,
+        @SerialName("parking_instructions") val parkingInstructions: String? = null,
+        @SerialName("pets_on_site") val petsOnSite: String? = null,
+        @SerialName("access_notes") val accessNotes: String? = null,
+        @SerialName("preferred_service_day") val preferredServiceDay: String? = null,
+        @SerialName("lawn_size") val lawnSize: String? = null,
+        @SerialName("snow_removal_areas") val snowRemovalAreas: String? = null,
+        @SerialName("cleaning_instructions") val cleaningInstructions: String? = null,
+        @SerialName("safety_notes") val safetyNotes: String? = null,
+    )
+
+    @Serializable
     data class Inquiry(
         val id: String,
         @SerialName("service_category") val serviceCategory: String? = null,
@@ -53,6 +67,7 @@ object InquiriesService {
         @SerialName("created_at") val createdAt: String,
         val customer: InquiryCustomer? = null,
         val vehicle: InquiryVehicle? = null,
+        val property: InquiryProperty? = null,
     )
 
     @Serializable

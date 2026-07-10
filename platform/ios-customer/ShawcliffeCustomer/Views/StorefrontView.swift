@@ -263,7 +263,8 @@ struct StorefrontView: View {
                     QuoteView(
                         businessName: businessName,
                         showPhotoUpload: viewModel.enabledComponents.contains(ComponentKeys.photoFileUpload),
-                        showVehicleFields: viewModel.enabledComponents.contains(ComponentKeys.vehicleProfiles)
+                        showVehicleFields: viewModel.enabledComponents.contains(ComponentKeys.vehicleProfiles),
+                        showPropertyFields: viewModel.enabledComponents.contains(ComponentKeys.propertyProfiles)
                     )
                 } label: {
                     Text("Get a Quote").bold().frame(maxWidth: .infinity)

@@ -267,6 +267,32 @@ struct InquiryVehicle: Codable {
     let mileage: Int?
 }
 
+struct InquiryProperty: Codable {
+    let address: String?
+    let gateCode: String?
+    let parkingInstructions: String?
+    let petsOnSite: String?
+    let accessNotes: String?
+    let preferredServiceDay: String?
+    let lawnSize: String?
+    let snowRemovalAreas: String?
+    let cleaningInstructions: String?
+    let safetyNotes: String?
+
+    enum CodingKeys: String, CodingKey {
+        case address
+        case gateCode = "gate_code"
+        case parkingInstructions = "parking_instructions"
+        case petsOnSite = "pets_on_site"
+        case accessNotes = "access_notes"
+        case preferredServiceDay = "preferred_service_day"
+        case lawnSize = "lawn_size"
+        case snowRemovalAreas = "snow_removal_areas"
+        case cleaningInstructions = "cleaning_instructions"
+        case safetyNotes = "safety_notes"
+    }
+}
+
 struct Inquiry: Codable, Identifiable {
     let id: String
     let serviceCategory: String?
@@ -279,6 +305,7 @@ struct Inquiry: Codable, Identifiable {
     let createdAt: String
     let customer: InquiryCustomer?
     let vehicle: InquiryVehicle?
+    let property: InquiryProperty?
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -292,6 +319,7 @@ struct Inquiry: Codable, Identifiable {
         case createdAt = "created_at"
         case customer
         case vehicle
+        case property
     }
 }
 
@@ -336,6 +364,43 @@ struct Booking: Codable, Identifiable {
         case createdAt = "created_at"
         case customer
         case pet
+    }
+}
+
+struct PropertyCustomer: Codable {
+    let name: String
+    let phone: String?
+    let email: String?
+}
+
+struct Property: Codable, Identifiable {
+    let id: String
+    let address: String?
+    let gateCode: String?
+    let parkingInstructions: String?
+    let petsOnSite: String?
+    let accessNotes: String?
+    let preferredServiceDay: String?
+    let lawnSize: String?
+    let snowRemovalAreas: String?
+    let cleaningInstructions: String?
+    let safetyNotes: String?
+    let createdAt: String
+    let customer: PropertyCustomer?
+
+    enum CodingKeys: String, CodingKey {
+        case id, address
+        case gateCode = "gate_code"
+        case parkingInstructions = "parking_instructions"
+        case petsOnSite = "pets_on_site"
+        case accessNotes = "access_notes"
+        case preferredServiceDay = "preferred_service_day"
+        case lawnSize = "lawn_size"
+        case snowRemovalAreas = "snow_removal_areas"
+        case cleaningInstructions = "cleaning_instructions"
+        case safetyNotes = "safety_notes"
+        case createdAt = "created_at"
+        case customer
     }
 }
 

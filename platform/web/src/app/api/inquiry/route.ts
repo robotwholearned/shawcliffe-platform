@@ -33,6 +33,16 @@ export async function POST(req: NextRequest) {
     vehicle_plate,
     vehicle_mileage,
     vehicle_notes,
+    property_address,
+    property_gate_code,
+    property_parking_instructions,
+    property_pets_on_site,
+    property_access_notes,
+    property_preferred_service_day,
+    property_lawn_size,
+    property_snow_removal_areas,
+    property_cleaning_instructions,
+    property_safety_notes,
   } = body
 
   if (!client_id || !name || (!phone && !email)) {
@@ -130,6 +140,33 @@ export async function POST(req: NextRequest) {
     vehicleId = vehicle?.id ?? null
   }
 
+  // Property Profiles (Tier 1): a property is created alongside the
+  // inquiry rather than through a standalone screen — see
+  // 019_property_profiles.sql.
+  let propertyId: string | null = null
+  const hasPropertyFields = property_address || property_gate_code || property_parking_instructions || property_pets_on_site || property_access_notes || property_preferred_service_day || property_lawn_size || property_snow_removal_areas || property_cleaning_instructions || property_safety_notes
+  if (hasPropertyFields && hasComponent(client.enabled_components, 'property_profiles')) {
+    const { data: property } = await supabase
+      .from('properties')
+      .insert({
+        client_id,
+        customer_id: customerId,
+        address: property_address || null,
+        gate_code: property_gate_code || null,
+        parking_instructions: property_parking_instructions || null,
+        pets_on_site: property_pets_on_site || null,
+        access_notes: property_access_notes || null,
+        preferred_service_day: property_preferred_service_day || null,
+        lawn_size: property_lawn_size || null,
+        snow_removal_areas: property_snow_removal_areas || null,
+        cleaning_instructions: property_cleaning_instructions || null,
+        safety_notes: property_safety_notes || null,
+      })
+      .select('id')
+      .single()
+    propertyId = property?.id ?? null
+  }
+
   const { data: inquiry, error: inquiryError } = await supabase
     .from('inquiries')
     .insert({
@@ -142,6 +179,7 @@ export async function POST(req: NextRequest) {
       photo_urls: photo_urls ?? [],
       preferred_contact_method: preferred_contact_method || null,
       vehicle_id: vehicleId,
+      property_id: propertyId,
     })
     .select('id')
     .single()

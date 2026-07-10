@@ -33,6 +33,7 @@ struct QuoteView: View {
     let businessName: String
     let showPhotoUpload: Bool
     let showVehicleFields: Bool
+    let showPropertyFields: Bool
 
     @State private var name = ""
     @State private var phone = ""
@@ -53,6 +54,16 @@ struct QuoteView: View {
     @State private var vehiclePlate = ""
     @State private var vehicleMileage = ""
     @State private var vehicleNotes = ""
+    @State private var propertyAddress = ""
+    @State private var propertyGateCode = ""
+    @State private var propertyParkingInstructions = ""
+    @State private var propertyPetsOnSite = ""
+    @State private var propertyAccessNotes = ""
+    @State private var propertyPreferredServiceDay = ""
+    @State private var propertyLawnSize = ""
+    @State private var propertySnowRemovalAreas = ""
+    @State private var propertyCleaningInstructions = ""
+    @State private var propertySafetyNotes = ""
     @State private var submitting = false
     @State private var done = false
     @State private var error: String?
@@ -131,6 +142,24 @@ struct QuoteView: View {
                     TextField("Mileage/hours", text: $vehicleMileage)
                         .keyboardType(.numberPad)
                     TextField("Issue notes", text: $vehicleNotes, axis: .vertical)
+                        .lineLimit(2...4)
+                }
+            }
+
+            if showPropertyFields {
+                Section("Property (optional)") {
+                    TextField("Address", text: $propertyAddress)
+                    TextField("Gate code", text: $propertyGateCode)
+                    TextField("Parking instructions", text: $propertyParkingInstructions)
+                    TextField("Pets on site", text: $propertyPetsOnSite)
+                    TextField("Access notes", text: $propertyAccessNotes, axis: .vertical)
+                        .lineLimit(2...4)
+                    TextField("Preferred service day", text: $propertyPreferredServiceDay)
+                    TextField("Lawn size", text: $propertyLawnSize)
+                    TextField("Snow removal areas", text: $propertySnowRemovalAreas)
+                    TextField("Cleaning instructions", text: $propertyCleaningInstructions, axis: .vertical)
+                        .lineLimit(2...4)
+                    TextField("Safety notes", text: $propertySafetyNotes, axis: .vertical)
                         .lineLimit(2...4)
                 }
             }
@@ -294,7 +323,17 @@ struct QuoteView: View {
                     vehicle_vin: vehicleVin.isEmpty ? nil : vehicleVin,
                     vehicle_plate: vehiclePlate.isEmpty ? nil : vehiclePlate,
                     vehicle_mileage: Int(vehicleMileage),
-                    vehicle_notes: vehicleNotes.isEmpty ? nil : vehicleNotes
+                    vehicle_notes: vehicleNotes.isEmpty ? nil : vehicleNotes,
+                    property_address: propertyAddress.isEmpty ? nil : propertyAddress,
+                    property_gate_code: propertyGateCode.isEmpty ? nil : propertyGateCode,
+                    property_parking_instructions: propertyParkingInstructions.isEmpty ? nil : propertyParkingInstructions,
+                    property_pets_on_site: propertyPetsOnSite.isEmpty ? nil : propertyPetsOnSite,
+                    property_access_notes: propertyAccessNotes.isEmpty ? nil : propertyAccessNotes,
+                    property_preferred_service_day: propertyPreferredServiceDay.isEmpty ? nil : propertyPreferredServiceDay,
+                    property_lawn_size: propertyLawnSize.isEmpty ? nil : propertyLawnSize,
+                    property_snow_removal_areas: propertySnowRemovalAreas.isEmpty ? nil : propertySnowRemovalAreas,
+                    property_cleaning_instructions: propertyCleaningInstructions.isEmpty ? nil : propertyCleaningInstructions,
+                    property_safety_notes: propertySafetyNotes.isEmpty ? nil : propertySafetyNotes
                 ),
                 as: InquiryResponse.self
             )
@@ -307,5 +346,5 @@ struct QuoteView: View {
 }
 
 #Preview {
-    NavigationStack { QuoteView(businessName: "Tom's Produce", showPhotoUpload: true, showVehicleFields: true) }
+    NavigationStack { QuoteView(businessName: "Tom's Produce", showPhotoUpload: true, showVehicleFields: true, showPropertyFields: true) }
 }

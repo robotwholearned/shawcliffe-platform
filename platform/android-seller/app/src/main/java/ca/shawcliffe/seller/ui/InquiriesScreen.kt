@@ -158,6 +158,15 @@ private fun InquiryRow(inquiry: InquiriesService.Inquiry, onStatusChange: (Strin
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
+        inquiry.property?.let { property ->
+            Text(
+                "🏠 " + (property.address ?: "Property on file"),
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            property.gateCode?.let { Text("Gate code: $it", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant) }
+            property.accessNotes?.let { Text("Access: $it", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant) }
+        }
     }
 }
 

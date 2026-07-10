@@ -138,6 +138,16 @@ data class InquiryRequest(
     val vehicle_plate: String? = null,
     val vehicle_mileage: Int? = null,
     val vehicle_notes: String? = null,
+    val property_address: String? = null,
+    val property_gate_code: String? = null,
+    val property_parking_instructions: String? = null,
+    val property_pets_on_site: String? = null,
+    val property_access_notes: String? = null,
+    val property_preferred_service_day: String? = null,
+    val property_lawn_size: String? = null,
+    val property_snow_removal_areas: String? = null,
+    val property_cleaning_instructions: String? = null,
+    val property_safety_notes: String? = null,
 )
 
 @Serializable

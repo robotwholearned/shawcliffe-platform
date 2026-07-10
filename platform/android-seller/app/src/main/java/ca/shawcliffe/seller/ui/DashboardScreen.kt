@@ -10,6 +10,7 @@ import androidx.compose.material.icons.filled.Campaign
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.DirectionsCar
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.House
 import androidx.compose.material.icons.filled.People
 import androidx.compose.material.icons.filled.Pets
 import androidx.compose.material.icons.filled.QuestionAnswer
@@ -61,6 +62,7 @@ fun DashboardScreen(clientId: String, authViewModel: AuthViewModel) {
     val showDocuments = ComponentKeys.DOCUMENT_CHECKLIST_INTAKE in authViewModel.enabledComponents
     val showVehicles = ComponentKeys.VEHICLE_PROFILES in authViewModel.enabledComponents
     val showPets = ComponentKeys.PET_PROFILES in authViewModel.enabledComponents
+    val showProperties = ComponentKeys.PROPERTY_PROFILES in authViewModel.enabledComponents
 
     androidx.compose.runtime.LaunchedEffect(clientId) {
         viewModel.loadAll()
@@ -77,6 +79,7 @@ fun DashboardScreen(clientId: String, authViewModel: AuthViewModel) {
         if (showDocuments) add(DashboardTab("Documents", Icons.Filled.Description) { m -> DocumentSubmissionsScreen(m) })
         if (showVehicles) add(DashboardTab("Vehicles", Icons.Filled.DirectionsCar) { m -> VehiclesScreen(m) })
         if (showPets) add(DashboardTab("Pets", Icons.Filled.Pets) { m -> PetsScreen(m) })
+        if (showProperties) add(DashboardTab("Properties", Icons.Filled.House) { m -> PropertiesScreen(m) })
     }
 
     Scaffold(

@@ -19,6 +19,11 @@ interface Inquiry {
   created_at: string
   customer: { name: string; phone: string | null; email: string | null } | null
   vehicle: { make: string | null; model: string | null; year: number | null; vin: string | null; plate: string | null; mileage: number | null } | null
+  property: {
+    address: string | null; gate_code: string | null; parking_instructions: string | null; pets_on_site: string | null
+    access_notes: string | null; preferred_service_day: string | null; lawn_size: string | null
+    snow_removal_areas: string | null; cleaning_instructions: string | null; safety_notes: string | null
+  } | null
 }
 
 export default function InquiriesPage() {
@@ -111,6 +116,20 @@ export default function InquiriesPage() {
                 {i.vehicle.plate && ` · Plate ${i.vehicle.plate}`}
                 {i.vehicle.vin && ` · VIN ${i.vehicle.vin}`}
                 {i.vehicle.mileage != null && ` · ${i.vehicle.mileage.toLocaleString()} mi`}
+              </div>
+            )}
+            {i.property && (
+              <div className="text-xs text-gray-500 space-y-0.5">
+                <div>🏠 {i.property.address || 'Property on file'}</div>
+                {i.property.gate_code && <div>Gate code: {i.property.gate_code}</div>}
+                {i.property.parking_instructions && <div>Parking: {i.property.parking_instructions}</div>}
+                {i.property.access_notes && <div>Access: {i.property.access_notes}</div>}
+                {i.property.pets_on_site && <div>Pets on site: {i.property.pets_on_site}</div>}
+                {i.property.preferred_service_day && <div>Preferred day: {i.property.preferred_service_day}</div>}
+                {i.property.lawn_size && <div>Lawn size: {i.property.lawn_size}</div>}
+                {i.property.snow_removal_areas && <div>Snow removal: {i.property.snow_removal_areas}</div>}
+                {i.property.cleaning_instructions && <div>Cleaning: {i.property.cleaning_instructions}</div>}
+                {i.property.safety_notes && <div>Safety: {i.property.safety_notes}</div>}
               </div>
             )}
             {i.description && <p className="text-sm text-gray-700">{i.description}</p>}

@@ -38,7 +38,7 @@ export async function GET(req: NextRequest) {
 
   let query = admin
     .from('inquiries')
-    .select('id, customer_id, service_category, job_location, urgency, description, photo_urls, preferred_contact_method, status, created_at, vehicle_id', { count: 'exact' })
+    .select('id, customer_id, service_category, job_location, urgency, description, photo_urls, preferred_contact_method, status, created_at, vehicle_id, property_id', { count: 'exact' })
     .eq('client_id', clientId)
     .order('created_at', { ascending: false })
     .range(from, to)
@@ -63,10 +63,17 @@ export async function GET(req: NextRequest) {
     : { data: [] }
   const vehicleById = new Map((vehicles ?? []).map(v => [v.id, v]))
 
-  const inquiries = (data ?? []).map(({ customer_id, vehicle_id, ...rest }) => ({
+  const propertyIds = Array.from(new Set((data ?? []).map(i => i.property_id).filter(Boolean)))
+  const { data: properties } = propertyIds.length
+    ? await admin.from('properties').select('id, address, gate_code, parking_instructions, pets_on_site, access_notes, preferred_service_day, lawn_size, snow_removal_areas, cleaning_instructions, safety_notes').eq('client_id', clientId).in('id', propertyIds)
+    : { data: [] }
+  const propertyById = new Map((properties ?? []).map(p => [p.id, p]))
+
+  const inquiries = (data ?? []).map(({ customer_id, vehicle_id, property_id, ...rest }) => ({
     ...rest,
     customer: customerById.get(customer_id) ?? null,
     vehicle: vehicle_id ? (vehicleById.get(vehicle_id) ?? null) : null,
+    property: property_id ? (propertyById.get(property_id) ?? null) : null,
   }))
 
   return NextResponse.json({ inquiries, total: count ?? 0, page, pageSize })

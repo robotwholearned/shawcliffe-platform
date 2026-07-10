@@ -43,6 +43,16 @@ struct InquiriesView: View {
                         Text("🚗 \([vehicle.year.map(String.init), vehicle.make, vehicle.model].compactMap { $0 }.joined(separator: " "))")
                             .font(.caption).foregroundStyle(.secondary)
                     }
+                    if let property = inquiry.property {
+                        Text("🏠 \(property.address ?? "Property on file")")
+                            .font(.caption).foregroundStyle(.secondary)
+                        if let gateCode = property.gateCode {
+                            Text("Gate code: \(gateCode)").font(.caption2).foregroundStyle(.secondary)
+                        }
+                        if let accessNotes = property.accessNotes {
+                            Text("Access: \(accessNotes)").font(.caption2).foregroundStyle(.secondary)
+                        }
+                    }
                     if let customer = inquiry.customer {
                         Text(customer.name).font(.subheadline.bold())
                         if let phone = customer.phone {

@@ -71,6 +71,7 @@ fun QuoteScreen(
 ) {
     val showPhotoUpload = ComponentKeys.PHOTO_FILE_UPLOAD in storefrontViewModel.enabledComponents
     val showVehicleFields = ComponentKeys.VEHICLE_PROFILES in storefrontViewModel.enabledComponents
+    val showPropertyFields = ComponentKeys.PROPERTY_PROFILES in storefrontViewModel.enabledComponents
     var name by remember { mutableStateOf("") }
     var phone by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
@@ -88,6 +89,16 @@ fun QuoteScreen(
     var vehicleVin by remember { mutableStateOf("") }
     var vehicleMileage by remember { mutableStateOf("") }
     var vehicleNotes by remember { mutableStateOf("") }
+    var propertyAddress by remember { mutableStateOf("") }
+    var propertyGateCode by remember { mutableStateOf("") }
+    var propertyParkingInstructions by remember { mutableStateOf("") }
+    var propertyPetsOnSite by remember { mutableStateOf("") }
+    var propertyAccessNotes by remember { mutableStateOf("") }
+    var propertyPreferredServiceDay by remember { mutableStateOf("") }
+    var propertyLawnSize by remember { mutableStateOf("") }
+    var propertySnowRemovalAreas by remember { mutableStateOf("") }
+    var propertyCleaningInstructions by remember { mutableStateOf("") }
+    var propertySafetyNotes by remember { mutableStateOf("") }
     var submitting by remember { mutableStateOf(false) }
     var done by remember { mutableStateOf(false) }
     var error by remember { mutableStateOf<String?>(null) }
@@ -251,6 +262,20 @@ fun QuoteScreen(
             OutlinedTextField(value = vehicleNotes, onValueChange = { vehicleNotes = it }, label = { Text("Issue notes") }, modifier = Modifier.fillMaxWidth())
         }
 
+        if (showPropertyFields) {
+            Text("Property (optional)", style = MaterialTheme.typography.titleSmall)
+            OutlinedTextField(value = propertyAddress, onValueChange = { propertyAddress = it }, label = { Text("Address") }, modifier = Modifier.fillMaxWidth())
+            OutlinedTextField(value = propertyGateCode, onValueChange = { propertyGateCode = it }, label = { Text("Gate code") }, modifier = Modifier.fillMaxWidth())
+            OutlinedTextField(value = propertyParkingInstructions, onValueChange = { propertyParkingInstructions = it }, label = { Text("Parking instructions") }, modifier = Modifier.fillMaxWidth())
+            OutlinedTextField(value = propertyPetsOnSite, onValueChange = { propertyPetsOnSite = it }, label = { Text("Pets on site") }, modifier = Modifier.fillMaxWidth())
+            OutlinedTextField(value = propertyAccessNotes, onValueChange = { propertyAccessNotes = it }, label = { Text("Access notes") }, modifier = Modifier.fillMaxWidth())
+            OutlinedTextField(value = propertyPreferredServiceDay, onValueChange = { propertyPreferredServiceDay = it }, label = { Text("Preferred service day") }, modifier = Modifier.fillMaxWidth())
+            OutlinedTextField(value = propertyLawnSize, onValueChange = { propertyLawnSize = it }, label = { Text("Lawn size") }, modifier = Modifier.fillMaxWidth())
+            OutlinedTextField(value = propertySnowRemovalAreas, onValueChange = { propertySnowRemovalAreas = it }, label = { Text("Snow removal areas") }, modifier = Modifier.fillMaxWidth())
+            OutlinedTextField(value = propertyCleaningInstructions, onValueChange = { propertyCleaningInstructions = it }, label = { Text("Cleaning instructions") }, modifier = Modifier.fillMaxWidth())
+            OutlinedTextField(value = propertySafetyNotes, onValueChange = { propertySafetyNotes = it }, label = { Text("Safety notes") }, modifier = Modifier.fillMaxWidth())
+        }
+
         error?.let { Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall) }
 
         Button(
@@ -289,6 +314,16 @@ fun QuoteScreen(
                                 vehicle_plate = vehiclePlate.ifEmpty { null },
                                 vehicle_mileage = vehicleMileage.toIntOrNull(),
                                 vehicle_notes = vehicleNotes.ifEmpty { null },
+                                property_address = propertyAddress.ifEmpty { null },
+                                property_gate_code = propertyGateCode.ifEmpty { null },
+                                property_parking_instructions = propertyParkingInstructions.ifEmpty { null },
+                                property_pets_on_site = propertyPetsOnSite.ifEmpty { null },
+                                property_access_notes = propertyAccessNotes.ifEmpty { null },
+                                property_preferred_service_day = propertyPreferredServiceDay.ifEmpty { null },
+                                property_lawn_size = propertyLawnSize.ifEmpty { null },
+                                property_snow_removal_areas = propertySnowRemovalAreas.ifEmpty { null },
+                                property_cleaning_instructions = propertyCleaningInstructions.ifEmpty { null },
+                                property_safety_notes = propertySafetyNotes.ifEmpty { null },
                             ),
                         )
                         done = true
