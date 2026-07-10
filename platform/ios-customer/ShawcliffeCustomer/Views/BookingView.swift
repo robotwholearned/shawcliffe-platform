@@ -8,6 +8,7 @@ private enum TimePreference: String, CaseIterable, Identifiable {
 
 struct BookingView: View {
     let businessName: String
+    let showPetFields: Bool
 
     @State private var name = ""
     @State private var phone = ""
@@ -19,6 +20,16 @@ struct BookingView: View {
     @State private var notes = ""
     @State private var smsConsent = false
     @State private var emailConsent = false
+    @State private var petName = ""
+    @State private var petBreed = ""
+    @State private var petSize = ""
+    @State private var petAge = ""
+    @State private var petAllergies = ""
+    @State private var petBehaviorNotes = ""
+    @State private var petGroomingPreferences = ""
+    @State private var petVaccinationInfo = ""
+    @State private var petEmergencyContact = ""
+    @State private var petCareInstructions = ""
     @State private var submitting = false
     @State private var done = false
     @State private var error: String?
@@ -75,6 +86,23 @@ struct BookingView: View {
 
                 TextField("Anything else we should know? (optional)", text: $notes, axis: .vertical)
                     .lineLimit(2...4)
+            }
+
+            if showPetFields {
+                Section("Pet (optional)") {
+                    TextField("Pet name", text: $petName)
+                    TextField("Breed", text: $petBreed)
+                    TextField("Size", text: $petSize)
+                    TextField("Age", text: $petAge)
+                    TextField("Allergies", text: $petAllergies)
+                    TextField("Behaviour notes", text: $petBehaviorNotes, axis: .vertical)
+                        .lineLimit(2...4)
+                    TextField("Grooming preferences", text: $petGroomingPreferences)
+                    TextField("Vaccination info", text: $petVaccinationInfo)
+                    TextField("Emergency contact", text: $petEmergencyContact)
+                    TextField("Care instructions", text: $petCareInstructions, axis: .vertical)
+                        .lineLimit(2...4)
+                }
             }
 
             Section {
@@ -136,7 +164,17 @@ struct BookingView: View {
                     service: service.isEmpty ? nil : service,
                     requested_date: hasPreferredDate ? Self.dateFormatter.string(from: preferredDate) : nil,
                     requested_time: timePreference.rawValue,
-                    notes: notes.isEmpty ? nil : notes
+                    notes: notes.isEmpty ? nil : notes,
+                    pet_name: petName.isEmpty ? nil : petName,
+                    pet_breed: petBreed.isEmpty ? nil : petBreed,
+                    pet_size: petSize.isEmpty ? nil : petSize,
+                    pet_age: petAge.isEmpty ? nil : petAge,
+                    pet_allergies: petAllergies.isEmpty ? nil : petAllergies,
+                    pet_behavior_notes: petBehaviorNotes.isEmpty ? nil : petBehaviorNotes,
+                    pet_grooming_preferences: petGroomingPreferences.isEmpty ? nil : petGroomingPreferences,
+                    pet_vaccination_info: petVaccinationInfo.isEmpty ? nil : petVaccinationInfo,
+                    pet_emergency_contact: petEmergencyContact.isEmpty ? nil : petEmergencyContact,
+                    pet_care_instructions: petCareInstructions.isEmpty ? nil : petCareInstructions
                 ),
                 as: BookingResponse.self
             )
@@ -149,5 +187,5 @@ struct BookingView: View {
 }
 
 #Preview {
-    NavigationStack { BookingView(businessName: "Tom's Produce") }
+    NavigationStack { BookingView(businessName: "Tom's Produce", showPetFields: true) }
 }

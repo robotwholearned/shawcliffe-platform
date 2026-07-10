@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServiceClient } from '@/lib/supabase/server'
 import { normalizePhone } from '@/lib/phone'
+import { hasComponent } from '@/lib/components'
 import { Resend } from 'resend'
 
 const FROM_ADDRESS = 'cassandra@shawcliffedigital.com'
@@ -20,6 +21,16 @@ export async function POST(req: NextRequest) {
     requested_date,
     requested_time,
     notes,
+    pet_name,
+    pet_breed,
+    pet_size,
+    pet_age,
+    pet_allergies,
+    pet_behavior_notes,
+    pet_grooming_preferences,
+    pet_vaccination_info,
+    pet_emergency_contact,
+    pet_care_instructions,
   } = body
 
   if (!client_id || !name || (!phone && !email)) {
@@ -41,7 +52,7 @@ export async function POST(req: NextRequest) {
   // Verify client exists and is active
   const { data: client } = await supabase
     .from('clients')
-    .select('id, operator_email, client_branding(app_name)')
+    .select('id, operator_email, enabled_components, client_branding(app_name)')
     .eq('id', client_id)
     .eq('active', true)
     .single()
@@ -88,6 +99,32 @@ export async function POST(req: NextRequest) {
     customerId = newCustomer.id
   }
 
+  // Pet Profiles (Tier 1): a pet is created alongside the booking rather
+  // than through a standalone screen — see 018_pet_profiles.sql.
+  let petId: string | null = null
+  const hasPetFields = pet_name || pet_breed || pet_size || pet_age || pet_allergies || pet_behavior_notes || pet_grooming_preferences || pet_vaccination_info || pet_emergency_contact || pet_care_instructions
+  if (hasPetFields && hasComponent(client.enabled_components, 'pet_profiles')) {
+    const { data: pet } = await supabase
+      .from('pets')
+      .insert({
+        client_id,
+        customer_id: customerId,
+        name: pet_name || null,
+        breed: pet_breed || null,
+        size: pet_size || null,
+        age: pet_age || null,
+        allergies: pet_allergies || null,
+        behavior_notes: pet_behavior_notes || null,
+        grooming_preferences: pet_grooming_preferences || null,
+        vaccination_info: pet_vaccination_info || null,
+        emergency_contact: pet_emergency_contact || null,
+        care_instructions: pet_care_instructions || null,
+      })
+      .select('id')
+      .single()
+    petId = pet?.id ?? null
+  }
+
   const { data: booking, error: bookingError } = await supabase
     .from('bookings')
     .insert({
@@ -97,6 +134,7 @@ export async function POST(req: NextRequest) {
       requested_date: requested_date || null,
       requested_time: requested_time || null,
       notes: notes || null,
+      pet_id: petId,
     })
     .select('id')
     .single()

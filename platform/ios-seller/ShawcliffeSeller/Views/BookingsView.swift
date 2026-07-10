@@ -39,6 +39,16 @@ struct BookingsView: View {
                             Text(email).font(.caption).foregroundStyle(.secondary)
                         }
                     }
+                    if let pet = booking.pet {
+                        Text("🐾 " + [pet.name, pet.breed, pet.size, pet.age].compactMap { $0 }.joined(separator: " · "))
+                            .font(.caption).foregroundStyle(.secondary)
+                        if let allergies = pet.allergies {
+                            Text("Allergies: \(allergies)").font(.caption2).foregroundStyle(.secondary)
+                        }
+                        if let behaviorNotes = pet.behaviorNotes {
+                            Text(behaviorNotes).font(.caption2).foregroundStyle(.secondary)
+                        }
+                    }
                     if let notes = booking.notes {
                         Text(notes).font(.subheadline)
                     }

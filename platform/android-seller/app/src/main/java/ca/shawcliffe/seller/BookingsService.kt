@@ -31,6 +31,16 @@ object BookingsService {
     )
 
     @Serializable
+    data class BookingPet(
+        val name: String? = null,
+        val breed: String? = null,
+        val size: String? = null,
+        val age: String? = null,
+        val allergies: String? = null,
+        @SerialName("behavior_notes") val behaviorNotes: String? = null,
+    )
+
+    @Serializable
     data class Booking(
         val id: String,
         val service: String? = null,
@@ -40,6 +50,7 @@ object BookingsService {
         val status: String,
         @SerialName("created_at") val createdAt: String,
         val customer: BookingCustomer? = null,
+        val pet: BookingPet? = null,
     )
 
     @Serializable

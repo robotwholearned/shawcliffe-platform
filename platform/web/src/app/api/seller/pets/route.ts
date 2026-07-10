@@ -2,9 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getAuthedUser, createServiceClient } from '@/lib/supabase/server'
 import { hasComponent } from '@/lib/components'
 
-const STATUSES = ['requested', 'confirmed', 'declined', 'completed', 'cancelled'] as const
-
-// Seller-facing read of the bookings table, mirrors api/seller/inquiries/route.ts.
+// Seller-facing read of the pets table, mirrors api/seller/vehicles/route.ts.
 export async function GET(req: NextRequest) {
   const user = await getAuthedUser(req)
   const role = user?.app_metadata?.role
@@ -18,7 +16,6 @@ export async function GET(req: NextRequest) {
   }
 
   const { searchParams } = new URL(req.url)
-  const status = searchParams.get('status')?.trim()
   const page = Math.max(0, parseInt(searchParams.get('page') ?? '0', 10) || 0)
   const pageSize = 25
   const from = page * pageSize
@@ -32,42 +29,29 @@ export async function GET(req: NextRequest) {
     .eq('id', clientId)
     .single()
 
-  if (!hasComponent(client?.enabled_components, 'booking_request_system')) {
+  if (!hasComponent(client?.enabled_components, 'pet_profiles')) {
     return NextResponse.json({ error: 'Component not enabled' }, { status: 403 })
   }
 
-  let query = admin
-    .from('bookings')
-    .select('id, customer_id, service, requested_date, requested_time, notes, status, created_at, pet_id', { count: 'exact' })
+  const { data, error, count } = await admin
+    .from('pets')
+    .select('id, customer_id, name, breed, size, age, allergies, behavior_notes, grooming_preferences, vaccination_info, emergency_contact, care_instructions, created_at', { count: 'exact' })
     .eq('client_id', clientId)
     .order('created_at', { ascending: false })
     .range(from, to)
 
-  if (status && (STATUSES as readonly string[]).includes(status)) {
-    query = query.eq('status', status)
-  }
-
-  const { data, error, count } = await query
-
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
-  const customerIds = Array.from(new Set((data ?? []).map(b => b.customer_id)))
+  const customerIds = Array.from(new Set((data ?? []).map(p => p.customer_id)))
   const { data: customers } = customerIds.length
     ? await admin.from('customers').select('id, name, phone, email').eq('client_id', clientId).in('id', customerIds)
     : { data: [] }
   const customerById = new Map((customers ?? []).map(c => [c.id, c]))
 
-  const petIds = Array.from(new Set((data ?? []).map(b => b.pet_id).filter(Boolean)))
-  const { data: pets } = petIds.length
-    ? await admin.from('pets').select('id, name, breed, size, age, allergies, behavior_notes').eq('client_id', clientId).in('id', petIds)
-    : { data: [] }
-  const petById = new Map((pets ?? []).map(p => [p.id, p]))
-
-  const bookings = (data ?? []).map(({ customer_id, pet_id, ...rest }) => ({
+  const pets = (data ?? []).map(({ customer_id, ...rest }) => ({
     ...rest,
     customer: customerById.get(customer_id) ?? null,
-    pet: pet_id ? (petById.get(pet_id) ?? null) : null,
   }))
 
-  return NextResponse.json({ bookings, total: count ?? 0, page, pageSize })
+  return NextResponse.json({ pets, total: count ?? 0, page, pageSize })
 }

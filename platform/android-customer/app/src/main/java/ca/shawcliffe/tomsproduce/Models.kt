@@ -159,6 +159,16 @@ data class BookingRequest(
     val requested_date: String?,
     val requested_time: String?,
     val notes: String?,
+    val pet_name: String? = null,
+    val pet_breed: String? = null,
+    val pet_size: String? = null,
+    val pet_age: String? = null,
+    val pet_allergies: String? = null,
+    val pet_behavior_notes: String? = null,
+    val pet_grooming_preferences: String? = null,
+    val pet_vaccination_info: String? = null,
+    val pet_emergency_contact: String? = null,
+    val pet_care_instructions: String? = null,
 )
 
 @Serializable

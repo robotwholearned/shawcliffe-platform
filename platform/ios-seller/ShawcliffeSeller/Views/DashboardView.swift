@@ -80,6 +80,14 @@ struct DashboardView: View {
                 }
                 .tabItem { Label("Vehicles", systemImage: "car") }
             }
+
+            if auth.enabledComponents.contains(ComponentKeys.petProfiles) {
+                NavigationStack {
+                    PetsView()
+                        .navigationTitle("Pets")
+                }
+                .tabItem { Label("Pets", systemImage: "pawprint") }
+            }
         }
         .task {
             await viewModel.loadAll()

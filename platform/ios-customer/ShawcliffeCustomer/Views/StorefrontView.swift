@@ -274,7 +274,10 @@ struct StorefrontView: View {
 
             if viewModel.enabledComponents.contains(ComponentKeys.bookingRequestSystem) {
                 NavigationLink {
-                    BookingView(businessName: businessName)
+                    BookingView(
+                        businessName: businessName,
+                        showPetFields: viewModel.enabledComponents.contains(ComponentKeys.petProfiles)
+                    )
                 } label: {
                     Text("Request a Booking").bold().frame(maxWidth: .infinity)
                 }

@@ -34,8 +34,10 @@ import androidx.compose.ui.unit.dp
 import ca.shawcliffe.tomsproduce.APIClient
 import ca.shawcliffe.tomsproduce.BookingRequest
 import ca.shawcliffe.tomsproduce.BookingResponse
+import ca.shawcliffe.tomsproduce.ComponentKeys
 import ca.shawcliffe.tomsproduce.Config
 import ca.shawcliffe.tomsproduce.Phone
+import ca.shawcliffe.tomsproduce.StorefrontViewModel
 import kotlinx.coroutines.launch
 import java.time.Instant
 import java.time.ZoneOffset
@@ -45,7 +47,12 @@ private val TIME_OPTIONS = listOf("morning" to "Morning", "afternoon" to "Aftern
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BookingScreen(onDone: () -> Unit, businessName: String = "Tom's Produce") {
+fun BookingScreen(
+    onDone: () -> Unit,
+    businessName: String = "Tom's Produce",
+    storefrontViewModel: StorefrontViewModel = activityScopedViewModel(),
+) {
+    val showPetFields = ComponentKeys.PET_PROFILES in storefrontViewModel.enabledComponents
     var name by remember { mutableStateOf("") }
     var phone by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
@@ -57,6 +64,16 @@ fun BookingScreen(onDone: () -> Unit, businessName: String = "Tom's Produce") {
     var notes by remember { mutableStateOf("") }
     var smsConsent by remember { mutableStateOf(false) }
     var emailConsent by remember { mutableStateOf(false) }
+    var petName by remember { mutableStateOf("") }
+    var petBreed by remember { mutableStateOf("") }
+    var petSize by remember { mutableStateOf("") }
+    var petAge by remember { mutableStateOf("") }
+    var petAllergies by remember { mutableStateOf("") }
+    var petBehaviorNotes by remember { mutableStateOf("") }
+    var petGroomingPreferences by remember { mutableStateOf("") }
+    var petVaccinationInfo by remember { mutableStateOf("") }
+    var petEmergencyContact by remember { mutableStateOf("") }
+    var petCareInstructions by remember { mutableStateOf("") }
     var submitting by remember { mutableStateOf(false) }
     var done by remember { mutableStateOf(false) }
     var error by remember { mutableStateOf<String?>(null) }
@@ -151,6 +168,20 @@ fun BookingScreen(onDone: () -> Unit, businessName: String = "Tom's Produce") {
             Text("Yes, send me email updates")
         }
 
+        if (showPetFields) {
+            Text("Pet (optional)", style = MaterialTheme.typography.titleSmall)
+            OutlinedTextField(value = petName, onValueChange = { petName = it }, label = { Text("Pet name") }, modifier = Modifier.fillMaxWidth())
+            OutlinedTextField(value = petBreed, onValueChange = { petBreed = it }, label = { Text("Breed") }, modifier = Modifier.fillMaxWidth())
+            OutlinedTextField(value = petSize, onValueChange = { petSize = it }, label = { Text("Size") }, modifier = Modifier.fillMaxWidth())
+            OutlinedTextField(value = petAge, onValueChange = { petAge = it }, label = { Text("Age") }, modifier = Modifier.fillMaxWidth())
+            OutlinedTextField(value = petAllergies, onValueChange = { petAllergies = it }, label = { Text("Allergies") }, modifier = Modifier.fillMaxWidth())
+            OutlinedTextField(value = petBehaviorNotes, onValueChange = { petBehaviorNotes = it }, label = { Text("Behaviour notes") }, modifier = Modifier.fillMaxWidth())
+            OutlinedTextField(value = petGroomingPreferences, onValueChange = { petGroomingPreferences = it }, label = { Text("Grooming preferences") }, modifier = Modifier.fillMaxWidth())
+            OutlinedTextField(value = petVaccinationInfo, onValueChange = { petVaccinationInfo = it }, label = { Text("Vaccination info") }, modifier = Modifier.fillMaxWidth())
+            OutlinedTextField(value = petEmergencyContact, onValueChange = { petEmergencyContact = it }, label = { Text("Emergency contact") }, modifier = Modifier.fillMaxWidth())
+            OutlinedTextField(value = petCareInstructions, onValueChange = { petCareInstructions = it }, label = { Text("Care instructions") }, modifier = Modifier.fillMaxWidth())
+        }
+
         error?.let { Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall) }
 
         Button(
@@ -180,6 +211,16 @@ fun BookingScreen(onDone: () -> Unit, businessName: String = "Tom's Produce") {
                                 requested_date = preferredDateMillis?.let { formatIsoDate(it) },
                                 requested_time = timePreference,
                                 notes = notes.ifEmpty { null },
+                                pet_name = petName.ifEmpty { null },
+                                pet_breed = petBreed.ifEmpty { null },
+                                pet_size = petSize.ifEmpty { null },
+                                pet_age = petAge.ifEmpty { null },
+                                pet_allergies = petAllergies.ifEmpty { null },
+                                pet_behavior_notes = petBehaviorNotes.ifEmpty { null },
+                                pet_grooming_preferences = petGroomingPreferences.ifEmpty { null },
+                                pet_vaccination_info = petVaccinationInfo.ifEmpty { null },
+                                pet_emergency_contact = petEmergencyContact.ifEmpty { null },
+                                pet_care_instructions = petCareInstructions.ifEmpty { null },
                             ),
                         )
                         done = true

@@ -11,6 +11,7 @@ import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.DirectionsCar
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.People
+import androidx.compose.material.icons.filled.Pets
 import androidx.compose.material.icons.filled.QuestionAnswer
 import androidx.compose.material.icons.filled.ShoppingBag
 import androidx.compose.material.icons.filled.Storefront
@@ -59,6 +60,7 @@ fun DashboardScreen(clientId: String, authViewModel: AuthViewModel) {
     val showReviewRequest = ComponentKeys.REVIEW_REQUEST_SYSTEM in authViewModel.enabledComponents
     val showDocuments = ComponentKeys.DOCUMENT_CHECKLIST_INTAKE in authViewModel.enabledComponents
     val showVehicles = ComponentKeys.VEHICLE_PROFILES in authViewModel.enabledComponents
+    val showPets = ComponentKeys.PET_PROFILES in authViewModel.enabledComponents
 
     androidx.compose.runtime.LaunchedEffect(clientId) {
         viewModel.loadAll()
@@ -74,6 +76,7 @@ fun DashboardScreen(clientId: String, authViewModel: AuthViewModel) {
         if (showBookings) add(DashboardTab("Bookings", Icons.Filled.CalendarMonth) { m -> BookingsScreen(m) })
         if (showDocuments) add(DashboardTab("Documents", Icons.Filled.Description) { m -> DocumentSubmissionsScreen(m) })
         if (showVehicles) add(DashboardTab("Vehicles", Icons.Filled.DirectionsCar) { m -> VehiclesScreen(m) })
+        if (showPets) add(DashboardTab("Pets", Icons.Filled.Pets) { m -> PetsScreen(m) })
     }
 
     Scaffold(

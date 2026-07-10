@@ -184,6 +184,16 @@ struct BookingRequest: Encodable {
     let requested_date: String?
     let requested_time: String?
     let notes: String?
+    let pet_name: String?
+    let pet_breed: String?
+    let pet_size: String?
+    let pet_age: String?
+    let pet_allergies: String?
+    let pet_behavior_notes: String?
+    let pet_grooming_preferences: String?
+    let pet_vaccination_info: String?
+    let pet_emergency_contact: String?
+    let pet_care_instructions: String?
 }
 
 struct DocumentChecklistItem: Codable, Identifiable {

@@ -16,6 +16,7 @@ interface Booking {
   status: Status
   created_at: string
   customer: { name: string; phone: string | null; email: string | null } | null
+  pet: { name: string | null; breed: string | null; size: string | null; age: string | null; allergies: string | null; behavior_notes: string | null } | null
 }
 
 export default function BookingsPage() {
@@ -104,6 +105,13 @@ export default function BookingsPage() {
             {(b.requested_date || b.requested_time) && (
               <div className="text-xs text-gray-500">
                 {[b.requested_date, b.requested_time].filter(Boolean).join(' — ')}
+              </div>
+            )}
+            {b.pet && (
+              <div className="text-xs text-gray-500">
+                🐾 {[b.pet.name, b.pet.breed, b.pet.size, b.pet.age].filter(Boolean).join(' · ')}
+                {b.pet.allergies && ` · Allergies: ${b.pet.allergies}`}
+                {b.pet.behavior_notes && ` · ${b.pet.behavior_notes}`}
               </div>
             )}
             {b.notes && <p className="text-sm text-gray-700">{b.notes}</p>}

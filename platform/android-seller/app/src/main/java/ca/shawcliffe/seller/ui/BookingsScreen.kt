@@ -151,6 +151,15 @@ private fun BookingRow(booking: BookingsService.Booking, onStatusChange: (String
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
+        booking.pet?.let { pet ->
+            Text(
+                "🐾 " + listOfNotNull(pet.name, pet.breed, pet.size, pet.age).joinToString(" · "),
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            pet.allergies?.let { Text("Allergies: $it", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant) }
+            pet.behaviorNotes?.let { Text(it, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant) }
+        }
         booking.notes?.takeIf { it.isNotEmpty() }?.let { Text(it, style = MaterialTheme.typography.bodyMedium) }
     }
 }

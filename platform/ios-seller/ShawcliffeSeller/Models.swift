@@ -301,6 +301,20 @@ struct BookingCustomer: Codable {
     let email: String?
 }
 
+struct BookingPet: Codable {
+    let name: String?
+    let breed: String?
+    let size: String?
+    let age: String?
+    let allergies: String?
+    let behaviorNotes: String?
+
+    enum CodingKeys: String, CodingKey {
+        case name, breed, size, age, allergies
+        case behaviorNotes = "behavior_notes"
+    }
+}
+
 struct Booking: Codable, Identifiable {
     let id: String
     let service: String?
@@ -310,6 +324,7 @@ struct Booking: Codable, Identifiable {
     let status: String
     let createdAt: String
     let customer: BookingCustomer?
+    let pet: BookingPet?
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -318,6 +333,40 @@ struct Booking: Codable, Identifiable {
         case requestedTime = "requested_time"
         case notes
         case status
+        case createdAt = "created_at"
+        case customer
+        case pet
+    }
+}
+
+struct PetCustomer: Codable {
+    let name: String
+    let phone: String?
+    let email: String?
+}
+
+struct Pet: Codable, Identifiable {
+    let id: String
+    let name: String?
+    let breed: String?
+    let size: String?
+    let age: String?
+    let allergies: String?
+    let behaviorNotes: String?
+    let groomingPreferences: String?
+    let vaccinationInfo: String?
+    let emergencyContact: String?
+    let careInstructions: String?
+    let createdAt: String
+    let customer: PetCustomer?
+
+    enum CodingKeys: String, CodingKey {
+        case id, name, breed, size, age, allergies
+        case behaviorNotes = "behavior_notes"
+        case groomingPreferences = "grooming_preferences"
+        case vaccinationInfo = "vaccination_info"
+        case emergencyContact = "emergency_contact"
+        case careInstructions = "care_instructions"
         case createdAt = "created_at"
         case customer
     }
