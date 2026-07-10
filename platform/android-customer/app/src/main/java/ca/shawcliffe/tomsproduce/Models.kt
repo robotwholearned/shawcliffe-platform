@@ -131,6 +131,13 @@ data class InquiryRequest(
     val description: String?,
     val preferred_contact_method: String?,
     val photo_urls: List<String> = emptyList(),
+    val vehicle_make: String? = null,
+    val vehicle_model: String? = null,
+    val vehicle_year: Int? = null,
+    val vehicle_vin: String? = null,
+    val vehicle_plate: String? = null,
+    val vehicle_mileage: Int? = null,
+    val vehicle_notes: String? = null,
 )
 
 @Serializable

@@ -18,6 +18,7 @@ interface Inquiry {
   status: Status
   created_at: string
   customer: { name: string; phone: string | null; email: string | null } | null
+  vehicle: { make: string | null; model: string | null; year: number | null; vin: string | null; plate: string | null; mileage: number | null } | null
 }
 
 export default function InquiriesPage() {
@@ -104,6 +105,14 @@ export default function InquiriesPage() {
               </div>
             )}
             {i.job_location && <div className="text-xs text-gray-500">{i.job_location}</div>}
+            {i.vehicle && (
+              <div className="text-xs text-gray-500">
+                🚗 {[i.vehicle.year, i.vehicle.make, i.vehicle.model].filter(Boolean).join(' ')}
+                {i.vehicle.plate && ` · Plate ${i.vehicle.plate}`}
+                {i.vehicle.vin && ` · VIN ${i.vehicle.vin}`}
+                {i.vehicle.mileage != null && ` · ${i.vehicle.mileage.toLocaleString()} mi`}
+              </div>
+            )}
             {i.description && <p className="text-sm text-gray-700">{i.description}</p>}
             <div className="flex flex-wrap gap-1.5 text-xs text-gray-400">
               {i.urgency && <span className="px-1.5 py-0.5 bg-gray-100 rounded-full">{i.urgency}</span>}

@@ -260,7 +260,11 @@ struct StorefrontView: View {
 
             if viewModel.enabledComponents.contains(ComponentKeys.inquiryQuoteForm) {
                 NavigationLink {
-                    QuoteView(businessName: businessName, showPhotoUpload: viewModel.enabledComponents.contains(ComponentKeys.photoFileUpload))
+                    QuoteView(
+                        businessName: businessName,
+                        showPhotoUpload: viewModel.enabledComponents.contains(ComponentKeys.photoFileUpload),
+                        showVehicleFields: viewModel.enabledComponents.contains(ComponentKeys.vehicleProfiles)
+                    )
                 } label: {
                     Text("Get a Quote").bold().frame(maxWidth: .infinity)
                 }

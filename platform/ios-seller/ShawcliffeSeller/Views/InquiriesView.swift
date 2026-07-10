@@ -39,6 +39,10 @@ struct InquiriesView: View {
                     if !inquiry.photoUrls.isEmpty {
                         Text("\(inquiry.photoUrls.count) photos").font(.caption).foregroundStyle(.secondary)
                     }
+                    if let vehicle = inquiry.vehicle {
+                        Text("🚗 \([vehicle.year.map(String.init), vehicle.make, vehicle.model].compactMap { $0 }.joined(separator: " "))")
+                            .font(.caption).foregroundStyle(.secondary)
+                    }
                     if let customer = inquiry.customer {
                         Text(customer.name).font(.subheadline.bold())
                         if let phone = customer.phone {

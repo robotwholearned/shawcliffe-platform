@@ -258,6 +258,15 @@ struct InquiryCustomer: Codable {
     let email: String?
 }
 
+struct InquiryVehicle: Codable {
+    let make: String?
+    let model: String?
+    let year: Int?
+    let vin: String?
+    let plate: String?
+    let mileage: Int?
+}
+
 struct Inquiry: Codable, Identifiable {
     let id: String
     let serviceCategory: String?
@@ -269,6 +278,7 @@ struct Inquiry: Codable, Identifiable {
     let status: String
     let createdAt: String
     let customer: InquiryCustomer?
+    let vehicle: InquiryVehicle?
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -281,6 +291,7 @@ struct Inquiry: Codable, Identifiable {
         case status
         case createdAt = "created_at"
         case customer
+        case vehicle
     }
 }
 
@@ -307,6 +318,31 @@ struct Booking: Codable, Identifiable {
         case requestedTime = "requested_time"
         case notes
         case status
+        case createdAt = "created_at"
+        case customer
+    }
+}
+
+struct VehicleCustomer: Codable {
+    let name: String
+    let phone: String?
+    let email: String?
+}
+
+struct Vehicle: Codable, Identifiable {
+    let id: String
+    let make: String?
+    let model: String?
+    let year: Int?
+    let vin: String?
+    let plate: String?
+    let mileage: Int?
+    let notes: String?
+    let createdAt: String
+    let customer: VehicleCustomer?
+
+    enum CodingKeys: String, CodingKey {
+        case id, make, model, year, vin, plate, mileage, notes
         case createdAt = "created_at"
         case customer
     }

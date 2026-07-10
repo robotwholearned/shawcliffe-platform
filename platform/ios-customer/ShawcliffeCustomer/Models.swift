@@ -163,6 +163,13 @@ struct InquiryRequest: Encodable {
     let description: String?
     let preferred_contact_method: String?
     let photo_urls: [String]
+    let vehicle_make: String?
+    let vehicle_model: String?
+    let vehicle_year: Int?
+    let vehicle_vin: String?
+    let vehicle_plate: String?
+    let vehicle_mileage: Int?
+    let vehicle_notes: String?
 }
 
 struct BookingRequest: Encodable {

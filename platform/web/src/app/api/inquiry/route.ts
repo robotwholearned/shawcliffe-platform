@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServiceClient } from '@/lib/supabase/server'
 import { normalizePhone } from '@/lib/phone'
+import { hasComponent } from '@/lib/components'
 import { Resend } from 'resend'
 
 const FROM_ADDRESS = 'cassandra@shawcliffedigital.com'
@@ -25,6 +26,13 @@ export async function POST(req: NextRequest) {
     description,
     photo_urls,
     preferred_contact_method,
+    vehicle_make,
+    vehicle_model,
+    vehicle_year,
+    vehicle_vin,
+    vehicle_plate,
+    vehicle_mileage,
+    vehicle_notes,
   } = body
 
   if (!client_id || !name || (!phone && !email)) {
@@ -52,7 +60,7 @@ export async function POST(req: NextRequest) {
   // Verify client exists and is active
   const { data: client } = await supabase
     .from('clients')
-    .select('id, operator_email, client_branding(app_name)')
+    .select('id, operator_email, enabled_components, client_branding(app_name)')
     .eq('id', client_id)
     .eq('active', true)
     .single()
@@ -99,6 +107,29 @@ export async function POST(req: NextRequest) {
     customerId = newCustomer.id
   }
 
+  // Vehicle Profiles (Tier 1): a vehicle is created alongside the inquiry
+  // rather than through a standalone screen — see 017_vehicle_profiles.sql.
+  let vehicleId: string | null = null
+  const hasVehicleFields = vehicle_make || vehicle_model || vehicle_year || vehicle_vin || vehicle_plate || vehicle_mileage || vehicle_notes
+  if (hasVehicleFields && hasComponent(client.enabled_components, 'vehicle_profiles')) {
+    const { data: vehicle } = await supabase
+      .from('vehicles')
+      .insert({
+        client_id,
+        customer_id: customerId,
+        make: vehicle_make || null,
+        model: vehicle_model || null,
+        year: vehicle_year || null,
+        vin: vehicle_vin || null,
+        plate: vehicle_plate || null,
+        mileage: vehicle_mileage || null,
+        notes: vehicle_notes || null,
+      })
+      .select('id')
+      .single()
+    vehicleId = vehicle?.id ?? null
+  }
+
   const { data: inquiry, error: inquiryError } = await supabase
     .from('inquiries')
     .insert({
@@ -110,6 +141,7 @@ export async function POST(req: NextRequest) {
       description: description || null,
       photo_urls: photo_urls ?? [],
       preferred_contact_method: preferred_contact_method || null,
+      vehicle_id: vehicleId,
     })
     .select('id')
     .single()

@@ -72,6 +72,14 @@ struct DashboardView: View {
                 }
                 .tabItem { Label("Documents", systemImage: "doc.text") }
             }
+
+            if auth.enabledComponents.contains(ComponentKeys.vehicleProfiles) {
+                NavigationStack {
+                    VehiclesView()
+                        .navigationTitle("Vehicles")
+                }
+                .tabItem { Label("Vehicles", systemImage: "car") }
+            }
         }
         .task {
             await viewModel.loadAll()

@@ -151,6 +151,13 @@ private fun InquiryRow(inquiry: InquiriesService.Inquiry, onStatusChange: (Strin
         if (inquiry.photoUrls.isNotEmpty()) {
             Text("${inquiry.photoUrls.size} photos", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
+        inquiry.vehicle?.let { vehicle ->
+            Text(
+                "🚗 " + listOfNotNull(vehicle.year?.toString(), vehicle.make, vehicle.model).joinToString(" "),
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
     }
 }
 

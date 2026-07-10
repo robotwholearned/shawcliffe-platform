@@ -32,6 +32,7 @@ private struct QuotePhoto: Identifiable {
 struct QuoteView: View {
     let businessName: String
     let showPhotoUpload: Bool
+    let showVehicleFields: Bool
 
     @State private var name = ""
     @State private var phone = ""
@@ -45,6 +46,13 @@ struct QuoteView: View {
     @State private var emailConsent = false
     @State private var photoSelections: [PhotosPickerItem] = []
     @State private var photos: [QuotePhoto] = []
+    @State private var vehicleMake = ""
+    @State private var vehicleModel = ""
+    @State private var vehicleYear = ""
+    @State private var vehicleVin = ""
+    @State private var vehiclePlate = ""
+    @State private var vehicleMileage = ""
+    @State private var vehicleNotes = ""
     @State private var submitting = false
     @State private var done = false
     @State private var error: String?
@@ -109,6 +117,21 @@ struct QuoteView: View {
                             }
                         }
                     }
+                }
+            }
+
+            if showVehicleFields {
+                Section("Vehicle (optional)") {
+                    TextField("Make", text: $vehicleMake)
+                    TextField("Model", text: $vehicleModel)
+                    TextField("Year", text: $vehicleYear)
+                        .keyboardType(.numberPad)
+                    TextField("License plate", text: $vehiclePlate)
+                    TextField("VIN", text: $vehicleVin)
+                    TextField("Mileage/hours", text: $vehicleMileage)
+                        .keyboardType(.numberPad)
+                    TextField("Issue notes", text: $vehicleNotes, axis: .vertical)
+                        .lineLimit(2...4)
                 }
             }
 
@@ -264,7 +287,14 @@ struct QuoteView: View {
                     urgency: urgency.rawValue,
                     description: description.isEmpty ? nil : description,
                     preferred_contact_method: preferredContact.rawValue,
-                    photo_urls: photos.compactMap(\.url)
+                    photo_urls: photos.compactMap(\.url),
+                    vehicle_make: vehicleMake.isEmpty ? nil : vehicleMake,
+                    vehicle_model: vehicleModel.isEmpty ? nil : vehicleModel,
+                    vehicle_year: Int(vehicleYear),
+                    vehicle_vin: vehicleVin.isEmpty ? nil : vehicleVin,
+                    vehicle_plate: vehiclePlate.isEmpty ? nil : vehiclePlate,
+                    vehicle_mileage: Int(vehicleMileage),
+                    vehicle_notes: vehicleNotes.isEmpty ? nil : vehicleNotes
                 ),
                 as: InquiryResponse.self
             )
@@ -277,5 +307,5 @@ struct QuoteView: View {
 }
 
 #Preview {
-    NavigationStack { QuoteView(businessName: "Tom's Produce", showPhotoUpload: true) }
+    NavigationStack { QuoteView(businessName: "Tom's Produce", showPhotoUpload: true, showVehicleFields: true) }
 }

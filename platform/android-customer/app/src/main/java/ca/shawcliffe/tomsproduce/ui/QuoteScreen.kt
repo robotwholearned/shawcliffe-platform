@@ -70,6 +70,7 @@ fun QuoteScreen(
     storefrontViewModel: StorefrontViewModel = activityScopedViewModel(),
 ) {
     val showPhotoUpload = ComponentKeys.PHOTO_FILE_UPLOAD in storefrontViewModel.enabledComponents
+    val showVehicleFields = ComponentKeys.VEHICLE_PROFILES in storefrontViewModel.enabledComponents
     var name by remember { mutableStateOf("") }
     var phone by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
@@ -80,6 +81,13 @@ fun QuoteScreen(
     var preferredContact by remember { mutableStateOf(CONTACT_OPTIONS[0].first) }
     var smsConsent by remember { mutableStateOf(false) }
     var emailConsent by remember { mutableStateOf(false) }
+    var vehicleMake by remember { mutableStateOf("") }
+    var vehicleModel by remember { mutableStateOf("") }
+    var vehicleYear by remember { mutableStateOf("") }
+    var vehiclePlate by remember { mutableStateOf("") }
+    var vehicleVin by remember { mutableStateOf("") }
+    var vehicleMileage by remember { mutableStateOf("") }
+    var vehicleNotes by remember { mutableStateOf("") }
     var submitting by remember { mutableStateOf(false) }
     var done by remember { mutableStateOf(false) }
     var error by remember { mutableStateOf<String?>(null) }
@@ -220,6 +228,29 @@ fun QuoteScreen(
             }
         }
 
+        if (showVehicleFields) {
+            Text("Vehicle (optional)", style = MaterialTheme.typography.titleSmall)
+            OutlinedTextField(value = vehicleMake, onValueChange = { vehicleMake = it }, label = { Text("Make") }, modifier = Modifier.fillMaxWidth())
+            OutlinedTextField(value = vehicleModel, onValueChange = { vehicleModel = it }, label = { Text("Model") }, modifier = Modifier.fillMaxWidth())
+            OutlinedTextField(
+                value = vehicleYear,
+                onValueChange = { vehicleYear = it },
+                label = { Text("Year") },
+                keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = KeyboardType.Number),
+                modifier = Modifier.fillMaxWidth(),
+            )
+            OutlinedTextField(value = vehiclePlate, onValueChange = { vehiclePlate = it }, label = { Text("License plate") }, modifier = Modifier.fillMaxWidth())
+            OutlinedTextField(value = vehicleVin, onValueChange = { vehicleVin = it }, label = { Text("VIN") }, modifier = Modifier.fillMaxWidth())
+            OutlinedTextField(
+                value = vehicleMileage,
+                onValueChange = { vehicleMileage = it },
+                label = { Text("Mileage/hours") },
+                keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = KeyboardType.Number),
+                modifier = Modifier.fillMaxWidth(),
+            )
+            OutlinedTextField(value = vehicleNotes, onValueChange = { vehicleNotes = it }, label = { Text("Issue notes") }, modifier = Modifier.fillMaxWidth())
+        }
+
         error?.let { Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall) }
 
         Button(
@@ -251,6 +282,13 @@ fun QuoteScreen(
                                 description = description.ifEmpty { null },
                                 preferred_contact_method = preferredContact,
                                 photo_urls = photos.mapNotNull { it.url },
+                                vehicle_make = vehicleMake.ifEmpty { null },
+                                vehicle_model = vehicleModel.ifEmpty { null },
+                                vehicle_year = vehicleYear.toIntOrNull(),
+                                vehicle_vin = vehicleVin.ifEmpty { null },
+                                vehicle_plate = vehiclePlate.ifEmpty { null },
+                                vehicle_mileage = vehicleMileage.toIntOrNull(),
+                                vehicle_notes = vehicleNotes.ifEmpty { null },
                             ),
                         )
                         done = true

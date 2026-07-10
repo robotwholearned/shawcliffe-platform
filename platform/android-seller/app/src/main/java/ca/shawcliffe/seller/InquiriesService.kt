@@ -31,6 +31,16 @@ object InquiriesService {
     )
 
     @Serializable
+    data class InquiryVehicle(
+        val make: String? = null,
+        val model: String? = null,
+        val year: Int? = null,
+        val vin: String? = null,
+        val plate: String? = null,
+        val mileage: Int? = null,
+    )
+
+    @Serializable
     data class Inquiry(
         val id: String,
         @SerialName("service_category") val serviceCategory: String? = null,
@@ -42,6 +52,7 @@ object InquiriesService {
         val status: String,
         @SerialName("created_at") val createdAt: String,
         val customer: InquiryCustomer? = null,
+        val vehicle: InquiryVehicle? = null,
     )
 
     @Serializable

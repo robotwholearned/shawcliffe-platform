@@ -8,6 +8,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Campaign
 import androidx.compose.material.icons.filled.Description
+import androidx.compose.material.icons.filled.DirectionsCar
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.People
 import androidx.compose.material.icons.filled.QuestionAnswer
@@ -57,6 +58,7 @@ fun DashboardScreen(clientId: String, authViewModel: AuthViewModel) {
     val showBookings = ComponentKeys.BOOKING_REQUEST_SYSTEM in authViewModel.enabledComponents
     val showReviewRequest = ComponentKeys.REVIEW_REQUEST_SYSTEM in authViewModel.enabledComponents
     val showDocuments = ComponentKeys.DOCUMENT_CHECKLIST_INTAKE in authViewModel.enabledComponents
+    val showVehicles = ComponentKeys.VEHICLE_PROFILES in authViewModel.enabledComponents
 
     androidx.compose.runtime.LaunchedEffect(clientId) {
         viewModel.loadAll()
@@ -71,6 +73,7 @@ fun DashboardScreen(clientId: String, authViewModel: AuthViewModel) {
         if (showInquiries) add(DashboardTab("Inquiries", Icons.Filled.QuestionAnswer) { m -> InquiriesScreen(m) })
         if (showBookings) add(DashboardTab("Bookings", Icons.Filled.CalendarMonth) { m -> BookingsScreen(m) })
         if (showDocuments) add(DashboardTab("Documents", Icons.Filled.Description) { m -> DocumentSubmissionsScreen(m) })
+        if (showVehicles) add(DashboardTab("Vehicles", Icons.Filled.DirectionsCar) { m -> VehiclesScreen(m) })
     }
 
     Scaffold(
