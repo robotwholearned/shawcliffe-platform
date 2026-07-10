@@ -62,4 +62,32 @@ object APIClient {
         }
         return response.body<PhotoUploadResponse>().url
     }
+
+    // General-purpose multipart submit (text fields + one file) — used by the
+    // Document Checklist form, which needs more fields than uploadPhoto's
+    // fixed client_id/file shape.
+    suspend fun submitDocument(
+        path: String,
+        fields: Map<String, String>,
+        bytes: ByteArray,
+        filename: String,
+        contentType: String,
+    ): DocumentSubmissionResponse {
+        val response: HttpResponse = client.submitFormWithBinaryData(
+            url = "${Config.API_BASE_URL}/$path",
+            formData = formData {
+                fields.forEach { (name, value) -> append(name, value) }
+                append("file", bytes, Headers.build {
+                    append(HttpHeaders.ContentType, contentType)
+                    append(HttpHeaders.ContentDisposition, "filename=\"$filename\"")
+                })
+            },
+        )
+
+        if (!response.status.isSuccess()) {
+            val errorBody = runCatching { response.body<ApiErrorBody>() }.getOrNull()
+            throw ApiException.Server(errorBody?.error ?: "Upload failed. Please try again.")
+        }
+        return response.body()
+    }
 }

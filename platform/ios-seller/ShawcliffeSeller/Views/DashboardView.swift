@@ -64,6 +64,14 @@ struct DashboardView: View {
                 }
                 .tabItem { Label("Bookings", systemImage: "calendar") }
             }
+
+            if auth.enabledComponents.contains(ComponentKeys.documentChecklistIntake) {
+                NavigationStack {
+                    DocumentSubmissionsView()
+                        .navigationTitle("Documents")
+                }
+                .tabItem { Label("Documents", systemImage: "doc.text") }
+            }
         }
         .task {
             await viewModel.loadAll()

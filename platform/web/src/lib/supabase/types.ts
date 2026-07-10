@@ -89,6 +89,17 @@ export interface Product {
   sort_order: number
 }
 
+export interface DocumentChecklistItem {
+  client_id: string
+  id: string
+  title: string
+  description: string | null
+  required: boolean
+  needs_upload: boolean
+  sort_order: number
+  created_at: string
+}
+
 export interface DailyStatus {
   client_id: string
   id: string

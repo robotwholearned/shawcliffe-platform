@@ -156,3 +156,17 @@ data class BookingRequest(
 
 @Serializable
 data class BookingResponse(val booking_id: String)
+
+@Serializable
+data class DocumentChecklistItem(
+    @SerialName("client_id") val clientId: String,
+    val id: String,
+    val title: String,
+    val description: String? = null,
+    val required: Boolean = true,
+    @SerialName("needs_upload") val needsUpload: Boolean = true,
+    @SerialName("sort_order") val sortOrder: Int = 0,
+)
+
+@Serializable
+data class DocumentSubmissionResponse(val submission_id: String, val url: String)

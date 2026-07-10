@@ -66,6 +66,47 @@ enum APIClient {
         }
         return try JSONDecoder().decode(PhotoUploadResponse.self, from: data).url
     }
+
+    // General-purpose multipart submit (text fields + one file) — used by the
+    // Document Checklist form, which needs more fields than uploadPhoto's
+    // fixed client_id/file shape.
+    static func submitMultipart<Response: Decodable>(
+        path: String,
+        fields: [String: String],
+        fileFieldName: String,
+        filename: String,
+        fileData: Data,
+        mimeType: String,
+        as type: Response.Type
+    ) async throws -> Response {
+        let boundary = UUID().uuidString
+        var request = URLRequest(url: Config.apiBaseURL.appendingPathComponent(path))
+        request.httpMethod = "POST"
+        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+
+        var body = Data()
+        for (name, value) in fields {
+            body.append("--\(boundary)\r\n".data(using: .utf8)!)
+            body.append("Content-Disposition: form-data; name=\"\(name)\"\r\n\r\n".data(using: .utf8)!)
+            body.append("\(value)\r\n".data(using: .utf8)!)
+        }
+        body.append("--\(boundary)\r\n".data(using: .utf8)!)
+        body.append("Content-Disposition: form-data; name=\"\(fileFieldName)\"; filename=\"\(filename)\"\r\n".data(using: .utf8)!)
+        body.append("Content-Type: \(mimeType)\r\n\r\n".data(using: .utf8)!)
+        body.append(fileData)
+        body.append("\r\n--\(boundary)--\r\n".data(using: .utf8)!)
+        request.httpBody = body
+
+        let (data, response) = try await URLSession.shared.data(for: request)
+        guard let http = response as? HTTPURLResponse else {
+            throw APIError.server("No response from server.")
+        }
+        guard (200..<300).contains(http.statusCode) else {
+            let errorBody = try? JSONDecoder().decode(APIErrorBody.self, from: data)
+            throw APIError.server(errorBody?.error ?? "Upload failed. Please try again.")
+        }
+        return try JSONDecoder().decode(Response.self, from: data)
+    }
 }
 
 struct PhotoUploadResponse: Decodable {
@@ -86,4 +127,9 @@ struct InquiryResponse: Decodable {
 
 struct BookingResponse: Decodable {
     let booking_id: String
+}
+
+struct DocumentSubmissionResponse: Decodable {
+    let submission_id: String
+    let url: String
 }

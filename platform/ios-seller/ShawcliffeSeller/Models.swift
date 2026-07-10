@@ -311,3 +311,29 @@ struct Booking: Codable, Identifiable {
         case customer
     }
 }
+
+struct DocumentSubmissionCustomer: Codable {
+    let name: String
+    let phone: String?
+    let email: String?
+}
+
+struct DocumentSubmissionChecklistItem: Codable {
+    let title: String
+}
+
+struct DocumentSubmission: Codable, Identifiable {
+    let id: String
+    let fileUrl: String
+    let submittedAt: String
+    let customer: DocumentSubmissionCustomer?
+    let checklistItem: DocumentSubmissionChecklistItem?
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case fileUrl = "file_url"
+        case submittedAt = "submitted_at"
+        case customer
+        case checklistItem = "checklist_item"
+    }
+}

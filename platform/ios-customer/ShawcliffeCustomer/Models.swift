@@ -179,6 +179,26 @@ struct BookingRequest: Encodable {
     let notes: String?
 }
 
+struct DocumentChecklistItem: Codable, Identifiable {
+    let clientId: String
+    let id: String
+    let title: String
+    let description: String?
+    let required: Bool
+    let needsUpload: Bool
+    let sortOrder: Int
+
+    enum CodingKeys: String, CodingKey {
+        case clientId = "client_id"
+        case id
+        case title
+        case description
+        case required
+        case needsUpload = "needs_upload"
+        case sortOrder = "sort_order"
+    }
+}
+
 struct APIErrorBody: Decodable {
     let error: String?
     let product: String?

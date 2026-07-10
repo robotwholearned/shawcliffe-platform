@@ -10,6 +10,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import ca.shawcliffe.tomsproduce.ui.BookingScreen
+import ca.shawcliffe.tomsproduce.ui.DocumentChecklistScreen
 import ca.shawcliffe.tomsproduce.ui.PreorderScreen
 import ca.shawcliffe.tomsproduce.ui.QuoteScreen
 import ca.shawcliffe.tomsproduce.ui.SignupScreen
@@ -39,12 +40,14 @@ class MainActivity : ComponentActivity() {
                                 onReserve = { navController.navigate("preorder") },
                                 onGetQuote = { navController.navigate("quote") },
                                 onRequestBooking = { navController.navigate("booking") },
+                                onViewDocuments = { navController.navigate("documents") },
                             )
                         }
                         composable("signup") { SignupScreen(onDone = { navController.popBackStack() }) }
                         composable("preorder") { PreorderScreen(onDone = { navController.popBackStack() }) }
                         composable("quote") { QuoteScreen(onDone = { navController.popBackStack() }) }
                         composable("booking") { BookingScreen(onDone = { navController.popBackStack() }) }
+                        composable("documents") { DocumentChecklistScreen(onDone = { navController.popBackStack() }) }
                     }
                 }
             }

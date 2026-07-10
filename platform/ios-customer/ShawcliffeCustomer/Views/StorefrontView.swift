@@ -277,6 +277,16 @@ struct StorefrontView: View {
                 .buttonStyle(.bordered)
                 .tint(primaryColor)
             }
+
+            if viewModel.enabledComponents.contains(ComponentKeys.documentChecklistIntake) {
+                NavigationLink {
+                    DocumentChecklistView(businessName: businessName)
+                } label: {
+                    Text("Documents").bold().frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.bordered)
+                .tint(primaryColor)
+            }
         }
         .padding(.top, 4)
     }
