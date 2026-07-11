@@ -38,6 +38,7 @@ object PetsService {
         @SerialName("vaccination_info") val vaccinationInfo: String? = null,
         @SerialName("emergency_contact") val emergencyContact: String? = null,
         @SerialName("care_instructions") val careInstructions: String? = null,
+        @SerialName("photo_url") val photoUrl: String? = null,
         @SerialName("created_at") val createdAt: String,
         val customer: PetCustomer? = null,
     )

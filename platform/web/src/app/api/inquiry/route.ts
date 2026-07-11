@@ -33,6 +33,7 @@ export async function POST(req: NextRequest) {
     vehicle_plate,
     vehicle_mileage,
     vehicle_notes,
+    vehicle_color,
     property_address,
     property_gate_code,
     property_parking_instructions,
@@ -43,6 +44,8 @@ export async function POST(req: NextRequest) {
     property_snow_removal_areas,
     property_cleaning_instructions,
     property_safety_notes,
+    property_place_id,
+    property_address_verified,
   } = body
 
   if (!client_id || !name || (!phone && !email)) {
@@ -120,7 +123,7 @@ export async function POST(req: NextRequest) {
   // Vehicle Profiles (Tier 1): a vehicle is created alongside the inquiry
   // rather than through a standalone screen — see 017_vehicle_profiles.sql.
   let vehicleId: string | null = null
-  const hasVehicleFields = vehicle_make || vehicle_model || vehicle_year || vehicle_vin || vehicle_plate || vehicle_mileage || vehicle_notes
+  const hasVehicleFields = vehicle_make || vehicle_model || vehicle_year || vehicle_vin || vehicle_plate || vehicle_mileage || vehicle_notes || vehicle_color
   if (hasVehicleFields && hasComponent(client.enabled_components, 'vehicle_profiles')) {
     const { data: vehicle } = await supabase
       .from('vehicles')
@@ -134,6 +137,7 @@ export async function POST(req: NextRequest) {
         plate: vehicle_plate || null,
         mileage: vehicle_mileage || null,
         notes: vehicle_notes || null,
+        color: vehicle_color || null,
       })
       .select('id')
       .single()
@@ -161,6 +165,8 @@ export async function POST(req: NextRequest) {
         snow_removal_areas: property_snow_removal_areas || null,
         cleaning_instructions: property_cleaning_instructions || null,
         safety_notes: property_safety_notes || null,
+        place_id: property_place_id || null,
+        address_verified: property_address_verified ?? false,
       })
       .select('id')
       .single()

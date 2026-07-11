@@ -1,19 +1,30 @@
 package ca.shawcliffe.tomsproduce.ui
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -29,6 +40,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import ca.shawcliffe.tomsproduce.APIClient
@@ -38,12 +52,20 @@ import ca.shawcliffe.tomsproduce.ComponentKeys
 import ca.shawcliffe.tomsproduce.Config
 import ca.shawcliffe.tomsproduce.Phone
 import ca.shawcliffe.tomsproduce.StorefrontViewModel
+import coil.compose.AsyncImage
 import kotlinx.coroutines.launch
 import java.time.Instant
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 
 private val TIME_OPTIONS = listOf("morning" to "Morning", "afternoon" to "Afternoon", "evening" to "Evening", "flexible" to "Flexible")
+
+private data class PetPhoto(
+    val uri: Uri,
+    val url: String? = null,
+    val uploading: Boolean = true,
+    val error: String? = null,
+)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -74,10 +96,31 @@ fun BookingScreen(
     var petVaccinationInfo by remember { mutableStateOf("") }
     var petEmergencyContact by remember { mutableStateOf("") }
     var petCareInstructions by remember { mutableStateOf("") }
+    var petPhoto by remember { mutableStateOf<PetPhoto?>(null) }
     var submitting by remember { mutableStateOf(false) }
     var done by remember { mutableStateOf(false) }
     var error by remember { mutableStateOf<String?>(null) }
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
+
+    val petPhotoLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia(),
+    ) { uri ->
+        if (uri != null) {
+            petPhoto = PetPhoto(uri = uri)
+            scope.launch {
+                try {
+                    val bytes = context.contentResolver.openInputStream(uri)?.use { it.readBytes() }
+                        ?: throw IllegalStateException("Could not read photo")
+                    val contentType = context.contentResolver.getType(uri) ?: "image/jpeg"
+                    val url = APIClient.uploadPhoto(Config.CLIENT_ID, bytes, "pet_${System.nanoTime()}.jpg", contentType, context = "booking")
+                    petPhoto = petPhoto?.copy(url = url, uploading = false)
+                } catch (e: Exception) {
+                    petPhoto = petPhoto?.copy(uploading = false, error = e.message ?: "Upload failed")
+                }
+            }
+        }
+    }
 
     if (done) {
         ConfirmationScreen(
@@ -180,6 +223,28 @@ fun BookingScreen(
             OutlinedTextField(value = petVaccinationInfo, onValueChange = { petVaccinationInfo = it }, label = { Text("Vaccination info") }, modifier = Modifier.fillMaxWidth())
             OutlinedTextField(value = petEmergencyContact, onValueChange = { petEmergencyContact = it }, label = { Text("Emergency contact") }, modifier = Modifier.fillMaxWidth())
             OutlinedTextField(value = petCareInstructions, onValueChange = { petCareInstructions = it }, label = { Text("Care instructions") }, modifier = Modifier.fillMaxWidth())
+
+            Text("Pet photo (optional)", style = MaterialTheme.typography.titleSmall)
+            Button(onClick = { petPhotoLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)) }) {
+                Text(if (petPhoto == null) "Add Photo" else "Change Photo")
+            }
+            petPhoto?.let { photo ->
+                Box(modifier = Modifier.size(72.dp)) {
+                    AsyncImage(
+                        model = photo.uri,
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.size(72.dp).clip(RoundedCornerShape(8.dp)),
+                    )
+                    if (photo.uploading) {
+                        CircularProgressIndicator(modifier = Modifier.size(24.dp).align(Alignment.Center))
+                    }
+                    IconButton(onClick = { petPhoto = null }, modifier = Modifier.align(Alignment.TopEnd).size(24.dp)) {
+                        Icon(Icons.Filled.Close, contentDescription = "Remove photo")
+                    }
+                }
+                photo.error?.let { Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall) }
+            }
         }
 
         error?.let { Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall) }
@@ -221,6 +286,7 @@ fun BookingScreen(
                                 pet_vaccination_info = petVaccinationInfo.ifEmpty { null },
                                 pet_emergency_contact = petEmergencyContact.ifEmpty { null },
                                 pet_care_instructions = petCareInstructions.ifEmpty { null },
+                                pet_photo_url = petPhoto?.url,
                             ),
                         )
                         done = true

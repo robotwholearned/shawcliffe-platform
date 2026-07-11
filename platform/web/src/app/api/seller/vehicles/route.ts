@@ -35,7 +35,7 @@ export async function GET(req: NextRequest) {
 
   const { data, error, count } = await admin
     .from('vehicles')
-    .select('id, customer_id, make, model, year, vin, plate, mileage, notes, created_at', { count: 'exact' })
+    .select('id, customer_id, make, model, year, vin, plate, mileage, color, notes, created_at', { count: 'exact' })
     .eq('client_id', clientId)
     .order('created_at', { ascending: false })
     .range(from, to)

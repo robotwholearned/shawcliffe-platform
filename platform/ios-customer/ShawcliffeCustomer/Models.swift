@@ -170,7 +170,10 @@ struct InquiryRequest: Encodable {
     let vehicle_plate: String?
     let vehicle_mileage: Int?
     let vehicle_notes: String?
+    let vehicle_color: String?
     let property_address: String?
+    let property_place_id: String?
+    let property_address_verified: Bool
     let property_gate_code: String?
     let property_parking_instructions: String?
     let property_pets_on_site: String?
@@ -204,6 +207,7 @@ struct BookingRequest: Encodable {
     let pet_vaccination_info: String?
     let pet_emergency_contact: String?
     let pet_care_instructions: String?
+    let photo_url: String?
 }
 
 struct DocumentChecklistItem: Codable, Identifiable {

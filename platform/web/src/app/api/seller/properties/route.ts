@@ -35,7 +35,7 @@ export async function GET(req: NextRequest) {
 
   const { data, error, count } = await admin
     .from('properties')
-    .select('id, customer_id, address, gate_code, parking_instructions, pets_on_site, access_notes, preferred_service_day, lawn_size, snow_removal_areas, cleaning_instructions, safety_notes, created_at', { count: 'exact' })
+    .select('id, customer_id, address, gate_code, parking_instructions, pets_on_site, access_notes, preferred_service_day, lawn_size, snow_removal_areas, cleaning_instructions, safety_notes, place_id, address_verified, created_at', { count: 'exact' })
     .eq('client_id', clientId)
     .order('created_at', { ascending: false })
     .range(from, to)

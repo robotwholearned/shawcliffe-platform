@@ -6,6 +6,7 @@ import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.forms.formData
 import io.ktor.client.request.forms.submitFormWithBinaryData
+import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
@@ -44,11 +45,21 @@ object APIClient {
         return response.body()
     }
 
-    suspend fun uploadPhoto(clientId: String, bytes: ByteArray, filename: String, contentType: String): String {
+    // GET for read-only lookups (NHTSA vPIC by absolute URL, /api/places/* by full API_BASE_URL path).
+    internal suspend inline fun <reified Response> get(url: String): Response {
+        val response: HttpResponse = client.get(url)
+        if (!response.status.isSuccess()) {
+            throw ApiException.Server("Request failed. Please try again.")
+        }
+        return response.body()
+    }
+
+    suspend fun uploadPhoto(clientId: String, bytes: ByteArray, filename: String, contentType: String, context: String? = null): String {
         val response: HttpResponse = client.submitFormWithBinaryData(
             url = "${Config.API_BASE_URL}/api/inquiry/photos",
             formData = formData {
                 append("client_id", clientId)
+                context?.let { append("context", it) }
                 append("file", bytes, Headers.build {
                     append(HttpHeaders.ContentType, contentType)
                     append(HttpHeaders.ContentDisposition, "filename=\"$filename\"")

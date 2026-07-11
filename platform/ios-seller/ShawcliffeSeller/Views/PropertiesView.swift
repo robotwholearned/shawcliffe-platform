@@ -18,7 +18,15 @@ struct PropertiesView: View {
 
             ForEach(properties) { property in
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(property.address ?? "Property").font(.headline)
+                    HStack(spacing: 4) {
+                        Text(property.address ?? "Property").font(.headline)
+                        if property.addressVerified == true {
+                            Label("Verified", systemImage: "checkmark.seal.fill")
+                                .labelStyle(.iconOnly)
+                                .foregroundStyle(.green)
+                                .accessibilityLabel("Verified")
+                        }
+                    }
                     if let customer = property.customer {
                         Text(customer.name).font(.subheadline.bold())
                         if let phone = customer.phone {

@@ -31,6 +31,7 @@ export async function POST(req: NextRequest) {
     pet_vaccination_info,
     pet_emergency_contact,
     pet_care_instructions,
+    pet_photo_url,
   } = body
 
   if (!client_id || !name || (!phone && !email)) {
@@ -102,7 +103,7 @@ export async function POST(req: NextRequest) {
   // Pet Profiles (Tier 1): a pet is created alongside the booking rather
   // than through a standalone screen — see 018_pet_profiles.sql.
   let petId: string | null = null
-  const hasPetFields = pet_name || pet_breed || pet_size || pet_age || pet_allergies || pet_behavior_notes || pet_grooming_preferences || pet_vaccination_info || pet_emergency_contact || pet_care_instructions
+  const hasPetFields = pet_name || pet_breed || pet_size || pet_age || pet_allergies || pet_behavior_notes || pet_grooming_preferences || pet_vaccination_info || pet_emergency_contact || pet_care_instructions || pet_photo_url
   if (hasPetFields && hasComponent(client.enabled_components, 'pet_profiles')) {
     const { data: pet } = await supabase
       .from('pets')
@@ -119,6 +120,7 @@ export async function POST(req: NextRequest) {
         vaccination_info: pet_vaccination_info || null,
         emergency_contact: pet_emergency_contact || null,
         care_instructions: pet_care_instructions || null,
+        photo_url: pet_photo_url || null,
       })
       .select('id')
       .single()

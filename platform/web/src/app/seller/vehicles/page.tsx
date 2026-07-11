@@ -3,17 +3,9 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useEnabledComponents } from '@/lib/use-enabled-components'
+import type { Vehicle as VehicleRow } from '@/lib/supabase/types'
 
-interface Vehicle {
-  id: string
-  make: string | null
-  model: string | null
-  year: number | null
-  vin: string | null
-  plate: string | null
-  mileage: number | null
-  notes: string | null
-  created_at: string
+type Vehicle = Omit<VehicleRow, 'client_id' | 'customer_id'> & {
   customer: { name: string; phone: string | null; email: string | null } | null
 }
 
@@ -75,6 +67,7 @@ export default function VehiclesPage() {
               </div>
             )}
             <div className="flex flex-wrap gap-1.5 text-xs text-gray-400">
+              {v.color && <span className="px-1.5 py-0.5 bg-gray-100 rounded-full">{v.color}</span>}
               {v.plate && <span className="px-1.5 py-0.5 bg-gray-100 rounded-full">Plate {v.plate}</span>}
               {v.vin && <span className="px-1.5 py-0.5 bg-gray-100 rounded-full">VIN {v.vin}</span>}
               {v.mileage != null && <span className="px-1.5 py-0.5 bg-gray-100 rounded-full">{v.mileage.toLocaleString()} mi</span>}

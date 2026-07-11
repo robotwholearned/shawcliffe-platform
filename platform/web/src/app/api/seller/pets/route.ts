@@ -35,7 +35,7 @@ export async function GET(req: NextRequest) {
 
   const { data, error, count } = await admin
     .from('pets')
-    .select('id, customer_id, name, breed, size, age, allergies, behavior_notes, grooming_preferences, vaccination_info, emergency_contact, care_instructions, created_at', { count: 'exact' })
+    .select('id, customer_id, name, breed, size, age, allergies, behavior_notes, grooming_preferences, vaccination_info, emergency_contact, care_instructions, photo_url, created_at', { count: 'exact' })
     .eq('client_id', clientId)
     .order('created_at', { ascending: false })
     .range(from, to)

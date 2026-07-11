@@ -29,6 +29,30 @@ private struct QuotePhoto: Identifiable {
     var error: String?
 }
 
+private let vehicleColors = ["Black", "White", "Silver", "Gray", "Red", "Blue", "Green", "Brown", "Gold", "Beige", "Other"]
+private let otherOption = "Other"
+
+private struct NHTSAMakesResponse: Decodable {
+    struct Make: Decodable { let Make_Name: String }
+    let Results: [Make]
+}
+
+private struct NHTSAModelsResponse: Decodable {
+    struct Model: Decodable { let Model_Name: String }
+    let Results: [Model]
+}
+
+private struct PlaceSuggestion: Decodable, Identifiable {
+    let place_id: String
+    let description: String
+    var id: String { place_id }
+}
+
+private struct PlaceDetailsResponse: Decodable {
+    let formatted_address: String
+    let place_id: String
+}
+
 struct QuoteView: View {
     let businessName: String
     let showPhotoUpload: Bool
@@ -47,14 +71,25 @@ struct QuoteView: View {
     @State private var emailConsent = false
     @State private var photoSelections: [PhotosPickerItem] = []
     @State private var photos: [QuotePhoto] = []
-    @State private var vehicleMake = ""
-    @State private var vehicleModel = ""
+    @State private var vehicleMakes: [String] = []
+    @State private var vehicleModels: [String] = []
+    @State private var selectedMake = otherOption
+    @State private var selectedModel = otherOption
+    @State private var vehicleMakeOther = ""
+    @State private var vehicleModelOther = ""
+    @State private var selectedColor = otherOption
+    @State private var vehicleColorOther = ""
     @State private var vehicleYear = ""
     @State private var vehicleVin = ""
     @State private var vehiclePlate = ""
     @State private var vehicleMileage = ""
     @State private var vehicleNotes = ""
     @State private var propertyAddress = ""
+    @State private var addressSuggestions: [PlaceSuggestion] = []
+    @State private var addressPlaceId: String?
+    @State private var addressVerified = false
+    @State private var addressSearchTask: Task<Void, Never>?
+    @State private var suppressNextAddressSearch = false
     @State private var propertyGateCode = ""
     @State private var propertyParkingInstructions = ""
     @State private var propertyPetsOnSite = ""
@@ -83,6 +118,11 @@ struct QuoteView: View {
         }
         .navigationTitle("Get a Quote")
         .navigationBarTitleDisplayMode(.inline)
+        .task {
+            if showVehicleFields {
+                await loadVehicleMakes()
+            }
+        }
     }
 
     private var form: some View {
@@ -133,12 +173,49 @@ struct QuoteView: View {
 
             if showVehicleFields {
                 Section("Vehicle (optional)") {
-                    TextField("Make", text: $vehicleMake)
-                    TextField("Model", text: $vehicleModel)
+                    Picker("Make", selection: $selectedMake) {
+                        ForEach(vehicleMakes, id: \.self) { make in
+                            Text(make).tag(make)
+                        }
+                        Text("Other").tag(otherOption)
+                    }
+                    .onChange(of: selectedMake) { newMake in
+                        selectedModel = otherOption
+                        vehicleModelOther = ""
+                        vehicleModels = []
+                        if newMake != otherOption {
+                            Task { await loadVehicleModels(for: newMake) }
+                        }
+                    }
+                    if selectedMake == otherOption {
+                        TextField("Make", text: $vehicleMakeOther)
+                    }
+
+                    Picker("Model", selection: $selectedModel) {
+                        ForEach(vehicleModels, id: \.self) { model in
+                            Text(model).tag(model)
+                        }
+                        Text("Other").tag(otherOption)
+                    }
+                    if selectedModel == otherOption {
+                        TextField("Model", text: $vehicleModelOther)
+                    }
+
+                    Picker("Color", selection: $selectedColor) {
+                        ForEach(vehicleColors, id: \.self) { color in
+                            Text(color).tag(color)
+                        }
+                    }
+                    if selectedColor == otherOption {
+                        TextField("Color", text: $vehicleColorOther)
+                    }
+
                     TextField("Year", text: $vehicleYear)
                         .keyboardType(.numberPad)
                     TextField("License plate", text: $vehiclePlate)
                     TextField("VIN", text: $vehicleVin)
+                        .textInputAutocapitalization(.characters)
+                        .autocorrectionDisabled()
                     TextField("Mileage/hours", text: $vehicleMileage)
                         .keyboardType(.numberPad)
                     TextField("Issue notes", text: $vehicleNotes, axis: .vertical)
@@ -149,6 +226,34 @@ struct QuoteView: View {
             if showPropertyFields {
                 Section("Property (optional)") {
                     TextField("Address", text: $propertyAddress)
+                        .onChange(of: propertyAddress) { newValue in
+                            if suppressNextAddressSearch {
+                                suppressNextAddressSearch = false
+                                return
+                            }
+                            addressVerified = false
+                            addressPlaceId = nil
+                            addressSearchTask?.cancel()
+                            let trimmed = newValue.trimmingCharacters(in: .whitespaces)
+                            guard trimmed.count >= 3 else {
+                                addressSuggestions = []
+                                return
+                            }
+                            addressSearchTask = Task {
+                                try? await Task.sleep(nanoseconds: 400_000_000)
+                                guard !Task.isCancelled else { return }
+                                await fetchAddressSuggestions(newValue)
+                            }
+                        }
+                    ForEach(addressSuggestions) { suggestion in
+                        Button {
+                            Task { await selectAddressSuggestion(suggestion) }
+                        } label: {
+                            Text(suggestion.description)
+                                .font(.footnote)
+                                .foregroundStyle(.primary)
+                        }
+                    }
                     TextField("Gate code", text: $propertyGateCode)
                     TextField("Parking instructions", text: $propertyParkingInstructions)
                     TextField("Pets on site", text: $propertyPetsOnSite)
@@ -288,6 +393,58 @@ struct QuoteView: View {
         photoSelections = []
     }
 
+    private func loadVehicleMakes() async {
+        guard let url = URL(string: "https://vpic.nhtsa.dot.gov/api/vehicles/GetAllMakes?format=json") else { return }
+        guard let response = try? await APIClient.get(url: url, as: NHTSAMakesResponse.self) else { return }
+        vehicleMakes = response.Results.map(\.Make_Name).sorted()
+    }
+
+    private func loadVehicleModels(for make: String) async {
+        guard let encodedMake = make.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed),
+              let url = URL(string: "https://vpic.nhtsa.dot.gov/api/vehicles/GetModelsForMake/\(encodedMake)?format=json") else { return }
+        guard let response = try? await APIClient.get(url: url, as: NHTSAModelsResponse.self) else { return }
+        vehicleModels = response.Results.map(\.Model_Name).sorted()
+    }
+
+    private func fetchAddressSuggestions(_ query: String) async {
+        var components = URLComponents(url: Config.apiBaseURL.appendingPathComponent("api/places/autocomplete"), resolvingAgainstBaseURL: false)!
+        components.queryItems = [URLQueryItem(name: "input", value: query)]
+        guard let url = components.url else { return }
+        addressSuggestions = (try? await APIClient.get(url: url, as: [PlaceSuggestion].self)) ?? []
+    }
+
+    private func selectAddressSuggestion(_ suggestion: PlaceSuggestion) async {
+        addressSuggestions = []
+        var components = URLComponents(url: Config.apiBaseURL.appendingPathComponent("api/places/details"), resolvingAgainstBaseURL: false)!
+        components.queryItems = [URLQueryItem(name: "place_id", value: suggestion.place_id)]
+        suppressNextAddressSearch = true
+        guard let url = components.url,
+              let details = try? await APIClient.get(url: url, as: PlaceDetailsResponse.self) else {
+            propertyAddress = suggestion.description
+            addressPlaceId = nil
+            addressVerified = false
+            return
+        }
+        propertyAddress = details.formatted_address
+        addressPlaceId = details.place_id
+        addressVerified = true
+    }
+
+    private var effectiveVehicleMake: String? {
+        let value = selectedMake == otherOption ? vehicleMakeOther : selectedMake
+        return value.trimmingCharacters(in: .whitespaces).isEmpty ? nil : value
+    }
+
+    private var effectiveVehicleModel: String? {
+        let value = selectedModel == otherOption ? vehicleModelOther : selectedModel
+        return value.trimmingCharacters(in: .whitespaces).isEmpty ? nil : value
+    }
+
+    private var effectiveVehicleColor: String? {
+        let value = selectedColor == otherOption ? vehicleColorOther : selectedColor
+        return value.trimmingCharacters(in: .whitespaces).isEmpty ? nil : value
+    }
+
     private func submit() async {
         error = nil
         guard !phone.isEmpty || !email.isEmpty else {
@@ -297,6 +454,19 @@ struct QuoteView: View {
         if let phoneError = Phone.error(for: phone) {
             error = phoneError
             return
+        }
+        if !vehicleYear.isEmpty {
+            let currentYear = Calendar.current.component(.year, from: Date())
+            guard let year = Int(vehicleYear), (1980...currentYear + 1).contains(year) else {
+                error = "Enter a valid vehicle year between 1980 and \(Calendar.current.component(.year, from: Date()) + 1)."
+                return
+            }
+        }
+        if !vehicleVin.isEmpty {
+            guard vehicleVin.count == 17, vehicleVin.allSatisfy({ $0.isLetter || $0.isNumber }) else {
+                error = "VIN must be exactly 17 letters and numbers."
+                return
+            }
         }
 
         submitting = true
@@ -317,14 +487,17 @@ struct QuoteView: View {
                     description: description.isEmpty ? nil : description,
                     preferred_contact_method: preferredContact.rawValue,
                     photo_urls: photos.compactMap(\.url),
-                    vehicle_make: vehicleMake.isEmpty ? nil : vehicleMake,
-                    vehicle_model: vehicleModel.isEmpty ? nil : vehicleModel,
+                    vehicle_make: effectiveVehicleMake,
+                    vehicle_model: effectiveVehicleModel,
                     vehicle_year: Int(vehicleYear),
                     vehicle_vin: vehicleVin.isEmpty ? nil : vehicleVin,
                     vehicle_plate: vehiclePlate.isEmpty ? nil : vehiclePlate,
                     vehicle_mileage: Int(vehicleMileage),
                     vehicle_notes: vehicleNotes.isEmpty ? nil : vehicleNotes,
+                    vehicle_color: effectiveVehicleColor,
                     property_address: propertyAddress.isEmpty ? nil : propertyAddress,
+                    property_place_id: addressPlaceId,
+                    property_address_verified: addressVerified,
                     property_gate_code: propertyGateCode.isEmpty ? nil : propertyGateCode,
                     property_parking_instructions: propertyParkingInstructions.isEmpty ? nil : propertyParkingInstructions,
                     property_pets_on_site: propertyPetsOnSite.isEmpty ? nil : propertyPetsOnSite,

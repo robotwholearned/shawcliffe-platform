@@ -138,6 +138,7 @@ data class InquiryRequest(
     val vehicle_plate: String? = null,
     val vehicle_mileage: Int? = null,
     val vehicle_notes: String? = null,
+    val vehicle_color: String? = null,
     val property_address: String? = null,
     val property_gate_code: String? = null,
     val property_parking_instructions: String? = null,
@@ -148,6 +149,8 @@ data class InquiryRequest(
     val property_snow_removal_areas: String? = null,
     val property_cleaning_instructions: String? = null,
     val property_safety_notes: String? = null,
+    val property_place_id: String? = null,
+    val property_address_verified: Boolean = false,
 )
 
 @Serializable
@@ -155,6 +158,30 @@ data class InquiryResponse(val inquiry_id: String)
 
 @Serializable
 data class PhotoUploadResponse(val url: String)
+
+@Serializable
+data class NhtsaMake(@SerialName("Make_Name") val makeName: String)
+
+@Serializable
+data class NhtsaMakesResponse(val Results: List<NhtsaMake> = emptyList())
+
+@Serializable
+data class NhtsaModel(@SerialName("Model_Name") val modelName: String)
+
+@Serializable
+data class NhtsaModelsResponse(val Results: List<NhtsaModel> = emptyList())
+
+@Serializable
+data class PlaceSuggestion(val description: String, @SerialName("place_id") val placeId: String)
+
+@Serializable
+data class PlacesAutocompleteResponse(val suggestions: List<PlaceSuggestion> = emptyList())
+
+@Serializable
+data class PlaceDetailsResponse(
+    @SerialName("formatted_address") val formattedAddress: String? = null,
+    @SerialName("place_id") val placeId: String? = null,
+)
 
 @Serializable
 data class BookingRequest(
@@ -179,6 +206,7 @@ data class BookingRequest(
     val pet_vaccination_info: String? = null,
     val pet_emergency_contact: String? = null,
     val pet_care_instructions: String? = null,
+    val pet_photo_url: String? = null,
 )
 
 @Serializable

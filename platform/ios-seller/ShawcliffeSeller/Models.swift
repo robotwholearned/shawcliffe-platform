@@ -385,6 +385,7 @@ struct Property: Codable, Identifiable {
     let snowRemovalAreas: String?
     let cleaningInstructions: String?
     let safetyNotes: String?
+    let addressVerified: Bool?
     let createdAt: String
     let customer: PropertyCustomer?
 
@@ -399,6 +400,7 @@ struct Property: Codable, Identifiable {
         case snowRemovalAreas = "snow_removal_areas"
         case cleaningInstructions = "cleaning_instructions"
         case safetyNotes = "safety_notes"
+        case addressVerified = "address_verified"
         case createdAt = "created_at"
         case customer
     }
@@ -422,6 +424,7 @@ struct Pet: Codable, Identifiable {
     let vaccinationInfo: String?
     let emergencyContact: String?
     let careInstructions: String?
+    let photoUrl: String?
     let createdAt: String
     let customer: PetCustomer?
 
@@ -432,6 +435,7 @@ struct Pet: Codable, Identifiable {
         case vaccinationInfo = "vaccination_info"
         case emergencyContact = "emergency_contact"
         case careInstructions = "care_instructions"
+        case photoUrl = "photo_url"
         case createdAt = "created_at"
         case customer
     }

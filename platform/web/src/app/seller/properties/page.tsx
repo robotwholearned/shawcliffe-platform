@@ -3,20 +3,9 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useEnabledComponents } from '@/lib/use-enabled-components'
+import type { Property as PropertyRow } from '@/lib/supabase/types'
 
-interface Property {
-  id: string
-  address: string | null
-  gate_code: string | null
-  parking_instructions: string | null
-  pets_on_site: string | null
-  access_notes: string | null
-  preferred_service_day: string | null
-  lawn_size: string | null
-  snow_removal_areas: string | null
-  cleaning_instructions: string | null
-  safety_notes: string | null
-  created_at: string
+type Property = Omit<PropertyRow, 'client_id' | 'customer_id'> & {
   customer: { name: string; phone: string | null; email: string | null } | null
 }
 
@@ -63,8 +52,11 @@ export default function PropertiesPage() {
         {properties?.map(p => (
           <div key={p.id} className="px-4 py-3 space-y-1.5">
             <div className="flex items-center justify-between gap-2">
-              <span className="text-sm font-medium text-gray-800 truncate">
+              <span className="text-sm font-medium text-gray-800 truncate flex items-center gap-1.5">
                 {p.address || 'Property'}
+                {p.address_verified && (
+                  <span className="px-1.5 py-0.5 bg-green-50 text-green-700 rounded-full text-xs font-normal flex-shrink-0">Verified</span>
+                )}
               </span>
               <span className="text-xs text-gray-400 flex-shrink-0">
                 {new Date(p.created_at).toLocaleDateString()}

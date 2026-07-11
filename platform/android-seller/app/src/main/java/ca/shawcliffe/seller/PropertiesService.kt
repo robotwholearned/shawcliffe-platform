@@ -39,6 +39,7 @@ object PropertiesService {
         @SerialName("snow_removal_areas") val snowRemovalAreas: String? = null,
         @SerialName("cleaning_instructions") val cleaningInstructions: String? = null,
         @SerialName("safety_notes") val safetyNotes: String? = null,
+        @SerialName("address_verified") val addressVerified: Boolean = false,
         @SerialName("created_at") val createdAt: String,
         val customer: PropertyCustomer? = null,
     )

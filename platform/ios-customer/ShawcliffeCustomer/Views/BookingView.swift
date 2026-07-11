@@ -1,4 +1,6 @@
 import SwiftUI
+import PhotosUI
+import UIKit
 
 private enum TimePreference: String, CaseIterable, Identifiable {
     case morning, afternoon, evening, flexible
@@ -30,6 +32,11 @@ struct BookingView: View {
     @State private var petVaccinationInfo = ""
     @State private var petEmergencyContact = ""
     @State private var petCareInstructions = ""
+    @State private var petPhotoSelection: PhotosPickerItem?
+    @State private var petPhotoThumbnail: Image?
+    @State private var petPhotoURL: String?
+    @State private var petPhotoUploading = false
+    @State private var petPhotoError: String?
     @State private var submitting = false
     @State private var done = false
     @State private var error: String?
@@ -102,6 +109,20 @@ struct BookingView: View {
                     TextField("Emergency contact", text: $petEmergencyContact)
                     TextField("Care instructions", text: $petCareInstructions, axis: .vertical)
                         .lineLimit(2...4)
+
+                    PhotosPicker(selection: $petPhotoSelection, matching: .images) {
+                        Text(petPhotoURL == nil ? "Add Pet Photo (optional)" : "Change Pet Photo")
+                    }
+                    .onChange(of: petPhotoSelection) { newItem in
+                        Task { await uploadPetPhoto(newItem) }
+                    }
+
+                    if petPhotoUploading || petPhotoThumbnail != nil {
+                        petPhotoThumbnailView
+                    }
+                    if let petPhotoError {
+                        Text(petPhotoError).foregroundStyle(.red).font(.caption)
+                    }
                 }
             }
 
@@ -136,6 +157,73 @@ struct BookingView: View {
                 .disabled(submitting || name.trimmingCharacters(in: .whitespaces).isEmpty)
             }
         }
+    }
+
+    @ViewBuilder
+    private var petPhotoThumbnailView: some View {
+        ZStack(alignment: .topTrailing) {
+            Group {
+                if let petPhotoThumbnail {
+                    petPhotoThumbnail.resizable().scaledToFill()
+                } else {
+                    Rectangle().fill(.gray.opacity(0.2))
+                }
+            }
+            .frame(width: 60, height: 60)
+            .clipped()
+            .cornerRadius(6)
+
+            if petPhotoUploading {
+                ProgressView()
+                    .frame(width: 60, height: 60)
+                    .background(.black.opacity(0.2))
+                    .cornerRadius(6)
+            }
+
+            Button {
+                petPhotoSelection = nil
+                petPhotoThumbnail = nil
+                petPhotoURL = nil
+                petPhotoError = nil
+            } label: {
+                Image(systemName: "xmark.circle.fill")
+                    .foregroundStyle(.white, .black.opacity(0.6))
+            }
+            .offset(x: 6, y: -6)
+        }
+    }
+
+    private func uploadPetPhoto(_ item: PhotosPickerItem?) async {
+        guard let item else { return }
+        petPhotoError = nil
+        petPhotoThumbnail = nil
+        petPhotoURL = nil
+        petPhotoUploading = true
+
+        guard let data = try? await item.loadTransferable(type: Data.self) else {
+            petPhotoUploading = false
+            petPhotoError = "Couldn't load photo."
+            return
+        }
+        if let uiImage = UIImage(data: data) {
+            petPhotoThumbnail = Image(uiImage: uiImage)
+        }
+
+        do {
+            let response = try await APIClient.submitMultipart(
+                path: "api/inquiry/photos",
+                fields: ["client_id": Config.clientId, "context": "booking"],
+                fileFieldName: "file",
+                filename: "photo.jpg",
+                fileData: data,
+                mimeType: item.supportedContentTypes.first?.preferredMIMEType ?? "image/jpeg",
+                as: PhotoUploadResponse.self
+            )
+            petPhotoURL = response.url
+        } catch {
+            petPhotoError = error.localizedDescription
+        }
+        petPhotoUploading = false
     }
 
     private func submit() async {
@@ -174,7 +262,8 @@ struct BookingView: View {
                     pet_grooming_preferences: petGroomingPreferences.isEmpty ? nil : petGroomingPreferences,
                     pet_vaccination_info: petVaccinationInfo.isEmpty ? nil : petVaccinationInfo,
                     pet_emergency_contact: petEmergencyContact.isEmpty ? nil : petEmergencyContact,
-                    pet_care_instructions: petCareInstructions.isEmpty ? nil : petCareInstructions
+                    pet_care_instructions: petCareInstructions.isEmpty ? nil : petCareInstructions,
+                    photo_url: petPhotoURL
                 ),
                 as: BookingResponse.self
             )

@@ -17,7 +17,17 @@ struct PetsView: View {
             }
 
             ForEach(pets) { pet in
-                VStack(alignment: .leading, spacing: 4) {
+                HStack(alignment: .top, spacing: 12) {
+                    if let photoUrlString = pet.photoUrl, let photoUrl = URL(string: photoUrlString) {
+                        AsyncImage(url: photoUrl) { image in
+                            image.resizable().aspectRatio(contentMode: .fill)
+                        } placeholder: {
+                            Color.secondary.opacity(0.1)
+                        }
+                        .frame(width: 48, height: 48)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                    }
+                    VStack(alignment: .leading, spacing: 4) {
                     Text([pet.name, pet.breed].compactMap { $0 }.joined(separator: " — "))
                         .font(.headline)
                     if let customer = pet.customer {
@@ -50,6 +60,7 @@ struct PetsView: View {
                     }
                     if let careInstructions = pet.careInstructions {
                         Text("Care: \(careInstructions)").font(.caption).foregroundStyle(.secondary)
+                    }
                     }
                 }
                 .padding(.vertical, 4)

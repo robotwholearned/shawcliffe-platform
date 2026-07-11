@@ -39,6 +39,14 @@ enum APIClient {
         return try JSONDecoder().decode(Response.self, from: data)
     }
 
+    static func get<Response: Decodable>(url: URL, as type: Response.Type) async throws -> Response {
+        let (data, response) = try await URLSession.shared.data(from: url)
+        guard let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode) else {
+            throw APIError.server("Request failed.")
+        }
+        return try JSONDecoder().decode(Response.self, from: data)
+    }
+
     static func uploadPhoto(path: String, clientId: String, fileData: Data, mimeType: String) async throws -> String {
         let boundary = UUID().uuidString
         var request = URLRequest(url: Config.apiBaseURL.appendingPathComponent(path))

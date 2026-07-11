@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,13 +22,19 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -46,14 +53,61 @@ import ca.shawcliffe.tomsproduce.ComponentKeys
 import ca.shawcliffe.tomsproduce.Config
 import ca.shawcliffe.tomsproduce.InquiryRequest
 import ca.shawcliffe.tomsproduce.InquiryResponse
+import ca.shawcliffe.tomsproduce.NhtsaMakesResponse
+import ca.shawcliffe.tomsproduce.NhtsaModelsResponse
+import ca.shawcliffe.tomsproduce.PlaceDetailsResponse
+import ca.shawcliffe.tomsproduce.PlaceSuggestion
+import ca.shawcliffe.tomsproduce.PlacesAutocompleteResponse
 import ca.shawcliffe.tomsproduce.Phone
 import ca.shawcliffe.tomsproduce.StorefrontViewModel
 import coil.compose.AsyncImage
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.net.URLEncoder
+import java.time.Year
 
 private val URGENCY_OPTIONS = listOf("asap" to "ASAP", "this_week" to "This week", "this_month" to "This month", "flexible" to "Flexible")
 private val CONTACT_OPTIONS = listOf("phone" to "Phone", "email" to "Email", "sms" to "Text")
 private const val MAX_PHOTOS = 5
+private const val OTHER_OPTION = "Other"
+private val VEHICLE_COLOR_OPTIONS = listOf("Black", "White", "Silver", "Gray", "Red", "Blue", "Green", "Brown", "Gold", "Beige", OTHER_OPTION)
+private const val NHTSA_BASE_URL = "https://vpic.nhtsa.dot.gov/api/vehicles"
+
+private fun encode(value: String): String = URLEncoder.encode(value, "UTF-8")
+
+private fun resolveOrOther(selected: String, otherText: String): String? = when {
+    selected.isEmpty() -> null
+    selected == OTHER_OPTION -> otherText.ifBlank { null }
+    else -> selected
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun DropdownField(
+    label: String,
+    options: List<String>,
+    selected: String,
+    onSelected: (String) -> Unit,
+    enabled: Boolean = true,
+) {
+    var expanded by remember { mutableStateOf(false) }
+    ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { if (enabled) expanded = it }) {
+        OutlinedTextField(
+            value = selected,
+            onValueChange = {},
+            readOnly = true,
+            enabled = enabled,
+            label = { Text(label) },
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+            modifier = Modifier.fillMaxWidth().menuAnchor(MenuAnchorType.PrimaryNotEditable),
+        )
+        ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+            options.forEach { option ->
+                DropdownMenuItem(text = { Text(option) }, onClick = { onSelected(option); expanded = false })
+            }
+        }
+    }
+}
 
 private data class PhotoUpload(
     val id: Long,
@@ -83,13 +137,23 @@ fun QuoteScreen(
     var smsConsent by remember { mutableStateOf(false) }
     var emailConsent by remember { mutableStateOf(false) }
     var vehicleMake by remember { mutableStateOf("") }
+    var vehicleMakeOther by remember { mutableStateOf("") }
     var vehicleModel by remember { mutableStateOf("") }
+    var vehicleModelOther by remember { mutableStateOf("") }
+    var vehicleColor by remember { mutableStateOf("") }
+    var vehicleColorOther by remember { mutableStateOf("") }
     var vehicleYear by remember { mutableStateOf("") }
     var vehiclePlate by remember { mutableStateOf("") }
     var vehicleVin by remember { mutableStateOf("") }
     var vehicleMileage by remember { mutableStateOf("") }
     var vehicleNotes by remember { mutableStateOf("") }
+    val vehicleMakeOptions = remember { mutableStateListOf<String>() }
+    val vehicleModelOptions = remember { mutableStateListOf<String>() }
     var propertyAddress by remember { mutableStateOf("") }
+    var propertyPlaceId by remember { mutableStateOf<String?>(null) }
+    var propertyAddressVerified by remember { mutableStateOf(false) }
+    var lastSelectedAddress by remember { mutableStateOf<String?>(null) }
+    val addressSuggestions = remember { mutableStateListOf<PlaceSuggestion>() }
     var propertyGateCode by remember { mutableStateOf("") }
     var propertyParkingInstructions by remember { mutableStateOf("") }
     var propertyPetsOnSite by remember { mutableStateOf("") }
@@ -124,6 +188,54 @@ fun QuoteScreen(
                     val i = photos.indexOfFirst { it.id == entry.id }
                     if (i >= 0) photos[i] = photos[i].copy(uploading = false, error = e.message ?: "Upload failed")
                 }
+            }
+        }
+    }
+
+    if (showVehicleFields) {
+        LaunchedEffect(Unit) {
+            try {
+                val response = APIClient.get<NhtsaMakesResponse>("$NHTSA_BASE_URL/GetAllMakes?format=json")
+                vehicleMakeOptions.addAll(response.Results.map { it.makeName })
+            } catch (e: Exception) {
+                // ponytail: NHTSA lookup failed, fall through to "Other" free-text below
+            }
+            vehicleMakeOptions.add(OTHER_OPTION)
+        }
+
+        LaunchedEffect(vehicleMake) {
+            vehicleModelOptions.clear()
+            if (vehicleMake.isEmpty() || vehicleMake == OTHER_OPTION) return@LaunchedEffect
+            try {
+                val response = APIClient.get<NhtsaModelsResponse>(
+                    "$NHTSA_BASE_URL/GetModelsForMake/${encode(vehicleMake)}?format=json",
+                )
+                vehicleModelOptions.addAll(response.Results.map { it.modelName }.distinct())
+            } catch (e: Exception) {
+                // ponytail: model lookup failed, fall through to "Other" free-text below
+            }
+            vehicleModelOptions.add(OTHER_OPTION)
+        }
+    }
+
+    if (showPropertyFields) {
+        LaunchedEffect(propertyAddress) {
+            if (propertyAddress == lastSelectedAddress) return@LaunchedEffect
+            propertyPlaceId = null
+            propertyAddressVerified = false
+            if (propertyAddress.trim().length < 3) {
+                addressSuggestions.clear()
+                return@LaunchedEffect
+            }
+            delay(400)
+            try {
+                val response = APIClient.get<PlacesAutocompleteResponse>(
+                    "${Config.API_BASE_URL}/api/places/autocomplete?input=${encode(propertyAddress)}",
+                )
+                addressSuggestions.clear()
+                addressSuggestions.addAll(response.suggestions)
+            } catch (e: Exception) {
+                addressSuggestions.clear()
             }
         }
     }
@@ -241,8 +353,34 @@ fun QuoteScreen(
 
         if (showVehicleFields) {
             Text("Vehicle (optional)", style = MaterialTheme.typography.titleSmall)
-            OutlinedTextField(value = vehicleMake, onValueChange = { vehicleMake = it }, label = { Text("Make") }, modifier = Modifier.fillMaxWidth())
-            OutlinedTextField(value = vehicleModel, onValueChange = { vehicleModel = it }, label = { Text("Model") }, modifier = Modifier.fillMaxWidth())
+            DropdownField(
+                label = "Make",
+                options = vehicleMakeOptions,
+                selected = vehicleMake,
+                onSelected = { vehicleMake = it; vehicleModel = ""; vehicleModelOther = "" },
+            )
+            if (vehicleMake == OTHER_OPTION) {
+                OutlinedTextField(value = vehicleMakeOther, onValueChange = { vehicleMakeOther = it }, label = { Text("Make (other)") }, modifier = Modifier.fillMaxWidth())
+            }
+            DropdownField(
+                label = "Model",
+                options = vehicleModelOptions,
+                selected = vehicleModel,
+                onSelected = { vehicleModel = it },
+                enabled = vehicleMake.isNotEmpty(),
+            )
+            if (vehicleModel == OTHER_OPTION) {
+                OutlinedTextField(value = vehicleModelOther, onValueChange = { vehicleModelOther = it }, label = { Text("Model (other)") }, modifier = Modifier.fillMaxWidth())
+            }
+            DropdownField(
+                label = "Color",
+                options = VEHICLE_COLOR_OPTIONS,
+                selected = vehicleColor,
+                onSelected = { vehicleColor = it },
+            )
+            if (vehicleColor == OTHER_OPTION) {
+                OutlinedTextField(value = vehicleColorOther, onValueChange = { vehicleColorOther = it }, label = { Text("Color (other)") }, modifier = Modifier.fillMaxWidth())
+            }
             OutlinedTextField(
                 value = vehicleYear,
                 onValueChange = { vehicleYear = it },
@@ -264,7 +402,42 @@ fun QuoteScreen(
 
         if (showPropertyFields) {
             Text("Property (optional)", style = MaterialTheme.typography.titleSmall)
-            OutlinedTextField(value = propertyAddress, onValueChange = { propertyAddress = it }, label = { Text("Address") }, modifier = Modifier.fillMaxWidth())
+            OutlinedTextField(
+                value = propertyAddress,
+                onValueChange = { propertyAddress = it },
+                label = { Text("Address") },
+                supportingText = { if (propertyAddressVerified) Text("Verified") },
+                modifier = Modifier.fillMaxWidth(),
+            )
+            if (addressSuggestions.isNotEmpty()) {
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    addressSuggestions.forEach { suggestion ->
+                        Text(
+                            suggestion.description,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    scope.launch {
+                                        val resolved = try {
+                                            val details = APIClient.get<PlaceDetailsResponse>(
+                                                "${Config.API_BASE_URL}/api/places/details?place_id=${encode(suggestion.placeId)}",
+                                            )
+                                            (details.formattedAddress ?: suggestion.description) to (details.placeId ?: suggestion.placeId)
+                                        } catch (e: Exception) {
+                                            suggestion.description to null
+                                        }
+                                        lastSelectedAddress = resolved.first
+                                        propertyAddress = resolved.first
+                                        propertyPlaceId = resolved.second
+                                        propertyAddressVerified = resolved.second != null
+                                        addressSuggestions.clear()
+                                    }
+                                }
+                                .padding(vertical = 8.dp),
+                        )
+                    }
+                }
+            }
             OutlinedTextField(value = propertyGateCode, onValueChange = { propertyGateCode = it }, label = { Text("Gate code") }, modifier = Modifier.fillMaxWidth())
             OutlinedTextField(value = propertyParkingInstructions, onValueChange = { propertyParkingInstructions = it }, label = { Text("Parking instructions") }, modifier = Modifier.fillMaxWidth())
             OutlinedTextField(value = propertyPetsOnSite, onValueChange = { propertyPetsOnSite = it }, label = { Text("Pets on site") }, modifier = Modifier.fillMaxWidth())
@@ -289,6 +462,15 @@ fun QuoteScreen(
                     error = it
                     return@Button
                 }
+                val year = vehicleYear.toIntOrNull()
+                if (vehicleYear.isNotEmpty() && (year == null || year < 1980 || year > Year.now().value + 1)) {
+                    error = "Enter a valid vehicle year."
+                    return@Button
+                }
+                if (vehicleVin.isNotEmpty() && !vehicleVin.matches(Regex("^[A-Za-z0-9]{17}$"))) {
+                    error = "VIN must be exactly 17 alphanumeric characters."
+                    return@Button
+                }
                 submitting = true
                 scope.launch {
                     try {
@@ -307,13 +489,14 @@ fun QuoteScreen(
                                 description = description.ifEmpty { null },
                                 preferred_contact_method = preferredContact,
                                 photo_urls = photos.mapNotNull { it.url },
-                                vehicle_make = vehicleMake.ifEmpty { null },
-                                vehicle_model = vehicleModel.ifEmpty { null },
-                                vehicle_year = vehicleYear.toIntOrNull(),
+                                vehicle_make = resolveOrOther(vehicleMake, vehicleMakeOther),
+                                vehicle_model = resolveOrOther(vehicleModel, vehicleModelOther),
+                                vehicle_year = year,
                                 vehicle_vin = vehicleVin.ifEmpty { null },
                                 vehicle_plate = vehiclePlate.ifEmpty { null },
                                 vehicle_mileage = vehicleMileage.toIntOrNull(),
                                 vehicle_notes = vehicleNotes.ifEmpty { null },
+                                vehicle_color = resolveOrOther(vehicleColor, vehicleColorOther),
                                 property_address = propertyAddress.ifEmpty { null },
                                 property_gate_code = propertyGateCode.ifEmpty { null },
                                 property_parking_instructions = propertyParkingInstructions.ifEmpty { null },
@@ -324,6 +507,8 @@ fun QuoteScreen(
                                 property_snow_removal_areas = propertySnowRemovalAreas.ifEmpty { null },
                                 property_cleaning_instructions = propertyCleaningInstructions.ifEmpty { null },
                                 property_safety_notes = propertySafetyNotes.ifEmpty { null },
+                                property_place_id = propertyPlaceId,
+                                property_address_verified = propertyAddressVerified,
                             ),
                         )
                         done = true

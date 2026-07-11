@@ -91,7 +91,16 @@ fun PropertiesScreen(modifier: Modifier = Modifier) {
 @Composable
 private fun PropertyRow(property: PropertiesService.Property) {
     Column(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        Text(property.address ?: "Property", style = MaterialTheme.typography.titleSmall)
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+            Text(property.address ?: "Property", style = MaterialTheme.typography.titleSmall)
+            if (property.addressVerified) {
+                Text(
+                    "Verified",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.primary,
+                )
+            }
+        }
         property.customer?.let { customer ->
             Text(customer.name, style = MaterialTheme.typography.bodyMedium)
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {

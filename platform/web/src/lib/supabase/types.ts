@@ -198,6 +198,58 @@ export interface TwilioSubaccount {
   created_at: string
 }
 
+export interface Vehicle {
+  client_id: string
+  id: string
+  customer_id: string
+  make: string | null
+  model: string | null
+  year: number | null
+  vin: string | null
+  plate: string | null
+  mileage: number | null
+  color: string | null
+  notes: string | null
+  created_at: string
+}
+
+export interface Pet {
+  client_id: string
+  id: string
+  customer_id: string
+  name: string | null
+  breed: string | null
+  size: string | null
+  age: string | null
+  allergies: string | null
+  behavior_notes: string | null
+  grooming_preferences: string | null
+  vaccination_info: string | null
+  emergency_contact: string | null
+  care_instructions: string | null
+  photo_url: string | null
+  created_at: string
+}
+
+export interface Property {
+  client_id: string
+  id: string
+  customer_id: string
+  address: string | null
+  gate_code: string | null
+  parking_instructions: string | null
+  pets_on_site: string | null
+  access_notes: string | null
+  preferred_service_day: string | null
+  lawn_size: string | null
+  snow_removal_areas: string | null
+  cleaning_instructions: string | null
+  safety_notes: string | null
+  place_id: string | null
+  address_verified: boolean
+  created_at: string
+}
+
 export interface ClientWithBranding extends Client {
   client_branding: ClientBranding | null
 }
