@@ -6,6 +6,9 @@ interface Props {
   params: { slug: string }
 }
 
+// SSR on every request — client active/enabled state must reflect live admin changes
+export const revalidate = 0
+
 export default async function SignupPage({ params }: Props) {
   const supabase = createServiceClient()
   const { data: client } = await supabase

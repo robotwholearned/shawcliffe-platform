@@ -17,13 +17,16 @@ interface Props {
   clientId: string
   slug: string
   showStatus: boolean
+  showQuote: boolean
+  showBooking: boolean
+  showDocuments: boolean
   initialStatus: { status: DailyStatusValue; custom_message: string | null } | null
   initialProducts: Product[]
   hours?: string | null
   location?: LocationInfo | null
 }
 
-export default function RealtimeStorefront({ clientId, slug, showStatus, initialStatus, initialProducts, hours, location }: Props) {
+export default function RealtimeStorefront({ clientId, slug, showStatus, showQuote, showBooking, showDocuments, initialStatus, initialProducts, hours, location }: Props) {
   const [status, setStatus] = useState(initialStatus)
   const [products, setProducts] = useState(initialProducts)
   const [connected, setConnected] = useState(true)
@@ -188,6 +191,30 @@ export default function RealtimeStorefront({ clientId, slug, showStatus, initial
         >
           Reserve an order <span aria-hidden>→</span>
         </a>
+        {showQuote && (
+          <a
+            href={`/${slug}/quote`}
+            className="block text-center text-sm font-semibold text-[var(--brand-primary,#2563eb)] hover:underline"
+          >
+            Get a quote <span aria-hidden>→</span>
+          </a>
+        )}
+        {showBooking && (
+          <a
+            href={`/${slug}/booking`}
+            className="block text-center text-sm font-semibold text-[var(--brand-primary,#2563eb)] hover:underline"
+          >
+            Request a booking <span aria-hidden>→</span>
+          </a>
+        )}
+        {showDocuments && (
+          <a
+            href={`/${slug}/documents`}
+            className="block text-center text-sm font-semibold text-[var(--brand-primary,#2563eb)] hover:underline"
+          >
+            Submit documents <span aria-hidden>→</span>
+          </a>
+        )}
       </div>
     </div>
   )

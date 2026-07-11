@@ -7,6 +7,9 @@ interface Props {
   params: { slug: string }
 }
 
+// SSR on every request — client active/enabled state and product list must reflect live admin changes
+export const revalidate = 0
+
 export default async function PreorderPage({ params }: Props) {
   const supabase = createServiceClient()
   const { data: client } = await supabase

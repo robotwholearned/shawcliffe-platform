@@ -92,6 +92,9 @@ export default async function ClientPage({ params }: Props) {
           clientId={client.id}
           slug={params.slug}
           showStatus={hasComponent(client.enabled_components, 'status_tracker')}
+          showQuote={hasComponent(client.enabled_components, 'inquiry_quote_form')}
+          showBooking={hasComponent(client.enabled_components, 'booking_request_system')}
+          showDocuments={hasComponent(client.enabled_components, 'document_checklist_intake')}
           initialStatus={status ? { status: status.status as DailyStatusValue, custom_message: status.custom_message } : null}
           initialProducts={products}
           hours={status?.hours_open && status?.hours_close ? `${status.hours_open} – ${status.hours_close}` : null}
