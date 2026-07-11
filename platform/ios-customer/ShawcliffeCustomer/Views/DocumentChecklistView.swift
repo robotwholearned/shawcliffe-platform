@@ -10,6 +10,7 @@ struct DocumentChecklistView: View {
 
     @State private var items: [DocumentChecklistItem] = []
     @State private var loading = true
+    @State private var loadError: String?
     @State private var name = ""
     @State private var phone = ""
     @State private var email = ""
@@ -30,6 +31,10 @@ struct DocumentChecklistView: View {
                         ProgressView()
                         Spacer()
                     }
+                }
+            } else if let loadError {
+                Section {
+                    Text(loadError).foregroundStyle(.red).font(.footnote)
                 }
             } else if items.isEmpty {
                 Section {
@@ -128,6 +133,10 @@ struct DocumentChecklistView: View {
             contactError = phoneError
             return
         }
+        if let emailErr = Email.error(for: email) {
+            contactError = emailErr
+            return
+        }
         filePickerItemId = item.id
     }
 
@@ -187,7 +196,7 @@ struct DocumentChecklistView: View {
                 .value
             items = rows
         } catch {
-            items = []
+            loadError = "Couldn't load checklist, try again."
         }
         loading = false
     }

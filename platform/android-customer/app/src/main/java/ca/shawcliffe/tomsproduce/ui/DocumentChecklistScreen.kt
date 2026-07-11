@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import ca.shawcliffe.tomsproduce.APIClient
 import ca.shawcliffe.tomsproduce.Config
 import ca.shawcliffe.tomsproduce.DocumentChecklistItem
+import ca.shawcliffe.tomsproduce.Email
 import ca.shawcliffe.tomsproduce.Phone
 import ca.shawcliffe.tomsproduce.supabase
 import io.github.jan.supabase.postgrest.from
@@ -50,6 +51,7 @@ private sealed class UploadState {
 fun DocumentChecklistScreen(onDone: () -> Unit) {
     var items by remember { mutableStateOf<List<DocumentChecklistItem>>(emptyList()) }
     var loading by remember { mutableStateOf(true) }
+    var loadError by remember { mutableStateOf<String?>(null) }
     var name by remember { mutableStateOf("") }
     var phone by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
@@ -97,13 +99,13 @@ fun DocumentChecklistScreen(onDone: () -> Unit) {
     }
 
     LaunchedEffect(Unit) {
-        items = try {
-            supabase.from("document_checklist_items").select {
+        try {
+            items = supabase.from("document_checklist_items").select {
                 filter { eq("client_id", Config.CLIENT_ID) }
                 order("sort_order", io.github.jan.supabase.postgrest.query.Order.ASCENDING)
             }.decodeList()
         } catch (e: Exception) {
-            emptyList()
+            loadError = "Couldn't load checklist, try again."
         }
         loading = false
     }
@@ -122,6 +124,10 @@ fun DocumentChecklistScreen(onDone: () -> Unit) {
             contactError = it
             return
         }
+        Email.error(email)?.let {
+            contactError = it
+            return
+        }
         pendingItemId = item.id
         filePickerLauncher.launch(arrayOf("image/*", "application/pdf"))
     }
@@ -137,6 +143,8 @@ fun DocumentChecklistScreen(onDone: () -> Unit) {
 
         if (loading) {
             CircularProgressIndicator()
+        } else if (loadError != null) {
+            Text(loadError!!, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
         } else if (items.isEmpty()) {
             Text("No checklist items yet.", color = MaterialTheme.colorScheme.onSurfaceVariant)
         } else {

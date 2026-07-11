@@ -2,6 +2,7 @@
 
 import { useRef, useState } from 'react'
 import { normalizePhone, phoneError } from '@/lib/phone'
+import { emailError } from '@/lib/email'
 import type { DocumentChecklistItem } from '@/lib/supabase/types'
 
 const CONSENT_TEXT = 'I agree to be contacted about my submission. Message frequency varies. Reply STOP to unsubscribe. Message & data rates may apply.'
@@ -37,6 +38,7 @@ export default function DocumentsForm({ clientId, businessName, slug, initialIte
     if (!name.trim()) { setContactError('Enter your name before uploading.'); return }
     if (!phone && !email) { setContactError('Enter a phone number or email before uploading.'); return }
     if (phone && phoneError(phone)) { setContactError(phoneError(phone)!); return }
+    if (email && emailError(email)) { setContactError(emailError(email)!); return }
     fileInputRefs.current[itemId]?.click()
   }
 

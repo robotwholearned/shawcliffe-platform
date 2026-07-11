@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getAuthedUser, createServiceClient } from '@/lib/supabase/server'
+import { PUSH_MONTHLY_ALLOTMENT, getUsageThisMonth } from '@/lib/sms-limits'
 import { sendPush, isConfigured as apnsConfigured, isInvalidTokenError } from '@/lib/apns'
 import { sendFcmPush, isConfigured as fcmConfigured, isUnregisteredError } from '@/lib/fcm'
 import type { PushToken } from '@/lib/supabase/types'
@@ -41,6 +42,7 @@ export async function POST(req: NextRequest) {
     .single()
 
   let customerIds: string[]
+  let capped = false
 
   if (test) {
     const { data: client } = await admin
@@ -65,6 +67,19 @@ export async function POST(req: NextRequest) {
     }
     customerIds = [selfCustomer.id]
   } else {
+    const { data: client } = await admin.from('clients').select('tier').eq('id', targetClientId).single()
+    const tier = (client?.tier ?? 1) as 1 | 2 | 3
+    const allotment = PUSH_MONTHLY_ALLOTMENT[tier]
+    const used = await getUsageThisMonth(admin, targetClientId, 'push')
+    const remaining = Math.max(0, allotment - used)
+
+    if (remaining === 0) {
+      return NextResponse.json(
+        { error: `Monthly push limit reached (${allotment} included on this plan)`, limit: allotment, used },
+        { status: 429 }
+      )
+    }
+
     let query = admin
       .from('customers')
       .select('id')
@@ -80,6 +95,11 @@ export async function POST(req: NextRequest) {
 
     if (customerIds.length === 0) {
       return NextResponse.json({ sent: 0, message: 'No customers with push notifications enabled' })
+    }
+
+    if (customerIds.length > remaining) {
+      customerIds = customerIds.slice(0, remaining)
+      capped = true
     }
   }
 
@@ -144,5 +164,5 @@ export async function POST(req: NextRequest) {
   const failed = dispatched.filter((r) => !r.ok).length
   const errors = dispatched.filter((r) => !r.ok).map((r) => r.error ?? 'Unknown error')
 
-  return NextResponse.json({ sent, failed, total: tokens.length, errors })
+  return NextResponse.json({ sent, failed, total: tokens.length, errors, capped })
 }

@@ -1,7 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { normalizePhone, phoneError } from '@/lib/phone'
+
+interface PlaceSuggestion {
+  place_id: string
+  description: string
+}
 
 const CONSENT_TEXT = 'I agree to be contacted about my quote request. Message frequency varies. Reply STOP to unsubscribe. Message & data rates may apply.'
 
@@ -60,6 +65,9 @@ export default function QuoteForm({ clientId, businessName, slug, showVehicleFie
   const [vehicleNotes, setVehicleNotes] = useState('')
 
   const [propertyAddress, setPropertyAddress] = useState('')
+  const [propertyPlaceId, setPropertyPlaceId] = useState<string | null>(null)
+  const [propertyAddressVerified, setPropertyAddressVerified] = useState(false)
+  const [addressSuggestions, setAddressSuggestions] = useState<PlaceSuggestion[]>([])
   const [propertyGateCode, setPropertyGateCode] = useState('')
   const [propertyParkingInstructions, setPropertyParkingInstructions] = useState('')
   const [propertyPetsOnSite, setPropertyPetsOnSite] = useState('')
@@ -101,6 +109,45 @@ export default function QuoteForm({ clientId, businessName, slug, showVehicleFie
     setPhotos(prev => prev.filter((_, i) => i !== index))
   }
 
+  useEffect(() => {
+    if (!showPropertyFields || propertyAddress.trim().length < 3) {
+      setAddressSuggestions([])
+      return
+    }
+    const timeout = setTimeout(async () => {
+      try {
+        const res = await fetch(`/api/places/autocomplete?input=${encodeURIComponent(propertyAddress)}&client_id=${encodeURIComponent(clientId)}`)
+        const data = await res.json().catch(() => ({}))
+        setAddressSuggestions(res.ok ? data.suggestions ?? [] : [])
+      } catch {
+        setAddressSuggestions([])
+      }
+    }, 400)
+    return () => clearTimeout(timeout)
+  }, [propertyAddress, showPropertyFields, clientId])
+
+  async function selectAddressSuggestion(suggestion: PlaceSuggestion) {
+    setAddressSuggestions([])
+    try {
+      const res = await fetch(`/api/places/details?place_id=${encodeURIComponent(suggestion.place_id)}&client_id=${encodeURIComponent(clientId)}`)
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok || !data.place_id) throw new Error('lookup failed')
+      setPropertyAddress(data.formatted_address ?? suggestion.description)
+      setPropertyPlaceId(data.place_id)
+      setPropertyAddressVerified(true)
+    } catch {
+      setPropertyAddress(suggestion.description)
+      setPropertyPlaceId(null)
+      setPropertyAddressVerified(false)
+    }
+  }
+
+  function handlePropertyAddressChange(value: string) {
+    setPropertyAddress(value)
+    setPropertyPlaceId(null)
+    setPropertyAddressVerified(false)
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!phone && !email) { setError('Enter a phone number or email so we can send you a quote.'); return }
@@ -135,6 +182,8 @@ export default function QuoteForm({ clientId, businessName, slug, showVehicleFie
         vehicle_notes: showVehicleFields ? vehicleNotes || null : null,
         vehicle_color: showVehicleFields ? vehicleColor || null : null,
         property_address: showPropertyFields ? propertyAddress || null : null,
+        property_place_id: showPropertyFields ? propertyPlaceId : null,
+        property_address_verified: showPropertyFields ? propertyAddressVerified : false,
         property_gate_code: showPropertyFields ? propertyGateCode || null : null,
         property_parking_instructions: showPropertyFields ? propertyParkingInstructions || null : null,
         property_pets_on_site: showPropertyFields ? propertyPetsOnSite || null : null,
@@ -237,7 +286,23 @@ export default function QuoteForm({ clientId, businessName, slug, showVehicleFie
         {showPropertyFields && (
           <section className="space-y-3">
             <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Property (optional)</h2>
-            <input type="text" value={propertyAddress} onChange={e => setPropertyAddress(e.target.value)} placeholder="Address" className={inputClass} />
+            <div className="relative">
+              <input type="text" value={propertyAddress} onChange={e => handlePropertyAddressChange(e.target.value)} placeholder="Address" className={inputClass} autoComplete="off" />
+              {propertyAddressVerified && (
+                <span className="absolute right-3 top-3.5 text-xs text-green-700">Verified</span>
+              )}
+              {addressSuggestions.length > 0 && (
+                <ul className="absolute z-10 top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+                  {addressSuggestions.map(s => (
+                    <li key={s.place_id}>
+                      <button type="button" onClick={() => selectAddressSuggestion(s)} className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                        {s.description}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
             <input type="text" value={propertyGateCode} onChange={e => setPropertyGateCode(e.target.value)} placeholder="Gate code" className={inputClass} />
             <input type="text" value={propertyParkingInstructions} onChange={e => setPropertyParkingInstructions(e.target.value)} placeholder="Parking instructions" className={inputClass} />
             <input type="text" value={propertyPetsOnSite} onChange={e => setPropertyPetsOnSite(e.target.value)} placeholder="Pets on site" className={inputClass} />

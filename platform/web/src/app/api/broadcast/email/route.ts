@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getAuthedUser, createServiceClient } from '@/lib/supabase/server'
+import { EMAIL_MONTHLY_ALLOTMENT, getUsageThisMonth } from '@/lib/sms-limits'
 import { Resend } from 'resend'
 
 const FROM_ADDRESS = 'cassandra@shawcliffedigital.com'
@@ -38,6 +39,7 @@ export async function POST(req: NextRequest) {
   const fromName = branding?.app_name ?? 'Your Local Seller'
 
   let customers: { id: string | null; name: string | null; email: string | null }[]
+  let capped = false
 
   if (test) {
     const { data: client } = await admin
@@ -51,6 +53,19 @@ export async function POST(req: NextRequest) {
     }
     customers = [{ id: null, name: null, email: client.operator_email }]
   } else {
+    const { data: client } = await admin.from('clients').select('tier').eq('id', targetClientId).single()
+    const tier = (client?.tier ?? 1) as 1 | 2 | 3
+    const allotment = EMAIL_MONTHLY_ALLOTMENT[tier]
+    const used = await getUsageThisMonth(admin, targetClientId, 'email')
+    const remaining = Math.max(0, allotment - used)
+
+    if (remaining === 0) {
+      return NextResponse.json(
+        { error: `Monthly email limit reached (${allotment} included on this plan)`, limit: allotment, used },
+        { status: 429 }
+      )
+    }
+
     // Load opted-in customers with email
     let query = admin
       .from('customers')
@@ -68,6 +83,11 @@ export async function POST(req: NextRequest) {
 
     if (customers.length === 0) {
       return NextResponse.json({ sent: 0, message: 'No opted-in customers with email addresses' })
+    }
+
+    if (customers.length > remaining) {
+      customers = customers.slice(0, remaining)
+      capped = true
     }
   }
 
@@ -101,7 +121,7 @@ export async function POST(req: NextRequest) {
   const sent = results.filter(r => r.status === 'fulfilled').length
   const failed = results.filter(r => r.status === 'rejected').length
 
-  return NextResponse.json({ sent, failed, total: customers.length })
+  return NextResponse.json({ sent, failed, total: customers.length, capped })
 }
 
 function emailTemplate(fromName: string, message: string): string {

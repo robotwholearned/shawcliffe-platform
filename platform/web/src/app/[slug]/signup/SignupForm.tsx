@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { normalizePhone, phoneError } from '@/lib/phone'
+import { emailError } from '@/lib/email'
 
 const CONSENT_TEXT = "I agree to receive updates about today's availability, location, and products. Message frequency varies. Reply STOP to unsubscribe. Message & data rates may apply."
 
@@ -25,6 +26,7 @@ export default function SignupForm({ clientId, businessName, slug }: Props) {
     e.preventDefault()
     if (!phone && !email) { setError('Enter a phone number or email.'); return }
     if (phone && phoneError(phone)) { setError(phoneError(phone)!); return }
+    if (email && emailError(email)) { setError(emailError(email)!); return }
     if (!smsConsent && !emailConsent) { setError('Please check at least one consent option.'); return }
 
     setSubmitting(true)

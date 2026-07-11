@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
@@ -30,6 +31,21 @@ import ca.shawcliffe.seller.DashboardViewModel
 import ca.shawcliffe.seller.TestSendResult
 
 data class MessageTemplate(val label: String, val sms: String, val subject: String, val email: String)
+
+private sealed class PendingBroadcast(val title: String, val preview: String) {
+    data class Sms(val message: String) : PendingBroadcast(
+        "Send SMS to all opted-in customers?",
+        message,
+    )
+    data class Email(val subject: String, val message: String) : PendingBroadcast(
+        "Send email to all opted-in customers?",
+        "Subject: \"$subject\"\n\n$message",
+    )
+    data class Push(val message: String) : PendingBroadcast(
+        "Send push notification to all customers with the app installed?",
+        message,
+    )
+}
 
 val messageTemplates = listOf(
     MessageTemplate("We're open", "We're open today! Come see us at the usual spot.", "We're open today!", "We're open today! Come see us at the usual spot."),
@@ -57,6 +73,7 @@ fun BroadcastScreen(viewModel: DashboardViewModel, clientId: String, modifier: M
     var emailMessage by remember { mutableStateOf("") }
     var pushMessage by remember { mutableStateOf("") }
     var showLog by remember { mutableStateOf(false) }
+    var pendingBroadcast by remember { mutableStateOf<PendingBroadcast?>(null) }
 
     if (showLog) {
         Column(modifier = modifier.fillMaxSize()) {
@@ -82,10 +99,10 @@ fun BroadcastScreen(viewModel: DashboardViewModel, clientId: String, modifier: M
                 Text("${smsMessage.length}/160", style = MaterialTheme.typography.labelSmall)
                 viewModel.smsResult?.let { ResultLabel(it) }
             }
-            if (viewModel.testResult?.channel == "sms") TestResultLabel(viewModel.testResult!!)
+            viewModel.testResult?.let { if (it.channel == "sms") TestResultLabel(it) }
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 Button(
-                    onClick = { viewModel.sendSMSBroadcast(smsMessage) },
+                    onClick = { pendingBroadcast = PendingBroadcast.Sms(smsMessage) },
                     enabled = !viewModel.isSendingSMS && smsMessage.trim().isNotEmpty() && smsMessage.length <= 160,
                     modifier = Modifier.weight(1f),
                 ) {
@@ -121,10 +138,10 @@ fun BroadcastScreen(viewModel: DashboardViewModel, clientId: String, modifier: M
                 modifier = Modifier.fillMaxWidth().height(120.dp),
             )
             viewModel.emailResult?.let { ResultLabel(it) }
-            if (viewModel.testResult?.channel == "email") TestResultLabel(viewModel.testResult!!)
+            viewModel.testResult?.let { if (it.channel == "email") TestResultLabel(it) }
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 Button(
-                    onClick = { viewModel.sendEmailBroadcast(emailSubject, emailMessage) },
+                    onClick = { pendingBroadcast = PendingBroadcast.Email(emailSubject, emailMessage) },
                     enabled = !viewModel.isSendingEmail && emailSubject.trim().isNotEmpty() && emailMessage.trim().isNotEmpty(),
                     modifier = Modifier.weight(1f),
                 ) {
@@ -153,10 +170,10 @@ fun BroadcastScreen(viewModel: DashboardViewModel, clientId: String, modifier: M
                 Text("Only reaches customers with the app installed", style = MaterialTheme.typography.labelSmall)
                 viewModel.pushResult?.let { ResultLabel(it) }
             }
-            if (viewModel.testResult?.channel == "push") TestResultLabel(viewModel.testResult!!)
+            viewModel.testResult?.let { if (it.channel == "push") TestResultLabel(it) }
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 Button(
-                    onClick = { viewModel.sendPushBroadcast(pushMessage) },
+                    onClick = { pendingBroadcast = PendingBroadcast.Push(pushMessage) },
                     enabled = !viewModel.isSendingPush && pushMessage.trim().isNotEmpty(),
                     modifier = Modifier.weight(1f),
                 ) {
@@ -171,6 +188,31 @@ fun BroadcastScreen(viewModel: DashboardViewModel, clientId: String, modifier: M
                 }
             }
         }
+    }
+
+    pendingBroadcast?.let { pending ->
+        AlertDialog(
+            onDismissRequest = { pendingBroadcast = null },
+            title = { Text(pending.title) },
+            text = { Text("${pending.preview}\n\nThis cannot be undone.") },
+            confirmButton = {
+                TextButton(onClick = {
+                    when (pending) {
+                        is PendingBroadcast.Sms -> viewModel.sendSMSBroadcast(pending.message)
+                        is PendingBroadcast.Email -> viewModel.sendEmailBroadcast(pending.subject, pending.message)
+                        is PendingBroadcast.Push -> viewModel.sendPushBroadcast(pending.message)
+                    }
+                    pendingBroadcast = null
+                }) {
+                    Text("Send")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { pendingBroadcast = null }) {
+                    Text("Cancel")
+                }
+            },
+        )
     }
 }
 

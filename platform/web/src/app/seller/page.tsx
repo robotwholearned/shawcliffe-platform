@@ -265,9 +265,14 @@ export default function SellerDashboard() {
         </div>
       </header>
 
-      <Link href="/seller/notifications" className="block text-xs text-blue-600 hover:text-blue-700 -mt-3">
-        View sent notifications →
-      </Link>
+      <div className="flex items-center gap-4 -mt-3">
+        <Link href="/seller/notifications" className="text-xs text-blue-600 hover:text-blue-700">
+          View sent notifications →
+        </Link>
+        <Link href="/seller/preview" className="text-xs text-blue-600 hover:text-blue-700">
+          Preview your storefront →
+        </Link>
+      </div>
 
       {/* Status */}
       <section className="bg-white rounded-2xl shadow-sm p-4 space-y-3">

@@ -56,10 +56,19 @@ export async function GET(req: NextRequest) {
     : { data: [] }
   const itemById = new Map((items ?? []).map(i => [i.id, i]))
 
-  const submissions = (data ?? []).map(({ customer_id, checklist_item_id, ...rest }) => ({
+  // file_url is a storage path in the private `documents` bucket, not a
+  // public URL — resolve each to a short-lived signed URL for this response.
+  const paths = (data ?? []).map(s => s.file_url)
+  const { data: signedUrls } = paths.length
+    ? await admin.storage.from('documents').createSignedUrls(paths, 300)
+    : { data: [] }
+  const signedUrlByPath = new Map((signedUrls ?? []).map(s => [s.path, s.signedUrl]))
+
+  const submissions = (data ?? []).map(({ customer_id, checklist_item_id, file_url, ...rest }) => ({
     ...rest,
     customer: customerById.get(customer_id) ?? null,
     checklist_item: checklist_item_id ? (itemById.get(checklist_item_id) ?? null) : null,
+    file_url: signedUrlByPath.get(file_url) ?? null,
   }))
 
   return NextResponse.json({ submissions, total: count ?? 0, page, pageSize })

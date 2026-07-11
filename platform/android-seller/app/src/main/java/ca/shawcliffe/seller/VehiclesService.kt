@@ -32,6 +32,7 @@ object VehiclesService {
         val make: String? = null,
         val model: String? = null,
         val year: Int? = null,
+        val color: String? = null,
         val vin: String? = null,
         val plate: String? = null,
         val mileage: Int? = null,

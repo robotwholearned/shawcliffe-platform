@@ -6,7 +6,7 @@ import { useEnabledComponents } from '@/lib/use-enabled-components'
 
 interface Submission {
   id: string
-  file_url: string
+  file_url: string | null
   submitted_at: string
   customer: { name: string; phone: string | null; email: string | null } | null
   checklist_item: { title: string } | null
@@ -69,9 +69,11 @@ export default function DocumentSubmissionsPage() {
                 {s.customer.email && <span>{s.customer.email}</span>}
               </div>
             )}
-            <a href={s.file_url} target="_blank" rel="noreferrer" className="text-xs text-blue-600 hover:text-blue-700">
-              View file →
-            </a>
+            {s.file_url && (
+              <a href={s.file_url} target="_blank" rel="noreferrer" className="text-xs text-blue-600 hover:text-blue-700">
+                View file →
+              </a>
+            )}
           </div>
         ))}
       </section>

@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import type { Product } from '@/lib/supabase/types'
 import { normalizePhone, phoneError } from '@/lib/phone'
+import { emailError } from '@/lib/email'
 
 interface Props {
   clientId: string
@@ -33,6 +34,7 @@ export default function PreorderForm({ clientId, businessName, slug, initialProd
     e.preventDefault()
     if (!phone && !email) { setError('Enter a phone number or email so we can confirm your order.'); return }
     if (phone && phoneError(phone)) { setError(phoneError(phone)!); return }
+    if (email && emailError(email)) { setError(emailError(email)!); return }
     if (selectedItems.length === 0) { setError('Select at least one product.'); return }
 
     setSubmitting(true)

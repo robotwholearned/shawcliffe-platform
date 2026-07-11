@@ -6,11 +6,12 @@ import twilio from 'twilio'
 // 1. Suspend Twilio subaccount
 // 2. Delete all Storage assets under {client_id}/
 // 3. Delete Supabase Auth users for this client
-// 4. Delete client row (cascades to all 11 tenant tables via FK)
+// 4. Delete client row (cascades to all 19 tenant tables via FK)
 //
 // The cascade handles: client_branding, locations, products, daily_status,
 // customers, preorders, preorder_items, announcements, payment_intents,
-// notification_log, twilio_subaccounts
+// notification_log, twilio_subaccounts, push_tokens, inquiries, bookings,
+// document_checklist_items, document_submissions, vehicles, pets, properties
 
 export async function POST(req: NextRequest, { params }: { params: { clientId: string } }) {
   const supabase = createClient()

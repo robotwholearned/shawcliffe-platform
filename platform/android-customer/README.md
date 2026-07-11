@@ -52,21 +52,19 @@ Requires `minSdk 26` (Android 8.0).
 
 ## Known gaps / not yet built
 
-- **Push is not wired end-to-end and won't work as shipped.** No Firebase
-  project/`google-services.json` exists for this app yet, so
-  `FirebaseMessaging.getInstance()` throws at runtime — `PushManager` catches
-  this and no-ops (same "best effort, retries next launch" pattern as the iOS
-  APNs code). Beyond that, the server only understands APNs today:
-  `platform/web/src/app/api/push/register/route.ts` writes every token to
-  `customers.apns_token`, and `platform/web/src/app/api/broadcast/push/route.ts`
-  sends exclusively via `platform/web/src/lib/apns.ts`. `customers.fcm_token`
-  exists in the schema but nothing reads or writes it. Per
-  `platform/ARCHITECTURE-MAP.md` ("Android push (FCM, once the Android app
-  exists — at that point, migrate iOS onto FCM too rather than running two
-  providers)"), the real fix is a server change, not an app change: create a
-  Firebase project, add `google-services.json` + the `google-services` Gradle
-  plugin here, and update both push routes to branch on token type (or
-  migrate iOS onto FCM as recommended).
+- **Push is code-complete but not live: no Firebase project yet.** Server
+  side is fully wired — `push_tokens` (migration 009) stores tokens per
+  platform, `platform/web/src/app/api/push/register/route.ts` accepts
+  `platform: "android"` and stores FCM tokens there, and
+  `platform/web/src/app/api/broadcast/push/route.ts` dispatches Android
+  tokens via `platform/web/src/lib/fcm.ts` (FCM HTTP v1) alongside the
+  existing APNs path for iOS. The only missing piece is a real Firebase
+  project: without `google-services.json`, `FirebaseMessaging.getInstance()`
+  throws at runtime and `PushManager` catches it and no-ops (same "best
+  effort, retries next launch" pattern as the iOS APNs code). To go live:
+  create a Firebase project, add `google-services.json` + the
+  `google-services` Gradle plugin here, and set `FCM_SERVICE_ACCOUNT_JSON` on
+  the server.
 - **Launcher icon is a placeholder vector**, not real app art or the
   per-client logo.
 - No offline cache (Room).

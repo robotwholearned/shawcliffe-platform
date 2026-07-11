@@ -1,5 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServiceClient } from '@/lib/supabase/server'
+import { normalizePhone } from '@/lib/phone'
+import { emailError } from '@/lib/email'
+import { Resend } from 'resend'
+
+const FROM_ADDRESS = 'cassandra@shawcliffedigital.com'
 
 export async function POST(req: NextRequest) {
   const body = await req.json()
@@ -9,12 +14,20 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
   }
 
+  const normalizedPhone = customer_phone ? normalizePhone(customer_phone) : null
+  if (customer_phone && !normalizedPhone) {
+    return NextResponse.json({ error: 'Invalid phone number format' }, { status: 400 })
+  }
+  if (customer_email && emailError(customer_email)) {
+    return NextResponse.json({ error: 'Invalid email format' }, { status: 400 })
+  }
+
   const supabase = createServiceClient()
 
   // Verify client is active
   const { data: client } = await supabase
     .from('clients')
-    .select('id')
+    .select('id, operator_email, client_branding(app_name)')
     .eq('id', client_id)
     .eq('active', true)
     .single()
@@ -22,6 +35,7 @@ export async function POST(req: NextRequest) {
   if (!client) return NextResponse.json({ error: 'Client not found' }, { status: 404 })
 
   // Check quantity caps for each product
+  const orderedItems: { name: string; quantity: number }[] = []
   for (const item of items as { product_id: string; quantity: number }[]) {
     const { data: product } = await supabase
       .from('products')
@@ -33,6 +47,7 @@ export async function POST(req: NextRequest) {
     if (!product) {
       return NextResponse.json({ error: `Product not found` }, { status: 404 })
     }
+    orderedItems.push({ name: product.name, quantity: item.quantity })
 
     if (product.quantity_limit != null) {
       // Count existing pending/confirmed preorder quantities for this product
@@ -58,11 +73,15 @@ export async function POST(req: NextRequest) {
   let customerId: string
 
   const emailOrPhone = customer_email || customer_phone
+  // Strip PostgREST filter-syntax metacharacters so a submitted email/phone
+  // can't break out of this .or() clause into an injected condition.
+  const safeEmail = (customer_email ?? '').replace(/[,()]/g, '')
+  const safePhone = (normalizedPhone ?? '').replace(/[,()]/g, '')
   const { data: existingCustomer } = await supabase
     .from('customers')
     .select('id')
     .eq('client_id', client_id)
-    .or(`email.eq.${customer_email ?? ''},phone.eq.${customer_phone ?? ''}`)
+    .or(`email.eq.${safeEmail},phone.eq.${safePhone}`)
     .maybeSingle()
 
   if (existingCustomer) {
@@ -73,7 +92,7 @@ export async function POST(req: NextRequest) {
       .insert({
         client_id,
         name: customer_name,
-        phone: customer_phone || null,
+        phone: normalizedPhone,
         email: customer_email || null,
         sms_consent: false,
         email_consent: false,
@@ -121,5 +140,169 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Failed to save preorder items' }, { status: 500 })
   }
 
+  // Fire-and-forget: the preorder is already saved, so notification delivery
+  // shouldn't block the customer-facing response on two Resend round-trips.
+  sendPreorderEmails(supabase, {
+    clientId: client_id,
+    operatorEmail: client.operator_email,
+    fromName: getBrandingAppName(client.client_branding) ?? 'Your Local Seller',
+    customerId,
+    customerName: customer_name,
+    customerPhone: normalizedPhone,
+    customerEmail: customer_email || null,
+    items: orderedItems,
+    pickupWindowStart: pickup_window_start || null,
+    pickupWindowEnd: pickup_window_end || null,
+    notes: notes || null,
+  }).catch((err) => console.error('preorder notification dispatch failed', err))
+
   return NextResponse.json({ preorder_id: preorder.id }, { status: 201 })
+}
+
+// Supabase's generated types embed a to-one PostgREST relation as an array
+// regardless of the underlying FK being unique — normalize either shape.
+function getBrandingAppName(embed: unknown): string | null {
+  const row = Array.isArray(embed) ? embed[0] : embed
+  return (row as { app_name?: string | null } | null)?.app_name ?? null
+}
+
+async function sendPreorderEmails(
+  supabase: ReturnType<typeof createServiceClient>,
+  info: {
+    clientId: string
+    operatorEmail: string | null
+    fromName: string
+    customerId: string
+    customerName: string
+    customerPhone: string | null
+    customerEmail: string | null
+    items: { name: string; quantity: number }[]
+    pickupWindowStart: string | null
+    pickupWindowEnd: string | null
+    notes: string | null
+  }
+) {
+  const resend = new Resend(process.env.RESEND_API_KEY)
+  const itemsSummary = info.items.map(i => `${i.quantity}x ${i.name}`).join(', ')
+
+  const sendOwnerEmail = async () => {
+    if (!info.operatorEmail) return
+    try {
+      const { data } = await resend.emails.send({
+        from: `${info.fromName} <${FROM_ADDRESS}>`,
+        to: info.operatorEmail,
+        subject: `New preorder from ${info.customerName}`,
+        html: ownerEmailTemplate(info, itemsSummary),
+        text: ownerEmailText(info, itemsSummary),
+      })
+
+      await supabase.from('notification_log').insert({
+        client_id: info.clientId,
+        customer_id: info.customerId,
+        channel: 'email',
+        message_preview: `New preorder from ${info.customerName}`.substring(0, 50),
+        status: 'sent',
+        provider_message_id: data?.id ?? null,
+      })
+    } catch (err) {
+      console.error('preorder owner email failed', err)
+    }
+  }
+
+  const sendCustomerEmail = async () => {
+    if (!info.customerEmail) return
+    try {
+      const { data } = await resend.emails.send({
+        from: `${info.fromName} <${FROM_ADDRESS}>`,
+        to: info.customerEmail,
+        subject: `Your preorder is confirmed`,
+        html: customerEmailTemplate(info.fromName, itemsSummary),
+        text: `Thanks for your preorder with ${info.fromName}! We've received it: ${itemsSummary}. Pay at pickup — no payment required now.`,
+      })
+
+      await supabase.from('notification_log').insert({
+        client_id: info.clientId,
+        customer_id: info.customerId,
+        channel: 'email',
+        message_preview: 'Preorder confirmation',
+        status: 'sent',
+        provider_message_id: data?.id ?? null,
+      })
+    } catch (err) {
+      console.error('preorder customer confirmation email failed', err)
+    }
+  }
+
+  await Promise.allSettled([sendOwnerEmail(), sendCustomerEmail()])
+}
+
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
+function ownerEmailText(
+  info: {
+    customerName: string
+    customerPhone: string | null
+    customerEmail: string | null
+    pickupWindowStart: string | null
+    pickupWindowEnd: string | null
+    notes: string | null
+  },
+  itemsSummary: string
+): string {
+  return [
+    `New preorder from ${info.customerName}`,
+    `Items: ${itemsSummary}`,
+    info.pickupWindowStart && `Pickup from: ${info.pickupWindowStart}`,
+    info.pickupWindowEnd && `Pickup until: ${info.pickupWindowEnd}`,
+    info.notes && `Notes: ${info.notes}`,
+    info.customerPhone && `Phone: ${info.customerPhone}`,
+    info.customerEmail && `Email: ${info.customerEmail}`,
+  ]
+    .filter(Boolean)
+    .join('\n')
+}
+
+function ownerEmailTemplate(info: Parameters<typeof ownerEmailText>[0], itemsSummary: string): string {
+  const rows = [
+    ['Items', itemsSummary],
+    ['Pickup from', info.pickupWindowStart],
+    ['Pickup until', info.pickupWindowEnd],
+    ['Phone', info.customerPhone],
+    ['Email', info.customerEmail],
+  ].filter(([, v]) => v)
+
+  return `
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"></head>
+<body style="font-family: system-ui, sans-serif; max-width: 560px; margin: 0 auto; padding: 24px; color: #1f2937;">
+  <h2 style="margin: 0 0 16px; font-size: 20px; color: #111827;">New preorder from ${escapeHtml(info.customerName)}</h2>
+  <table style="font-size: 15px; line-height: 1.6; border-collapse: collapse;">
+    ${rows.map(([k, v]) => `<tr><td style="padding: 2px 12px 2px 0; color: #6b7280;">${escapeHtml(k as string)}</td><td>${escapeHtml(v as string)}</td></tr>`).join('')}
+  </table>
+  ${info.notes ? `<p style="font-size: 15px; line-height: 1.6; white-space: pre-wrap; margin-top: 16px;">${escapeHtml(info.notes)}</p>` : ''}
+</body>
+</html>
+  `.trim()
+}
+
+function customerEmailTemplate(fromName: string, itemsSummary: string): string {
+  return `
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"></head>
+<body style="font-family: system-ui, sans-serif; max-width: 560px; margin: 0 auto; padding: 24px; color: #1f2937;">
+  <h2 style="margin: 0 0 16px; font-size: 20px; color: #111827;">${fromName}</h2>
+  <p style="font-size: 15px; line-height: 1.6;">Thanks for your preorder! We've received it: ${escapeHtml(itemsSummary)}.</p>
+  <p style="font-size: 15px; line-height: 1.6;">Pay at pickup — no payment required now.</p>
+</body>
+</html>
+  `.trim()
 }

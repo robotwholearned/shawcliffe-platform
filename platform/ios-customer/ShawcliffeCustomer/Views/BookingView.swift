@@ -236,6 +236,10 @@ struct BookingView: View {
             error = phoneError
             return
         }
+        if let emailErr = Email.error(for: email) {
+            error = emailErr
+            return
+        }
 
         submitting = true
         do {
@@ -263,7 +267,7 @@ struct BookingView: View {
                     pet_vaccination_info: petVaccinationInfo.isEmpty ? nil : petVaccinationInfo,
                     pet_emergency_contact: petEmergencyContact.isEmpty ? nil : petEmergencyContact,
                     pet_care_instructions: petCareInstructions.isEmpty ? nil : petCareInstructions,
-                    photo_url: petPhotoURL
+                    pet_photo_url: petPhotoURL
                 ),
                 as: BookingResponse.self
             )

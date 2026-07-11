@@ -408,7 +408,10 @@ struct QuoteView: View {
 
     private func fetchAddressSuggestions(_ query: String) async {
         var components = URLComponents(url: Config.apiBaseURL.appendingPathComponent("api/places/autocomplete"), resolvingAgainstBaseURL: false)!
-        components.queryItems = [URLQueryItem(name: "input", value: query)]
+        components.queryItems = [
+            URLQueryItem(name: "input", value: query),
+            URLQueryItem(name: "client_id", value: Config.clientId),
+        ]
         guard let url = components.url else { return }
         addressSuggestions = (try? await APIClient.get(url: url, as: [PlaceSuggestion].self)) ?? []
     }
@@ -416,7 +419,10 @@ struct QuoteView: View {
     private func selectAddressSuggestion(_ suggestion: PlaceSuggestion) async {
         addressSuggestions = []
         var components = URLComponents(url: Config.apiBaseURL.appendingPathComponent("api/places/details"), resolvingAgainstBaseURL: false)!
-        components.queryItems = [URLQueryItem(name: "place_id", value: suggestion.place_id)]
+        components.queryItems = [
+            URLQueryItem(name: "place_id", value: suggestion.place_id),
+            URLQueryItem(name: "client_id", value: Config.clientId),
+        ]
         suppressNextAddressSearch = true
         guard let url = components.url,
               let details = try? await APIClient.get(url: url, as: PlaceDetailsResponse.self) else {

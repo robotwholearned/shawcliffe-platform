@@ -50,6 +50,7 @@ import ca.shawcliffe.tomsproduce.BookingRequest
 import ca.shawcliffe.tomsproduce.BookingResponse
 import ca.shawcliffe.tomsproduce.ComponentKeys
 import ca.shawcliffe.tomsproduce.Config
+import ca.shawcliffe.tomsproduce.Email
 import ca.shawcliffe.tomsproduce.Phone
 import ca.shawcliffe.tomsproduce.StorefrontViewModel
 import coil.compose.AsyncImage
@@ -257,6 +258,10 @@ fun BookingScreen(
                     return@Button
                 }
                 Phone.error(phone)?.let {
+                    error = it
+                    return@Button
+                }
+                Email.error(email)?.let {
                     error = it
                     return@Button
                 }

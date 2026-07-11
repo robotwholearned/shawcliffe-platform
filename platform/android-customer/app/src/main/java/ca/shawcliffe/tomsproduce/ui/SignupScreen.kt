@@ -26,6 +26,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import ca.shawcliffe.tomsproduce.APIClient
 import ca.shawcliffe.tomsproduce.Config
+import ca.shawcliffe.tomsproduce.Email
 import ca.shawcliffe.tomsproduce.Phone
 import ca.shawcliffe.tomsproduce.PushManager
 import ca.shawcliffe.tomsproduce.SignupRequest
@@ -100,6 +101,10 @@ fun SignupScreen(onDone: () -> Unit, businessName: String = "Tom's Produce") {
                     return@Button
                 }
                 Phone.error(phone)?.let {
+                    error = it
+                    return@Button
+                }
+                Email.error(email)?.let {
                     error = it
                     return@Button
                 }

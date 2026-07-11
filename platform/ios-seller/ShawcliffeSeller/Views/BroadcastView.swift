@@ -15,6 +15,36 @@ let messageTemplates: [MessageTemplate] = [
     MessageTemplate(label: "Restocked", sms: "Just restocked! Fresh items now available.", subject: "We just restocked!", email: "Just restocked! Fresh items are now available."),
 ]
 
+private enum PendingBroadcast: Identifiable {
+    case sms(String)
+    case email(subject: String, message: String)
+    case push(String)
+
+    var id: String {
+        switch self {
+        case .sms: return "sms"
+        case .email: return "email"
+        case .push: return "push"
+        }
+    }
+
+    var title: String {
+        switch self {
+        case .sms: return "Send SMS to all opted-in customers?"
+        case .email: return "Send email to all opted-in customers?"
+        case .push: return "Send push notification to all customers with the app installed?"
+        }
+    }
+
+    var preview: String {
+        switch self {
+        case .sms(let message): return message
+        case .email(let subject, let message): return "Subject: \"\(subject)\"\n\n\(message)"
+        case .push(let message): return message
+        }
+    }
+}
+
 struct BroadcastView: View {
     @ObservedObject var viewModel: DashboardViewModel
     let clientId: String
@@ -22,6 +52,7 @@ struct BroadcastView: View {
     @State private var emailSubject = ""
     @State private var emailMessage = ""
     @State private var pushMessage = ""
+    @State private var pendingBroadcast: PendingBroadcast?
 
     var body: some View {
         List {
@@ -46,12 +77,12 @@ struct BroadcastView: View {
                         ResultLabel(result: result)
                     }
                 }
-                if viewModel.testResult?.channel == "sms" {
-                    TestResultLabel(result: viewModel.testResult!)
+                if let testResult = viewModel.testResult, testResult.channel == "sms" {
+                    TestResultLabel(result: testResult)
                 }
                 HStack {
                     Button {
-                        Task { await viewModel.sendSMSBroadcast(message: smsMessage) }
+                        pendingBroadcast = .sms(smsMessage)
                     } label: {
                         HStack {
                             Spacer()
@@ -87,12 +118,12 @@ struct BroadcastView: View {
                 if let result = viewModel.emailResult {
                     ResultLabel(result: result)
                 }
-                if viewModel.testResult?.channel == "email" {
-                    TestResultLabel(result: viewModel.testResult!)
+                if let testResult = viewModel.testResult, testResult.channel == "email" {
+                    TestResultLabel(result: testResult)
                 }
                 HStack {
                     Button {
-                        Task { await viewModel.sendEmailBroadcast(subject: emailSubject, message: emailMessage) }
+                        pendingBroadcast = .email(subject: emailSubject, message: emailMessage)
                     } label: {
                         HStack {
                             Spacer()
@@ -133,12 +164,12 @@ struct BroadcastView: View {
                         ResultLabel(result: result)
                     }
                 }
-                if viewModel.testResult?.channel == "push" {
-                    TestResultLabel(result: viewModel.testResult!)
+                if let testResult = viewModel.testResult, testResult.channel == "push" {
+                    TestResultLabel(result: testResult)
                 }
                 HStack {
                     Button {
-                        Task { await viewModel.sendPushBroadcast(message: pushMessage) }
+                        pendingBroadcast = .push(pushMessage)
                     } label: {
                         HStack {
                             Spacer()
@@ -164,6 +195,28 @@ struct BroadcastView: View {
             }
         }
         .listStyle(.insetGrouped)
+        .confirmationDialog(
+            pendingBroadcast?.title ?? "",
+            isPresented: Binding(
+                get: { pendingBroadcast != nil },
+                set: { if !$0 { pendingBroadcast = nil } }
+            ),
+            presenting: pendingBroadcast
+        ) { pending in
+            Button("Send", role: .destructive) {
+                switch pending {
+                case .sms(let message):
+                    Task { await viewModel.sendSMSBroadcast(message: message) }
+                case .email(let subject, let message):
+                    Task { await viewModel.sendEmailBroadcast(subject: subject, message: message) }
+                case .push(let message):
+                    Task { await viewModel.sendPushBroadcast(message: message) }
+                }
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: { pending in
+            Text(pending.preview + "\n\nThis cannot be undone.")
+        }
     }
 }
 

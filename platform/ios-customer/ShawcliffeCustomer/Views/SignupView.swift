@@ -85,6 +85,10 @@ struct SignupView: View {
             error = phoneError
             return
         }
+        if let emailErr = Email.error(for: email) {
+            error = emailErr
+            return
+        }
         guard smsConsent || emailConsent else {
             error = "Please check at least one consent option."
             return

@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { normalizePhone, phoneError } from '@/lib/phone'
+import { emailError } from '@/lib/email'
 
 interface Props {
   clientId: string
@@ -44,6 +45,7 @@ export default function BookingForm({ clientId, businessName, slug, showPetField
     if (!name.trim()) { setError('Enter your name.'); return }
     if (!phone && !email) { setError('Enter a phone number or email so we can confirm your booking.'); return }
     if (phone && phoneError(phone)) { setError(phoneError(phone)!); return }
+    if (email && emailError(email)) { setError(emailError(email)!); return }
 
     setSubmitting(true)
     setError(null)

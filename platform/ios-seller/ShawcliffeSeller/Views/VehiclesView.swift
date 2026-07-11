@@ -29,6 +29,9 @@ struct VehiclesView: View {
                             Text(email).font(.caption).foregroundStyle(.secondary)
                         }
                     }
+                    if let color = vehicle.color {
+                        Text(color).font(.caption).foregroundStyle(.secondary)
+                    }
                     if let plate = vehicle.plate {
                         Text("Plate \(plate)").font(.caption).foregroundStyle(.secondary)
                     }

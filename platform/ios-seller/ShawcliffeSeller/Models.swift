@@ -385,6 +385,7 @@ struct Property: Codable, Identifiable {
     let snowRemovalAreas: String?
     let cleaningInstructions: String?
     let safetyNotes: String?
+    let placeId: String?
     let addressVerified: Bool?
     let createdAt: String
     let customer: PropertyCustomer?
@@ -400,6 +401,7 @@ struct Property: Codable, Identifiable {
         case snowRemovalAreas = "snow_removal_areas"
         case cleaningInstructions = "cleaning_instructions"
         case safetyNotes = "safety_notes"
+        case placeId = "place_id"
         case addressVerified = "address_verified"
         case createdAt = "created_at"
         case customer
@@ -452,6 +454,7 @@ struct Vehicle: Codable, Identifiable {
     let make: String?
     let model: String?
     let year: Int?
+    let color: String?
     let vin: String?
     let plate: String?
     let mileage: Int?
@@ -460,7 +463,7 @@ struct Vehicle: Codable, Identifiable {
     let customer: VehicleCustomer?
 
     enum CodingKeys: String, CodingKey {
-        case id, make, model, year, vin, plate, mileage, notes
+        case id, make, model, year, color, vin, plate, mileage, notes
         case createdAt = "created_at"
         case customer
     }

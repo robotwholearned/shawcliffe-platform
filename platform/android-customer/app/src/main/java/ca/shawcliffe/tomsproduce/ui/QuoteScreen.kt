@@ -230,7 +230,7 @@ fun QuoteScreen(
             delay(400)
             try {
                 val response = APIClient.get<PlacesAutocompleteResponse>(
-                    "${Config.API_BASE_URL}/api/places/autocomplete?input=${encode(propertyAddress)}",
+                    "${Config.API_BASE_URL}/api/places/autocomplete?input=${encode(propertyAddress)}&client_id=${encode(Config.CLIENT_ID)}",
                 )
                 addressSuggestions.clear()
                 addressSuggestions.addAll(response.suggestions)
@@ -420,7 +420,7 @@ fun QuoteScreen(
                                     scope.launch {
                                         val resolved = try {
                                             val details = APIClient.get<PlaceDetailsResponse>(
-                                                "${Config.API_BASE_URL}/api/places/details?place_id=${encode(suggestion.placeId)}",
+                                                "${Config.API_BASE_URL}/api/places/details?place_id=${encode(suggestion.placeId)}&client_id=${encode(Config.CLIENT_ID)}",
                                             )
                                             (details.formattedAddress ?: suggestion.description) to (details.placeId ?: suggestion.placeId)
                                         } catch (e: Exception) {

@@ -23,6 +23,7 @@ struct StorefrontView: View {
             VStack(spacing: 0) {
                 headerBand
                 VStack(alignment: .leading, spacing: 20) {
+                    errorBanner
                     statusCard
                     productsSection
                     actionButtons
@@ -46,6 +47,15 @@ struct StorefrontView: View {
         }
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(.hidden, for: .navigationBar)
+    }
+
+    // MARK: Error
+
+    @ViewBuilder
+    private var errorBanner: some View {
+        if let errorMessage = viewModel.errorMessage {
+            Text(errorMessage).foregroundStyle(.red).font(.footnote)
+        }
     }
 
     // MARK: Header band

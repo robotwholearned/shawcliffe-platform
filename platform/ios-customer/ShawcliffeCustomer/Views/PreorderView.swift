@@ -115,6 +115,10 @@ struct PreorderView: View {
             error = phoneError
             return
         }
+        if let emailErr = Email.error(for: email) {
+            error = emailErr
+            return
+        }
         guard !selectedItems.isEmpty else {
             error = "Select at least one product."
             return

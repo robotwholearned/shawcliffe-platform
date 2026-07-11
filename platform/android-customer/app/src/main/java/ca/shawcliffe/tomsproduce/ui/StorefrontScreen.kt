@@ -86,6 +86,9 @@ fun StorefrontScreen(
                     .padding(horizontal = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(20.dp),
             ) {
+                viewModel.errorMessage?.let {
+                    Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
+                }
                 StatusCard(viewModel, primary)
                 ProductsSection(
                     products = viewModel.products,

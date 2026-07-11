@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServiceClient } from '@/lib/supabase/server'
 import { normalizePhone } from '@/lib/phone'
+import { emailError } from '@/lib/email'
 import { hasComponent } from '@/lib/components'
 import { Resend } from 'resend'
 
@@ -48,6 +49,9 @@ export async function POST(req: NextRequest) {
   const normalizedPhone = phoneStr ? normalizePhone(phoneStr) : null
   if (phoneStr && !normalizedPhone) {
     return NextResponse.json({ error: 'Invalid phone number format' }, { status: 400 })
+  }
+  if (emailStr && emailError(emailStr)) {
+    return NextResponse.json({ error: 'Invalid email format' }, { status: 400 })
   }
 
   const admin = createServiceClient()
@@ -108,25 +112,25 @@ export async function POST(req: NextRequest) {
   }
 
   const ext = file.type === 'application/pdf' ? 'pdf' : (file.type.split('/')[1] === 'jpeg' ? 'jpg' : file.type.split('/')[1])
-  const path = `${clientId}/documents/${crypto.randomUUID()}.${ext}`
+  const path = `${clientId}/${crypto.randomUUID()}.${ext}`
 
   const { error: uploadError } = await admin.storage
-    .from('assets')
+    .from('documents')
     .upload(path, await file.arrayBuffer(), { contentType: file.type })
 
   if (uploadError) {
     return NextResponse.json({ error: 'Upload failed' }, { status: 500 })
   }
 
-  const { data: publicUrl } = admin.storage.from('assets').getPublicUrl(path)
-
+  // Storage path, not a public URL — the `documents` bucket is private.
+  // The seller UI resolves this to a short-lived createSignedUrl() at read time.
   const { data: submission, error: submissionError } = await admin
     .from('document_submissions')
     .insert({
       client_id: clientId,
       customer_id: customerId,
       checklist_item_id: typeof checklistItemId === 'string' && checklistItemId ? checklistItemId : null,
-      file_url: publicUrl.publicUrl,
+      file_url: path,
     })
     .select('id')
     .single()
@@ -146,7 +150,7 @@ export async function POST(req: NextRequest) {
     }).catch((err) => console.error('document submission notification dispatch failed', err))
   }
 
-  return NextResponse.json({ submission_id: submission.id, url: publicUrl.publicUrl }, { status: 201 })
+  return NextResponse.json({ submission_id: submission.id }, { status: 201 })
 }
 
 function getBrandingAppName(embed: unknown): string | null {

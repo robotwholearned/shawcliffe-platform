@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServiceClient } from '@/lib/supabase/server'
 import { normalizePhone } from '@/lib/phone'
+import { emailError } from '@/lib/email'
 import { hasComponent } from '@/lib/components'
 import { Resend } from 'resend'
 
@@ -41,6 +42,9 @@ export async function POST(req: NextRequest) {
   const normalizedPhone = phone ? normalizePhone(phone) : null
   if (phone && !normalizedPhone) {
     return NextResponse.json({ error: 'Invalid phone number format' }, { status: 400 })
+  }
+  if (email && emailError(email)) {
+    return NextResponse.json({ error: emailError(email) }, { status: 400 })
   }
 
   // Hash IP for CASL/TCPA logging — we never store the raw IP

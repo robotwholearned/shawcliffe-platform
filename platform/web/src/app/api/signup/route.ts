@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServiceClient } from '@/lib/supabase/server'
 import { normalizePhone } from '@/lib/phone'
+import { emailError } from '@/lib/email'
 
 const CONSENT_TEXT_VERSION = 'v1-2026-06-02'
 
@@ -15,6 +16,9 @@ export async function POST(req: NextRequest) {
   const normalizedPhone = phone ? normalizePhone(phone) : null
   if (phone && !normalizedPhone) {
     return NextResponse.json({ error: 'Invalid phone number format' }, { status: 400 })
+  }
+  if (email && emailError(email)) {
+    return NextResponse.json({ error: 'Invalid email format' }, { status: 400 })
   }
   if (!sms_consent && !email_consent) {
     return NextResponse.json({ error: 'at least one consent is required' }, { status: 400 })

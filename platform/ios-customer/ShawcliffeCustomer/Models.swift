@@ -207,7 +207,7 @@ struct BookingRequest: Encodable {
     let pet_vaccination_info: String?
     let pet_emergency_contact: String?
     let pet_care_instructions: String?
-    let photo_url: String?
+    let pet_photo_url: String?
 }
 
 struct DocumentChecklistItem: Codable, Identifiable {

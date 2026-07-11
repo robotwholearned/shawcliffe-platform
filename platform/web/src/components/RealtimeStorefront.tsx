@@ -24,9 +24,12 @@ interface Props {
   initialProducts: Product[]
   hours?: string | null
   location?: LocationInfo | null
+  // Seller preview reuses this component for status/location/products but
+  // isn't a real customer session — hide the signup/quote/booking/etc CTAs.
+  hideActions?: boolean
 }
 
-export default function RealtimeStorefront({ clientId, slug, showStatus, showQuote, showBooking, showDocuments, initialStatus, initialProducts, hours, location }: Props) {
+export default function RealtimeStorefront({ clientId, slug, showStatus, showQuote, showBooking, showDocuments, initialStatus, initialProducts, hours, location, hideActions = false }: Props) {
   const [status, setStatus] = useState(initialStatus)
   const [products, setProducts] = useState(initialProducts)
   const [connected, setConnected] = useState(true)
@@ -178,6 +181,7 @@ export default function RealtimeStorefront({ clientId, slug, showStatus, showQuo
         <p className="py-8 text-center text-sm text-gray-400">No products listed yet.</p>
       )}
 
+      {!hideActions && (
       <div className="space-y-3 pt-2">
         <a
           href={`/${slug}/signup`}
@@ -216,6 +220,7 @@ export default function RealtimeStorefront({ clientId, slug, showStatus, showQuo
           </a>
         )}
       </div>
+      )}
     </div>
   )
 }
