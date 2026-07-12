@@ -16,13 +16,9 @@ import kotlinx.coroutines.tasks.await
  * with the server once both pieces exist. Mirrors ios-customer/PushManager.swift,
  * but over FCM instead of direct APNs.
  *
- * KNOWN GAP: no Firebase project/google-services.json exists yet (see
- * README), so FirebaseMessaging.getInstance() throws until one is added —
- * every call here is best-effort and silently no-ops on failure, same as the
- * iOS app's "retries next launch" behaviour. Server side is otherwise ready:
- * POST /api/push/register and /api/broadcast/push already store and send
- * Android tokens via push_tokens (platform = 'android') and lib/fcm.ts — the
- * only missing piece is a real Firebase project to produce real FCM tokens.
+ * Firebase project is live (google-services.json + plugin wired in
+ * app/build.gradle.kts); calls here still stay best-effort/no-op on failure
+ * for resilience, same as the iOS app's "retries next launch" behaviour.
  */
 object PushManager {
     private const val PREFS_NAME = "shawcliffe.push"

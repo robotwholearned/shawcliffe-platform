@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "414375080155",
+    "project_id": "shawcliffe-digital",
+    "storage_bucket": "shawcliffe-digital.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:414375080155:android:cd1c618b493eb65f4e9cfe",
+        "android_client_info": {
+          "package_name": "ca.shawcliffe.tomsproduce"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAcTZLx76aOYRLqmhXAPgMtTvfl4l7-8n4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

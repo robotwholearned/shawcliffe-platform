@@ -52,19 +52,14 @@ Requires `minSdk 26` (Android 8.0).
 
 ## Known gaps / not yet built
 
-- **Push is code-complete but not live: no Firebase project yet.** Server
-  side is fully wired — `push_tokens` (migration 009) stores tokens per
-  platform, `platform/web/src/app/api/push/register/route.ts` accepts
+- **Push is wired end-to-end.** `push_tokens` (migration 009) stores tokens
+  per platform, `platform/web/src/app/api/push/register/route.ts` accepts
   `platform: "android"` and stores FCM tokens there, and
   `platform/web/src/app/api/broadcast/push/route.ts` dispatches Android
   tokens via `platform/web/src/lib/fcm.ts` (FCM HTTP v1) alongside the
-  existing APNs path for iOS. The only missing piece is a real Firebase
-  project: without `google-services.json`, `FirebaseMessaging.getInstance()`
-  throws at runtime and `PushManager` catches it and no-ops (same "best
-  effort, retries next launch" pattern as the iOS APNs code). To go live:
-  create a Firebase project, add `google-services.json` + the
-  `google-services` Gradle plugin here, and set `FCM_SERVICE_ACCOUNT_JSON` on
-  the server.
+  existing APNs path for iOS. `google-services.json` + the `google-services`
+  Gradle plugin are in place here; `FCM_SERVICE_ACCOUNT_JSON` needs to be set
+  on the Render server for sends to actually go out.
 - **Launcher icon is a placeholder vector**, not real app art or the
   per-client logo.
 - No offline cache (Room).

@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.google.services)
 }
 
 // Per-client values, overridden by Fastlane via -P Gradle properties (see
@@ -73,8 +74,6 @@ dependencies {
     implementation(libs.kotlinx.coroutines.play.services)
     implementation(libs.androidx.navigation.compose)
 
-    // Push (FCM) — no google-services.json/Firebase project exists yet (see
-    // README "Known gaps"), so the google-services plugin isn't applied and
-    // this initializes lazily; PushManager treats failures as best-effort.
+    // Push (FCM) — google-services.json present, plugin applied above.
     implementation("com.google.firebase:firebase-messaging-ktx:24.1.0")
 }
