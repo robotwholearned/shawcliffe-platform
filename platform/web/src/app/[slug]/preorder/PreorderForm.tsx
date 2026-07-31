@@ -4,15 +4,21 @@ import { useState } from 'react'
 import type { Product } from '@/lib/supabase/types'
 import { normalizePhone, phoneError } from '@/lib/phone'
 import { emailError } from '@/lib/email'
+import BrandedShell from '@/components/BrandedShell'
+import { CardSection, Input, Textarea, SubmitButton, SuccessCard } from '@/components/form'
 
 interface Props {
   clientId: string
   businessName: string
   slug: string
+  logoUrl: string | null
+  tagline: string | null
+  primaryColor: string | null
+  heroUrl: string | null
   initialProducts: Product[]
 }
 
-export default function PreorderForm({ clientId, businessName, slug, initialProducts }: Props) {
+export default function PreorderForm({ clientId, businessName, slug, logoUrl, tagline, primaryColor, heroUrl, initialProducts }: Props) {
   const [quantities, setQuantities] = useState<Record<string, number>>({})
   const [name, setName] = useState('')
   const [phone, setPhone] = useState('')
@@ -71,36 +77,32 @@ export default function PreorderForm({ clientId, businessName, slug, initialProd
 
   if (done) {
     return (
-      <div className="min-h-screen flex items-center justify-center px-4">
-        <div className="text-center space-y-3 max-w-xs">
-          <div className="text-5xl">✓</div>
-          <h1 className="text-xl font-bold text-gray-900">Preorder confirmed!</h1>
-          <p className="text-sm text-gray-500">
-            {businessName} has your reservation. You'll receive a confirmation shortly.
-          </p>
-          <a href={`/${slug}`} className="inline-block text-sm text-[var(--brand-primary,#2563eb)] hover:underline mt-2">
-            ← Back to storefront
-          </a>
-        </div>
-      </div>
+      <BrandedShell businessName={businessName} logoUrl={logoUrl} tagline={tagline} heroUrl={heroUrl} primaryColor={primaryColor}>
+        <SuccessCard
+          businessName={businessName}
+          logoUrl={logoUrl}
+          slug={slug}
+          title="Preorder confirmed!"
+          message={`${businessName} has your reservation. You'll receive a confirmation shortly.`}
+        />
+      </BrandedShell>
     )
   }
 
   return (
-    <div className="min-h-screen px-4 py-8 max-w-md mx-auto space-y-6 pb-24">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">Reserve your order</h1>
-        <p className="text-sm text-gray-500 mt-1">Pay at pickup — no payment required now.</p>
-      </div>
+    <BrandedShell businessName={businessName} logoUrl={logoUrl} tagline={tagline} heroUrl={heroUrl} primaryColor={primaryColor}>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="animate-card-enter rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+          <h1 className="text-xl font-bold text-gray-900">Reserve your order</h1>
+          <p className="text-sm text-gray-500 mt-1">Pay at pickup — no payment required now.</p>
+        </div>
 
-      <form onSubmit={handleSubmit} className="space-y-5">
-        <section className="space-y-2">
-          <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wide">What would you like?</h2>
+        <CardSection title="What would you like?" delay={60}>
           {initialProducts.length === 0 && (
             <p className="text-sm text-gray-400 py-4 text-center">No products available for preorder right now.</p>
           )}
           {initialProducts.map(p => (
-            <div key={p.id} className="flex items-center justify-between bg-white rounded-xl border border-gray-100 px-4 py-3 shadow-sm">
+            <div key={p.id} className="flex items-center justify-between bg-gray-50 rounded-xl border border-gray-100 px-4 py-3">
               <div className="min-w-0">
                 <p className="text-sm font-medium text-gray-900 truncate">{p.name}</p>
                 {p.price != null && <p className="text-xs text-gray-400">${p.price.toFixed(2)}</p>}
@@ -117,60 +119,32 @@ export default function PreorderForm({ clientId, businessName, slug, initialProd
                 <button
                   type="button"
                   onClick={() => setQty(p.id, (quantities[p.id] ?? 0) + 1)}
-                  className="w-8 h-8 rounded-full bg-[var(--brand-primary,#2563eb)] text-white text-lg font-medium flex items-center justify-center hover:opacity-90"
+                  className="w-8 h-8 rounded-full bg-brand-primary text-white text-lg font-medium flex items-center justify-center hover:opacity-90"
                 >
                   +
                 </button>
               </div>
             </div>
           ))}
-        </section>
+        </CardSection>
 
-        <section className="space-y-3">
-          <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Your details</h2>
-          <input
-            type="text"
-            required
-            value={name}
-            onChange={e => setName(e.target.value)}
-            placeholder="Your name *"
-            className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--brand-primary,#2563eb)]"
-          />
-          <input
-            type="tel"
-            value={phone}
-            onChange={e => setPhone(e.target.value)}
-            placeholder="Phone number"
-            className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--brand-primary,#2563eb)]"
-          />
-          <input
-            type="email"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-            placeholder="Email address"
-            className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--brand-primary,#2563eb)]"
-          />
-          <textarea
-            value={notes}
-            onChange={e => setNotes(e.target.value)}
-            placeholder="Any notes for your order? (optional)"
-            rows={2}
-            className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--brand-primary,#2563eb)] resize-none"
-          />
-        </section>
+        <CardSection title="Your details" delay={120}>
+          <Input type="text" required value={name} onChange={e => setName(e.target.value)} placeholder="Your name *" />
+          <Input type="tel" value={phone} onChange={e => setPhone(e.target.value)} placeholder="Phone number" />
+          <Input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Email address" />
+          <Textarea value={notes} onChange={e => setNotes(e.target.value)} placeholder="Any notes for your order? (optional)" rows={2} />
+        </CardSection>
 
         {error && <p className="text-sm text-red-600">{error}</p>}
 
-        <button
-          type="submit"
+        <SubmitButton
+          loading={submitting}
+          loadingLabel="Placing order…"
           disabled={submitting || selectedItems.length === 0}
-          className="w-full bg-[var(--brand-primary,#2563eb)] text-white rounded-xl py-3.5 text-sm font-semibold hover:opacity-90 active:scale-95 transition-all disabled:opacity-50"
         >
-          {submitting
-            ? 'Placing order…'
-            : `Reserve ${selectedItems.reduce((s, i) => s + i.quantity, 0)} item${selectedItems.reduce((s, i) => s + i.quantity, 0) === 1 ? '' : 's'}`}
-        </button>
+          {`Reserve ${selectedItems.reduce((s, i) => s + i.quantity, 0)} item${selectedItems.reduce((s, i) => s + i.quantity, 0) === 1 ? '' : 's'}`}
+        </SubmitButton>
       </form>
-    </div>
+    </BrandedShell>
   )
 }
