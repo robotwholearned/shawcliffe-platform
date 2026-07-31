@@ -3,6 +3,8 @@
 import { useState } from 'react'
 import { normalizePhone, phoneError } from '@/lib/phone'
 import { emailError } from '@/lib/email'
+import BrandedShell from '@/components/BrandedShell'
+import { CardSection, Field, Input, SubmitButton, SuccessCard } from '@/components/form'
 
 const CONSENT_TEXT = "I agree to receive updates about today's availability, location, and products. Message frequency varies. Reply STOP to unsubscribe. Message & data rates may apply."
 
@@ -10,9 +12,13 @@ interface Props {
   clientId: string
   businessName: string
   slug: string
+  logoUrl: string | null
+  tagline: string | null
+  primaryColor: string | null
+  heroUrl: string | null
 }
 
-export default function SignupForm({ clientId, businessName, slug }: Props) {
+export default function SignupForm({ clientId, businessName, slug, logoUrl, tagline, primaryColor, heroUrl }: Props) {
   const [name, setName] = useState('')
   const [phone, setPhone] = useState('')
   const [email, setEmail] = useState('')
@@ -51,68 +57,41 @@ export default function SignupForm({ clientId, businessName, slug }: Props) {
 
   if (done) {
     return (
-      <div className="min-h-screen flex items-center justify-center px-4">
-        <div className="text-center space-y-3 max-w-xs">
-          <div className="text-5xl">✓</div>
-          <h1 className="text-xl font-bold text-gray-900">You're signed up!</h1>
-          <p className="text-sm text-gray-500">
-            We'll send you updates from {businessName} about today's hours, location, and what's available.
-          </p>
-          <a href={`/${slug}`} className="inline-block text-sm text-[var(--brand-primary,#2563eb)] hover:underline mt-2">
-            ← Back to storefront
-          </a>
-        </div>
-      </div>
+      <BrandedShell businessName={businessName} logoUrl={logoUrl} tagline={tagline} heroUrl={heroUrl} primaryColor={primaryColor}>
+        <SuccessCard
+          businessName={businessName}
+          logoUrl={logoUrl}
+          slug={slug}
+          title="You're signed up!"
+          message={`We'll send you updates from ${businessName} about today's hours, location, and what's available.`}
+        />
+      </BrandedShell>
     )
   }
 
   return (
-    <div className="min-h-screen px-4 py-8 max-w-md mx-auto space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">Stay in the loop</h1>
-        <p className="text-sm text-gray-500 mt-1">
-          Get updates from {businessName} — hours, location, and what's fresh today.
-        </p>
-      </div>
-
+    <BrandedShell businessName={businessName} logoUrl={logoUrl} tagline={tagline} heroUrl={heroUrl} primaryColor={primaryColor}>
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Your name <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="text"
-            required
-            value={name}
-            onChange={e => setName(e.target.value)}
-            placeholder="Jane Smith"
-            className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--brand-primary,#2563eb)]"
-          />
+        <div className="animate-card-enter rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+          <h1 className="text-xl font-bold text-gray-900">Stay in the loop</h1>
+          <p className="text-sm text-gray-500 mt-1">
+            Get updates from {businessName} — hours, location, and what's fresh today.
+          </p>
         </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Phone number</label>
-          <input
-            type="tel"
-            value={phone}
-            onChange={e => setPhone(e.target.value)}
-            placeholder="(289) 555-0100"
-            className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--brand-primary,#2563eb)]"
-          />
-        </div>
+        <CardSection title="Your details" delay={60}>
+          <Field label={<>Your name <span className="text-red-500">*</span></>}>
+            <Input type="text" required value={name} onChange={e => setName(e.target.value)} placeholder="Jane Smith" />
+          </Field>
+          <Field label="Phone number">
+            <Input type="tel" value={phone} onChange={e => setPhone(e.target.value)} placeholder="(289) 555-0100" />
+          </Field>
+          <Field label="Email address">
+            <Input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="jane@example.com" />
+          </Field>
+        </CardSection>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Email address</label>
-          <input
-            type="email"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-            placeholder="jane@example.com"
-            className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--brand-primary,#2563eb)]"
-          />
-        </div>
-
-        <div className="bg-gray-50 rounded-xl p-4 space-y-3">
+        <CardSection delay={120}>
           <p className="text-xs text-gray-500">{CONSENT_TEXT}</p>
           <label className="flex items-start gap-3 cursor-pointer">
             <input
@@ -132,18 +111,14 @@ export default function SignupForm({ clientId, businessName, slug }: Props) {
             />
             <span className="text-sm text-gray-700">Yes, send me email updates</span>
           </label>
-        </div>
+        </CardSection>
 
         {error && <p className="text-sm text-red-600">{error}</p>}
 
-        <button
-          type="submit"
-          disabled={submitting}
-          className="w-full bg-[var(--brand-primary,#2563eb)] text-white rounded-xl py-3.5 text-sm font-semibold hover:opacity-90 active:scale-95 transition-all disabled:opacity-50"
-        >
-          {submitting ? 'Signing up…' : 'Sign me up'}
-        </button>
+        <SubmitButton loading={submitting} loadingLabel="Signing up…" disabled={submitting}>
+          Sign me up
+        </SubmitButton>
       </form>
-    </div>
+    </BrandedShell>
   )
 }

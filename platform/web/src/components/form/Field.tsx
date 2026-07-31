@@ -1,7 +1,7 @@
 import { labelBase } from './styles'
 
 interface Props {
-  label: string
+  label: React.ReactNode
   children: React.ReactNode
 }
 
