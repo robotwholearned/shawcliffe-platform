@@ -4,17 +4,11 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
@@ -124,9 +118,10 @@ fun BookingScreen(
     }
 
     if (done) {
-        ConfirmationScreen(
+        BrandedSuccess(
             title = "Booking request sent!",
             message = "$businessName will confirm your booking soon.",
+            onBack = onDone,
         )
         return
     }
@@ -147,123 +142,124 @@ fun BookingScreen(
         }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-    ) {
-        Text("Request a Booking", style = MaterialTheme.typography.headlineSmall)
-
-        OutlinedTextField(value = name, onValueChange = { name = it }, label = { Text("Your name *") }, modifier = Modifier.fillMaxWidth())
-        OutlinedTextField(
-            value = phone,
-            onValueChange = { phone = it },
-            label = { Text("Phone number") },
-            keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = KeyboardType.Phone),
-            modifier = Modifier.fillMaxWidth(),
-        )
-        OutlinedTextField(
-            value = email,
-            onValueChange = { email = it },
-            label = { Text("Email address") },
-            keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = KeyboardType.Email),
-            modifier = Modifier.fillMaxWidth(),
-        )
-        OutlinedTextField(
-            value = service,
-            onValueChange = { service = it },
-            label = { Text("Service needed (optional)") },
-            modifier = Modifier.fillMaxWidth(),
-        )
-
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Checkbox(checked = hasPreferredDate, onCheckedChange = { hasPreferredDate = it })
-            Text("I have a preferred date")
-        }
-        if (hasPreferredDate) {
-            OutlinedButton(onClick = { showDatePicker = true }) {
-                Text(preferredDateMillis?.let { formatDate(it) } ?: "Choose a date")
-            }
+    BrandedScaffold(onBack = onDone) {
+        CardSection(title = "Request a Booking", eyebrow = "Your details", index = 0) {
+            OutlinedTextField(value = name, onValueChange = { name = it }, label = { Text("Your name *") }, modifier = Modifier.fillMaxWidth())
+            OutlinedTextField(
+                value = phone,
+                onValueChange = { phone = it },
+                label = { Text("Phone number") },
+                keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = KeyboardType.Phone),
+                modifier = Modifier.fillMaxWidth(),
+            )
+            OutlinedTextField(
+                value = email,
+                onValueChange = { email = it },
+                label = { Text("Email address") },
+                keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = KeyboardType.Email),
+                modifier = Modifier.fillMaxWidth(),
+            )
+            OutlinedTextField(
+                value = service,
+                onValueChange = { service = it },
+                label = { Text("Service needed (optional)") },
+                modifier = Modifier.fillMaxWidth(),
+            )
         }
 
-        Text("Preferred time", style = MaterialTheme.typography.titleSmall)
-        TIME_OPTIONS.forEach { (value, label) ->
+        CardSection(eyebrow = "Scheduling", index = 1) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                RadioButton(selected = timePreference == value, onClick = { timePreference = value })
-                Text(label)
+                Checkbox(checked = hasPreferredDate, onCheckedChange = { hasPreferredDate = it })
+                Text("I have a preferred date")
+            }
+            if (hasPreferredDate) {
+                OutlinedButton(onClick = { showDatePicker = true }) {
+                    Text(preferredDateMillis?.let { formatDate(it) } ?: "Choose a date")
+                }
+            }
+
+            Text("Preferred time", style = MaterialTheme.typography.titleSmall)
+            TIME_OPTIONS.forEach { (value, label) ->
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    RadioButton(selected = timePreference == value, onClick = { timePreference = value })
+                    Text(label)
+                }
             }
         }
 
-        OutlinedTextField(
-            value = notes,
-            onValueChange = { notes = it },
-            label = { Text("Anything else we should know? (optional)") },
-            modifier = Modifier.fillMaxWidth(),
-        )
-
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Checkbox(checked = smsConsent, onCheckedChange = { smsConsent = it })
-            Text("Yes, send me text message updates")
-        }
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Checkbox(checked = emailConsent, onCheckedChange = { emailConsent = it })
-            Text("Yes, send me email updates")
+        CardSection(eyebrow = "Notes & consent", index = 2) {
+            OutlinedTextField(
+                value = notes,
+                onValueChange = { notes = it },
+                label = { Text("Anything else we should know? (optional)") },
+                modifier = Modifier.fillMaxWidth(),
+            )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Checkbox(checked = smsConsent, onCheckedChange = { smsConsent = it })
+                Text("Yes, send me text message updates")
+            }
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Checkbox(checked = emailConsent, onCheckedChange = { emailConsent = it })
+                Text("Yes, send me email updates")
+            }
         }
 
         if (showPetFields) {
-            Text("Pet (optional)", style = MaterialTheme.typography.titleSmall)
-            OutlinedTextField(value = petName, onValueChange = { petName = it }, label = { Text("Pet name") }, modifier = Modifier.fillMaxWidth())
-            OutlinedTextField(value = petBreed, onValueChange = { petBreed = it }, label = { Text("Breed") }, modifier = Modifier.fillMaxWidth())
-            OutlinedTextField(value = petSize, onValueChange = { petSize = it }, label = { Text("Size") }, modifier = Modifier.fillMaxWidth())
-            OutlinedTextField(value = petAge, onValueChange = { petAge = it }, label = { Text("Age") }, modifier = Modifier.fillMaxWidth())
-            OutlinedTextField(value = petAllergies, onValueChange = { petAllergies = it }, label = { Text("Allergies") }, modifier = Modifier.fillMaxWidth())
-            OutlinedTextField(value = petBehaviorNotes, onValueChange = { petBehaviorNotes = it }, label = { Text("Behaviour notes") }, modifier = Modifier.fillMaxWidth())
-            OutlinedTextField(value = petGroomingPreferences, onValueChange = { petGroomingPreferences = it }, label = { Text("Grooming preferences") }, modifier = Modifier.fillMaxWidth())
-            OutlinedTextField(value = petVaccinationInfo, onValueChange = { petVaccinationInfo = it }, label = { Text("Vaccination info") }, modifier = Modifier.fillMaxWidth())
-            OutlinedTextField(value = petEmergencyContact, onValueChange = { petEmergencyContact = it }, label = { Text("Emergency contact") }, modifier = Modifier.fillMaxWidth())
-            OutlinedTextField(value = petCareInstructions, onValueChange = { petCareInstructions = it }, label = { Text("Care instructions") }, modifier = Modifier.fillMaxWidth())
+            CardSection(eyebrow = "Pet (optional)", index = 3) {
+                OutlinedTextField(value = petName, onValueChange = { petName = it }, label = { Text("Pet name") }, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(value = petBreed, onValueChange = { petBreed = it }, label = { Text("Breed") }, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(value = petSize, onValueChange = { petSize = it }, label = { Text("Size") }, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(value = petAge, onValueChange = { petAge = it }, label = { Text("Age") }, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(value = petAllergies, onValueChange = { petAllergies = it }, label = { Text("Allergies") }, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(value = petBehaviorNotes, onValueChange = { petBehaviorNotes = it }, label = { Text("Behaviour notes") }, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(value = petGroomingPreferences, onValueChange = { petGroomingPreferences = it }, label = { Text("Grooming preferences") }, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(value = petVaccinationInfo, onValueChange = { petVaccinationInfo = it }, label = { Text("Vaccination info") }, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(value = petEmergencyContact, onValueChange = { petEmergencyContact = it }, label = { Text("Emergency contact") }, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(value = petCareInstructions, onValueChange = { petCareInstructions = it }, label = { Text("Care instructions") }, modifier = Modifier.fillMaxWidth())
 
-            Text("Pet photo (optional)", style = MaterialTheme.typography.titleSmall)
-            Button(onClick = { petPhotoLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)) }) {
-                Text(if (petPhoto == null) "Add Photo" else "Change Photo")
-            }
-            petPhoto?.let { photo ->
-                Box(modifier = Modifier.size(72.dp)) {
-                    AsyncImage(
-                        model = photo.uri,
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier.size(72.dp).clip(RoundedCornerShape(8.dp)),
-                    )
-                    if (photo.uploading) {
-                        CircularProgressIndicator(modifier = Modifier.size(24.dp).align(Alignment.Center))
-                    }
-                    IconButton(onClick = { petPhoto = null }, modifier = Modifier.align(Alignment.TopEnd).size(24.dp)) {
-                        Icon(Icons.Filled.Close, contentDescription = "Remove photo")
-                    }
+                Text("Pet photo (optional)", style = MaterialTheme.typography.titleSmall)
+                Button(onClick = { petPhotoLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)) }) {
+                    Text(if (petPhoto == null) "Add Photo" else "Change Photo")
                 }
-                photo.error?.let { Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall) }
+                petPhoto?.let { photo ->
+                    Box(modifier = Modifier.size(72.dp)) {
+                        AsyncImage(
+                            model = photo.uri,
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.size(72.dp).clip(RoundedCornerShape(8.dp)),
+                        )
+                        if (photo.uploading) {
+                            CircularProgressIndicator(modifier = Modifier.size(24.dp).align(Alignment.Center))
+                        }
+                        IconButton(onClick = { petPhoto = null }, modifier = Modifier.align(Alignment.TopEnd).size(24.dp)) {
+                            Icon(Icons.Filled.Close, contentDescription = "Remove photo")
+                        }
+                    }
+                    photo.error?.let { Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall) }
+                }
             }
         }
 
         error?.let { Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall) }
 
-        Button(
+        BrandedCta(
+            text = "Request Booking",
+            enabled = !submitting && name.trim().isNotEmpty(),
+            loading = submitting,
             onClick = {
                 error = null
                 if (phone.isEmpty() && email.isEmpty()) {
                     error = "Enter a phone number or email so we can confirm your booking."
-                    return@Button
+                    return@BrandedCta
                 }
                 Phone.error(phone)?.let {
                     error = it
-                    return@Button
+                    return@BrandedCta
                 }
                 Email.error(email)?.let {
                     error = it
-                    return@Button
+                    return@BrandedCta
                 }
                 submitting = true
                 scope.launch {
@@ -301,11 +297,7 @@ fun BookingScreen(
                     submitting = false
                 }
             },
-            enabled = !submitting && name.trim().isNotEmpty(),
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            if (submitting) CircularProgressIndicator(modifier = Modifier.padding(2.dp)) else Text("Request Booking")
-        }
+        )
     }
 }
 
