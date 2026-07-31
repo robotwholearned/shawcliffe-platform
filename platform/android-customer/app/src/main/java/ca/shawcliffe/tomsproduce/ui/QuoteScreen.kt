@@ -10,13 +10,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
@@ -252,9 +250,10 @@ fun QuoteScreen(
     }
 
     if (done) {
-        ConfirmationScreen(
+        BrandedSuccess(
             title = "Request sent!",
             message = "$businessName will reach out about your quote soon.",
+            onBack = onDone,
         )
         return
     }
@@ -275,233 +274,235 @@ fun QuoteScreen(
         }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-    ) {
-        Text("Get a Quote", style = MaterialTheme.typography.headlineSmall)
+    BrandedScaffold(onBack = onDone) {
+        CardSection(title = "Get a Quote", eyebrow = "Your details", index = 0) {
+            OutlinedTextField(value = name, onValueChange = { name = it }, label = { Text("Your name *") }, modifier = Modifier.fillMaxWidth())
+            OutlinedTextField(
+                value = phone,
+                onValueChange = { phone = it },
+                label = { Text("Phone number") },
+                keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = KeyboardType.Phone),
+                modifier = Modifier.fillMaxWidth(),
+            )
+            OutlinedTextField(
+                value = email,
+                onValueChange = { email = it },
+                label = { Text("Email address") },
+                keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = KeyboardType.Email),
+                modifier = Modifier.fillMaxWidth(),
+            )
+            OutlinedTextField(
+                value = serviceCategory,
+                onValueChange = { serviceCategory = it },
+                label = { Text("What do you need? (optional)") },
+                modifier = Modifier.fillMaxWidth(),
+            )
+            OutlinedTextField(
+                value = jobLocation,
+                onValueChange = { jobLocation = it },
+                label = { Text("Job location (optional)") },
+                modifier = Modifier.fillMaxWidth(),
+            )
+            OutlinedTextField(
+                value = description,
+                onValueChange = { description = it },
+                label = { Text("Tell us more (optional)") },
+                modifier = Modifier.fillMaxWidth(),
+            )
+        }
 
-        OutlinedTextField(value = name, onValueChange = { name = it }, label = { Text("Your name *") }, modifier = Modifier.fillMaxWidth())
-        OutlinedTextField(
-            value = phone,
-            onValueChange = { phone = it },
-            label = { Text("Phone number") },
-            keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = KeyboardType.Phone),
-            modifier = Modifier.fillMaxWidth(),
-        )
-        OutlinedTextField(
-            value = email,
-            onValueChange = { email = it },
-            label = { Text("Email address") },
-            keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = KeyboardType.Email),
-            modifier = Modifier.fillMaxWidth(),
-        )
-        OutlinedTextField(
-            value = serviceCategory,
-            onValueChange = { serviceCategory = it },
-            label = { Text("What do you need? (optional)") },
-            modifier = Modifier.fillMaxWidth(),
-        )
-        OutlinedTextField(
-            value = jobLocation,
-            onValueChange = { jobLocation = it },
-            label = { Text("Job location (optional)") },
-            modifier = Modifier.fillMaxWidth(),
-        )
-        OutlinedTextField(
-            value = description,
-            onValueChange = { description = it },
-            label = { Text("Tell us more (optional)") },
-            modifier = Modifier.fillMaxWidth(),
-        )
-
-        Text("How urgent is this?", style = MaterialTheme.typography.titleSmall)
-        URGENCY_OPTIONS.forEach { (value, label) ->
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                RadioButton(selected = urgency == value, onClick = { urgency = value })
-                Text(label)
+        CardSection(eyebrow = "Preferences", index = 1) {
+            Text("How urgent is this?", style = MaterialTheme.typography.titleSmall)
+            URGENCY_OPTIONS.forEach { (value, label) ->
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    RadioButton(selected = urgency == value, onClick = { urgency = value })
+                    Text(label)
+                }
             }
-        }
 
-        Text("Preferred contact method", style = MaterialTheme.typography.titleSmall)
-        CONTACT_OPTIONS.forEach { (value, label) ->
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                RadioButton(selected = preferredContact == value, onClick = { preferredContact = value })
-                Text(label)
+            Text("Preferred contact method", style = MaterialTheme.typography.titleSmall)
+            CONTACT_OPTIONS.forEach { (value, label) ->
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    RadioButton(selected = preferredContact == value, onClick = { preferredContact = value })
+                    Text(label)
+                }
             }
-        }
 
-        Text("Preferred date (optional)", style = MaterialTheme.typography.titleSmall)
-        OutlinedButton(onClick = { showDatePicker = true }) {
-            Text(preferredDateMillis?.let { formatDate(it) } ?: "Choose a date")
-        }
+            Text("Preferred date (optional)", style = MaterialTheme.typography.titleSmall)
+            OutlinedButton(onClick = { showDatePicker = true }) {
+                Text(preferredDateMillis?.let { formatDate(it) } ?: "Choose a date")
+            }
 
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Checkbox(checked = smsConsent, onCheckedChange = { smsConsent = it })
-            Text("Yes, send me text message updates")
-        }
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Checkbox(checked = emailConsent, onCheckedChange = { emailConsent = it })
-            Text("Yes, send me email updates")
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Checkbox(checked = smsConsent, onCheckedChange = { smsConsent = it })
+                Text("Yes, send me text message updates")
+            }
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Checkbox(checked = emailConsent, onCheckedChange = { emailConsent = it })
+                Text("Yes, send me email updates")
+            }
         }
 
         if (showPhotoUpload) {
-            Text("Photos (optional)", style = MaterialTheme.typography.titleSmall)
-            Button(
-                onClick = { photoPickerLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)) },
-                enabled = photos.size < MAX_PHOTOS,
-            ) { Text("Add Photos (${photos.size}/$MAX_PHOTOS)") }
+            CardSection(eyebrow = "Photos (optional)", index = 2) {
+                Button(
+                    onClick = { photoPickerLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)) },
+                    enabled = photos.size < MAX_PHOTOS,
+                ) { Text("Add Photos (${photos.size}/$MAX_PHOTOS)") }
 
-            if (photos.isNotEmpty()) {
-                Row(
-                    modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    photos.forEach { photo ->
-                        Box(modifier = Modifier.size(72.dp)) {
-                            AsyncImage(
-                                model = photo.uri,
-                                contentDescription = null,
-                                contentScale = ContentScale.Crop,
-                                modifier = Modifier.size(72.dp).clip(RoundedCornerShape(8.dp)),
-                            )
-                            if (photo.uploading) {
-                                CircularProgressIndicator(modifier = Modifier.size(24.dp).align(Alignment.Center))
-                            }
-                            IconButton(onClick = { photos.remove(photo) }, modifier = Modifier.align(Alignment.TopEnd).size(24.dp)) {
-                                Icon(Icons.Filled.Close, contentDescription = "Remove photo")
+                if (photos.isNotEmpty()) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        photos.forEach { photo ->
+                            Box(modifier = Modifier.size(72.dp)) {
+                                AsyncImage(
+                                    model = photo.uri,
+                                    contentDescription = null,
+                                    contentScale = ContentScale.Crop,
+                                    modifier = Modifier.size(72.dp).clip(RoundedCornerShape(8.dp)),
+                                )
+                                if (photo.uploading) {
+                                    CircularProgressIndicator(modifier = Modifier.size(24.dp).align(Alignment.Center))
+                                }
+                                IconButton(onClick = { photos.remove(photo) }, modifier = Modifier.align(Alignment.TopEnd).size(24.dp)) {
+                                    Icon(Icons.Filled.Close, contentDescription = "Remove photo")
+                                }
                             }
                         }
                     }
-                }
-                photos.mapNotNull { it.error }.forEach {
-                    Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
+                    photos.mapNotNull { it.error }.forEach {
+                        Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
+                    }
                 }
             }
         }
 
         if (showVehicleFields) {
-            Text("Vehicle (optional)", style = MaterialTheme.typography.titleSmall)
-            DropdownField(
-                label = "Make",
-                options = vehicleMakeOptions,
-                selected = vehicleMake,
-                onSelected = { vehicleMake = it; vehicleModel = ""; vehicleModelOther = "" },
-            )
-            if (vehicleMake == OTHER_OPTION) {
-                OutlinedTextField(value = vehicleMakeOther, onValueChange = { vehicleMakeOther = it }, label = { Text("Make (other)") }, modifier = Modifier.fillMaxWidth())
+            CardSection(eyebrow = "Vehicle (optional)", index = 3) {
+                DropdownField(
+                    label = "Make",
+                    options = vehicleMakeOptions,
+                    selected = vehicleMake,
+                    onSelected = { vehicleMake = it; vehicleModel = ""; vehicleModelOther = "" },
+                )
+                if (vehicleMake == OTHER_OPTION) {
+                    OutlinedTextField(value = vehicleMakeOther, onValueChange = { vehicleMakeOther = it }, label = { Text("Make (other)") }, modifier = Modifier.fillMaxWidth())
+                }
+                DropdownField(
+                    label = "Model",
+                    options = vehicleModelOptions,
+                    selected = vehicleModel,
+                    onSelected = { vehicleModel = it },
+                    enabled = vehicleMake.isNotEmpty(),
+                )
+                if (vehicleModel == OTHER_OPTION) {
+                    OutlinedTextField(value = vehicleModelOther, onValueChange = { vehicleModelOther = it }, label = { Text("Model (other)") }, modifier = Modifier.fillMaxWidth())
+                }
+                DropdownField(
+                    label = "Color",
+                    options = VEHICLE_COLOR_OPTIONS,
+                    selected = vehicleColor,
+                    onSelected = { vehicleColor = it },
+                )
+                if (vehicleColor == OTHER_OPTION) {
+                    OutlinedTextField(value = vehicleColorOther, onValueChange = { vehicleColorOther = it }, label = { Text("Color (other)") }, modifier = Modifier.fillMaxWidth())
+                }
+                OutlinedTextField(
+                    value = vehicleYear,
+                    onValueChange = { vehicleYear = it },
+                    label = { Text("Year") },
+                    keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = KeyboardType.Number),
+                    modifier = Modifier.fillMaxWidth(),
+                )
+                OutlinedTextField(value = vehiclePlate, onValueChange = { vehiclePlate = it }, label = { Text("License plate") }, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(value = vehicleVin, onValueChange = { vehicleVin = it }, label = { Text("VIN") }, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(
+                    value = vehicleMileage,
+                    onValueChange = { vehicleMileage = it },
+                    label = { Text("Mileage/hours") },
+                    keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = KeyboardType.Number),
+                    modifier = Modifier.fillMaxWidth(),
+                )
+                OutlinedTextField(value = vehicleNotes, onValueChange = { vehicleNotes = it }, label = { Text("Issue notes") }, modifier = Modifier.fillMaxWidth())
             }
-            DropdownField(
-                label = "Model",
-                options = vehicleModelOptions,
-                selected = vehicleModel,
-                onSelected = { vehicleModel = it },
-                enabled = vehicleMake.isNotEmpty(),
-            )
-            if (vehicleModel == OTHER_OPTION) {
-                OutlinedTextField(value = vehicleModelOther, onValueChange = { vehicleModelOther = it }, label = { Text("Model (other)") }, modifier = Modifier.fillMaxWidth())
-            }
-            DropdownField(
-                label = "Color",
-                options = VEHICLE_COLOR_OPTIONS,
-                selected = vehicleColor,
-                onSelected = { vehicleColor = it },
-            )
-            if (vehicleColor == OTHER_OPTION) {
-                OutlinedTextField(value = vehicleColorOther, onValueChange = { vehicleColorOther = it }, label = { Text("Color (other)") }, modifier = Modifier.fillMaxWidth())
-            }
-            OutlinedTextField(
-                value = vehicleYear,
-                onValueChange = { vehicleYear = it },
-                label = { Text("Year") },
-                keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = KeyboardType.Number),
-                modifier = Modifier.fillMaxWidth(),
-            )
-            OutlinedTextField(value = vehiclePlate, onValueChange = { vehiclePlate = it }, label = { Text("License plate") }, modifier = Modifier.fillMaxWidth())
-            OutlinedTextField(value = vehicleVin, onValueChange = { vehicleVin = it }, label = { Text("VIN") }, modifier = Modifier.fillMaxWidth())
-            OutlinedTextField(
-                value = vehicleMileage,
-                onValueChange = { vehicleMileage = it },
-                label = { Text("Mileage/hours") },
-                keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = KeyboardType.Number),
-                modifier = Modifier.fillMaxWidth(),
-            )
-            OutlinedTextField(value = vehicleNotes, onValueChange = { vehicleNotes = it }, label = { Text("Issue notes") }, modifier = Modifier.fillMaxWidth())
         }
 
         if (showPropertyFields) {
-            Text("Property (optional)", style = MaterialTheme.typography.titleSmall)
-            OutlinedTextField(
-                value = propertyAddress,
-                onValueChange = { propertyAddress = it },
-                label = { Text("Address") },
-                supportingText = { if (propertyAddressVerified) Text("Verified") },
-                modifier = Modifier.fillMaxWidth(),
-            )
-            if (addressSuggestions.isNotEmpty()) {
-                Column(modifier = Modifier.fillMaxWidth()) {
-                    addressSuggestions.forEach { suggestion ->
-                        Text(
-                            suggestion.description,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable {
-                                    scope.launch {
-                                        val resolved = try {
-                                            val details = APIClient.get<PlaceDetailsResponse>(
-                                                "${Config.API_BASE_URL}/api/places/details?place_id=${encode(suggestion.placeId)}&client_id=${encode(Config.CLIENT_ID)}",
-                                            )
-                                            (details.formattedAddress ?: suggestion.description) to (details.placeId ?: suggestion.placeId)
-                                        } catch (e: Exception) {
-                                            suggestion.description to null
+            CardSection(eyebrow = "Property (optional)", index = 4) {
+                OutlinedTextField(
+                    value = propertyAddress,
+                    onValueChange = { propertyAddress = it },
+                    label = { Text("Address") },
+                    supportingText = { if (propertyAddressVerified) Text("Verified") },
+                    modifier = Modifier.fillMaxWidth(),
+                )
+                if (addressSuggestions.isNotEmpty()) {
+                    Column(modifier = Modifier.fillMaxWidth()) {
+                        addressSuggestions.forEach { suggestion ->
+                            Text(
+                                suggestion.description,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable {
+                                        scope.launch {
+                                            val resolved = try {
+                                                val details = APIClient.get<PlaceDetailsResponse>(
+                                                    "${Config.API_BASE_URL}/api/places/details?place_id=${encode(suggestion.placeId)}&client_id=${encode(Config.CLIENT_ID)}",
+                                                )
+                                                (details.formattedAddress ?: suggestion.description) to (details.placeId ?: suggestion.placeId)
+                                            } catch (e: Exception) {
+                                                suggestion.description to null
+                                            }
+                                            lastSelectedAddress = resolved.first
+                                            propertyAddress = resolved.first
+                                            propertyPlaceId = resolved.second
+                                            propertyAddressVerified = resolved.second != null
+                                            addressSuggestions.clear()
                                         }
-                                        lastSelectedAddress = resolved.first
-                                        propertyAddress = resolved.first
-                                        propertyPlaceId = resolved.second
-                                        propertyAddressVerified = resolved.second != null
-                                        addressSuggestions.clear()
                                     }
-                                }
-                                .padding(vertical = 8.dp),
-                        )
+                                    .padding(vertical = 8.dp),
+                            )
+                        }
                     }
                 }
+                OutlinedTextField(value = propertyGateCode, onValueChange = { propertyGateCode = it }, label = { Text("Gate code") }, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(value = propertyParkingInstructions, onValueChange = { propertyParkingInstructions = it }, label = { Text("Parking instructions") }, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(value = propertyPetsOnSite, onValueChange = { propertyPetsOnSite = it }, label = { Text("Pets on site") }, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(value = propertyAccessNotes, onValueChange = { propertyAccessNotes = it }, label = { Text("Access notes") }, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(value = propertyPreferredServiceDay, onValueChange = { propertyPreferredServiceDay = it }, label = { Text("Preferred service day") }, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(value = propertyLawnSize, onValueChange = { propertyLawnSize = it }, label = { Text("Lawn size") }, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(value = propertySnowRemovalAreas, onValueChange = { propertySnowRemovalAreas = it }, label = { Text("Snow removal areas") }, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(value = propertyCleaningInstructions, onValueChange = { propertyCleaningInstructions = it }, label = { Text("Cleaning instructions") }, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(value = propertySafetyNotes, onValueChange = { propertySafetyNotes = it }, label = { Text("Safety notes") }, modifier = Modifier.fillMaxWidth())
             }
-            OutlinedTextField(value = propertyGateCode, onValueChange = { propertyGateCode = it }, label = { Text("Gate code") }, modifier = Modifier.fillMaxWidth())
-            OutlinedTextField(value = propertyParkingInstructions, onValueChange = { propertyParkingInstructions = it }, label = { Text("Parking instructions") }, modifier = Modifier.fillMaxWidth())
-            OutlinedTextField(value = propertyPetsOnSite, onValueChange = { propertyPetsOnSite = it }, label = { Text("Pets on site") }, modifier = Modifier.fillMaxWidth())
-            OutlinedTextField(value = propertyAccessNotes, onValueChange = { propertyAccessNotes = it }, label = { Text("Access notes") }, modifier = Modifier.fillMaxWidth())
-            OutlinedTextField(value = propertyPreferredServiceDay, onValueChange = { propertyPreferredServiceDay = it }, label = { Text("Preferred service day") }, modifier = Modifier.fillMaxWidth())
-            OutlinedTextField(value = propertyLawnSize, onValueChange = { propertyLawnSize = it }, label = { Text("Lawn size") }, modifier = Modifier.fillMaxWidth())
-            OutlinedTextField(value = propertySnowRemovalAreas, onValueChange = { propertySnowRemovalAreas = it }, label = { Text("Snow removal areas") }, modifier = Modifier.fillMaxWidth())
-            OutlinedTextField(value = propertyCleaningInstructions, onValueChange = { propertyCleaningInstructions = it }, label = { Text("Cleaning instructions") }, modifier = Modifier.fillMaxWidth())
-            OutlinedTextField(value = propertySafetyNotes, onValueChange = { propertySafetyNotes = it }, label = { Text("Safety notes") }, modifier = Modifier.fillMaxWidth())
         }
 
         error?.let { Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall) }
 
-        Button(
+        BrandedCta(
+            text = "Request Quote",
+            enabled = !submitting && name.trim().isNotEmpty(),
+            loading = submitting,
             onClick = {
                 error = null
                 if (phone.isEmpty() && email.isEmpty()) {
                     error = "Enter a phone number or email so we can get back to you."
-                    return@Button
+                    return@BrandedCta
                 }
                 Phone.error(phone)?.let {
                     error = it
-                    return@Button
+                    return@BrandedCta
                 }
                 val year = vehicleYear.toIntOrNull()
                 if (vehicleYear.isNotEmpty() && (year == null || year < 1980 || year > Year.now().value + 1)) {
                     error = "Enter a valid vehicle year."
-                    return@Button
+                    return@BrandedCta
                 }
                 if (vehicleVin.isNotEmpty() && !vehicleVin.matches(Regex("^[A-Za-z0-9]{17}$"))) {
                     error = "VIN must be exactly 17 alphanumeric characters."
-                    return@Button
+                    return@BrandedCta
                 }
                 submitting = true
                 scope.launch {
@@ -551,11 +552,7 @@ fun QuoteScreen(
                     submitting = false
                 }
             },
-            enabled = !submitting && name.trim().isNotEmpty(),
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            if (submitting) CircularProgressIndicator(modifier = Modifier.padding(2.dp)) else Text("Request Quote")
-        }
+        )
     }
 }
 
