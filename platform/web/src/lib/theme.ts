@@ -17,6 +17,17 @@ export const FONT_IMPORT: Record<FontTheme, string> = {
   rustic:        'https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600&display=swap',
 }
 
+// Perceived luminance (0–1) of a #rrggbb color. Used to pick readable text on a
+// brand-colored surface: a light primary_color needs dark text, not white.
+export function isLightColor(hex: string | null | undefined): boolean {
+  const h = hex?.replace('#', '')
+  if (!h || h.length !== 6) return false
+  const r = parseInt(h.slice(0, 2), 16)
+  const g = parseInt(h.slice(2, 4), 16)
+  const b = parseInt(h.slice(4, 6), 16)
+  return (0.299 * r + 0.587 * g + 0.114 * b) / 255 > 0.6
+}
+
 export function brandingToVars(branding: ClientBranding): Record<string, string> {
   return {
     '--brand-primary':   branding.primary_color,

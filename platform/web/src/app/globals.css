@@ -8,3 +8,14 @@
   --brand-accent: #f59e0b;
   --brand-font: 'Inter', system-ui, sans-serif;
 }
+
+/* Subtle card entrance for branded form sections + success card. */
+@keyframes card-enter {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
+}
+.animate-card-enter { animation: card-enter 0.4s ease-out both; }
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-card-enter { animation: none; }
+}
