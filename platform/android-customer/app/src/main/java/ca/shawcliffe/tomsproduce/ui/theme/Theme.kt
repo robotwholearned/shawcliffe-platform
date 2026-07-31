@@ -6,6 +6,8 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import ca.shawcliffe.tomsproduce.ClientBranding
+import ca.shawcliffe.tomsproduce.colorFromHex
 
 // platform/brand/shawcliffe-digital-brand-guidelines.html — base theme before
 // per-client branding (client_branding.primary_color etc.) tints the UI.
@@ -38,14 +40,15 @@ private val DarkColors = darkColorScheme(
 @Composable
 fun ShawcliffeCustomerTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    seed: Color? = null,
+    branding: ClientBranding? = null,
     content: @Composable () -> Unit,
 ) {
-    val colors = when {
-        seed != null && !darkTheme -> LightColors.copy(primary = seed)
-        seed != null -> DarkColors.copy(primary = seed)
-        darkTheme -> DarkColors
-        else -> LightColors
+    val base = if (darkTheme) DarkColors else LightColors
+    val colors = if (branding != null) {
+        val primary = colorFromHex(branding.primaryColor)
+        base.copy(primary = primary, secondary = colorFromHex(branding.secondaryColor, default = primary))
+    } else {
+        base
     }
     MaterialTheme(colorScheme = colors, content = content)
 }
