@@ -4,6 +4,8 @@ import { useRef, useState } from 'react'
 import { normalizePhone, phoneError } from '@/lib/phone'
 import { emailError } from '@/lib/email'
 import type { DocumentChecklistItem } from '@/lib/supabase/types'
+import BrandedShell from '@/components/BrandedShell'
+import { CardSection, Input } from '@/components/form'
 
 const CONSENT_TEXT = 'I agree to be contacted about my submission. Message frequency varies. Reply STOP to unsubscribe. Message & data rates may apply.'
 
@@ -20,10 +22,14 @@ interface Props {
   clientId: string
   businessName: string
   slug: string
+  logoUrl: string | null
+  tagline: string | null
+  primaryColor: string | null
+  heroUrl: string | null
   initialItems: DocumentChecklistItem[]
 }
 
-export default function DocumentsForm({ clientId, businessName, slug, initialItems }: Props) {
+export default function DocumentsForm({ clientId, businessName, slug, logoUrl, tagline, primaryColor, heroUrl, initialItems }: Props) {
   const [name, setName] = useState('')
   const [phone, setPhone] = useState('')
   const [email, setEmail] = useState('')
@@ -83,125 +89,108 @@ export default function DocumentsForm({ clientId, businessName, slug, initialIte
   }
 
   return (
-    <div className="min-h-screen px-4 py-8 max-w-md mx-auto space-y-6 pb-24">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">Documents</h1>
-        <p className="text-sm text-gray-500 mt-1">{businessName} needs a few things from you.</p>
-      </div>
+    <BrandedShell businessName={businessName} logoUrl={logoUrl} tagline={tagline} heroUrl={heroUrl} primaryColor={primaryColor}>
+      <div className="space-y-4">
+        <div className="animate-card-enter rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+          <h1 className="text-xl font-bold text-gray-900">Documents</h1>
+          <p className="text-sm text-gray-500 mt-1">{businessName} needs a few things from you.</p>
+        </div>
 
-      {initialItems.length === 0 ? (
-        <p className="text-sm text-gray-400 py-4 text-center">No checklist items yet.</p>
-      ) : (
-        <>
-          <section className="space-y-3">
-            <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Your details</h2>
-            <input
-              type="text"
-              required
-              value={name}
-              onChange={e => setName(e.target.value)}
-              placeholder="Your name *"
-              className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--brand-primary,#2563eb)]"
-            />
-            <input
-              type="tel"
-              value={phone}
-              onChange={e => setPhone(e.target.value)}
-              placeholder="Phone number"
-              className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--brand-primary,#2563eb)]"
-            />
-            <input
-              type="email"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              placeholder="Email address"
-              className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--brand-primary,#2563eb)]"
-            />
-            <div className="bg-gray-50 rounded-xl p-4 space-y-3">
-              <p className="text-xs text-gray-500">{CONSENT_TEXT}</p>
-              <label className="flex items-start gap-3 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={smsConsent}
-                  onChange={e => setSmsConsent(e.target.checked)}
-                  className="mt-0.5 h-4 w-4 rounded border-gray-300"
-                />
-                <span className="text-sm text-gray-700">Yes, send me text message updates</span>
-              </label>
-              <label className="flex items-start gap-3 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={emailConsent}
-                  onChange={e => setEmailConsent(e.target.checked)}
-                  className="mt-0.5 h-4 w-4 rounded border-gray-300"
-                />
-                <span className="text-sm text-gray-700">Yes, send me email updates</span>
-              </label>
-            </div>
-            {contactError && <p className="text-sm text-red-600">{contactError}</p>}
-          </section>
+        {initialItems.length === 0 ? (
+          <CardSection delay={60}>
+            <p className="text-sm text-gray-400 py-4 text-center">No checklist items yet.</p>
+          </CardSection>
+        ) : (
+          <>
+            <CardSection title="Your details" delay={60}>
+              <Input type="text" required value={name} onChange={e => setName(e.target.value)} placeholder="Your name *" />
+              <Input type="tel" value={phone} onChange={e => setPhone(e.target.value)} placeholder="Phone number" />
+              <Input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Email address" />
+              <div className="bg-gray-50 rounded-xl p-4 space-y-3">
+                <p className="text-xs text-gray-500">{CONSENT_TEXT}</p>
+                <label className="flex items-start gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={smsConsent}
+                    onChange={e => setSmsConsent(e.target.checked)}
+                    className="mt-0.5 h-4 w-4 rounded border-gray-300"
+                  />
+                  <span className="text-sm text-gray-700">Yes, send me text message updates</span>
+                </label>
+                <label className="flex items-start gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={emailConsent}
+                    onChange={e => setEmailConsent(e.target.checked)}
+                    className="mt-0.5 h-4 w-4 rounded border-gray-300"
+                  />
+                  <span className="text-sm text-gray-700">Yes, send me email updates</span>
+                </label>
+              </div>
+              {contactError && <p className="text-sm text-red-600">{contactError}</p>}
+            </CardSection>
 
-          <section className="space-y-2">
-            <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Checklist</h2>
-            {initialItems.map(item => {
-              const state = uploadStates[item.id] ?? { status: 'idle' as UploadStatus }
-              return (
-                <div key={item.id} className="bg-white rounded-xl border border-gray-100 px-4 py-3 shadow-sm space-y-2">
-                  <div className="flex items-start justify-between gap-3">
-                    <p className="text-sm font-medium text-gray-900">{item.title}</p>
-                    <span className={`text-xs flex-shrink-0 ${item.required ? 'text-orange-500' : 'text-gray-400'}`}>
-                      {item.required ? 'Required' : 'Optional'}
-                    </span>
-                  </div>
-                  {item.description && <p className="text-xs text-gray-500">{item.description}</p>}
-                  {item.needs_upload && (
-                    <div>
-                      <input
-                        ref={el => { fileInputRefs.current[item.id] = el }}
-                        type="file"
-                        accept="image/jpeg,image/png,image/heic,image/webp,application/pdf"
-                        className="hidden"
-                        onChange={e => handleFileChange(item, e)}
-                      />
-                      {state.status === 'uploaded' && (
-                        <p className="text-xs text-green-600 font-medium">✓ Uploaded</p>
-                      )}
-                      {state.status === 'uploading' && (
-                        <p className="text-xs text-gray-500">Uploading…</p>
-                      )}
-                      {state.status === 'failed' && (
-                        <div className="space-y-1">
-                          <p className="text-xs text-red-600">{state.error}</p>
+            <CardSection title="Checklist" delay={120}>
+              {initialItems.map(item => {
+                const state = uploadStates[item.id] ?? { status: 'idle' as UploadStatus }
+                return (
+                  <div key={item.id} className="bg-gray-50 rounded-xl border border-gray-100 px-4 py-3 space-y-2">
+                    <div className="flex items-start justify-between gap-3">
+                      <p className="text-sm font-medium text-gray-900">{item.title}</p>
+                      <span className={`text-xs flex-shrink-0 ${item.required ? 'text-brand-accent font-medium' : 'text-gray-400'}`}>
+                        {item.required ? 'Required' : 'Optional'}
+                      </span>
+                    </div>
+                    {item.description && <p className="text-xs text-gray-500">{item.description}</p>}
+                    {item.needs_upload && (
+                      <div>
+                        <input
+                          ref={el => { fileInputRefs.current[item.id] = el }}
+                          type="file"
+                          accept="image/jpeg,image/png,image/heic,image/webp,application/pdf"
+                          className="hidden"
+                          onChange={e => handleFileChange(item, e)}
+                        />
+                        {state.status === 'uploaded' && (
+                          <p className="text-xs text-green-600 font-medium">✓ Uploaded</p>
+                        )}
+                        {state.status === 'uploading' && (
+                          <p className="text-xs text-gray-500">Uploading…</p>
+                        )}
+                        {state.status === 'failed' && (
+                          <div className="space-y-1">
+                            <p className="text-xs text-red-600">{state.error}</p>
+                            <button
+                              type="button"
+                              onClick={() => startUpload(item.id)}
+                              className="text-xs font-medium text-brand-primary"
+                            >
+                              Try again
+                            </button>
+                          </div>
+                        )}
+                        {state.status === 'idle' && (
                           <button
                             type="button"
                             onClick={() => startUpload(item.id)}
-                            className="text-xs font-medium text-[var(--brand-primary,#2563eb)]"
+                            className="text-xs font-medium text-brand-primary"
                           >
-                            Try again
+                            Upload
                           </button>
-                        </div>
-                      )}
-                      {state.status === 'idle' && (
-                        <button
-                          type="button"
-                          onClick={() => startUpload(item.id)}
-                          className="text-xs font-medium text-[var(--brand-primary,#2563eb)]"
-                        >
-                          Upload
-                        </button>
-                      )}
-                    </div>
-                  )}
-                </div>
-              )
-            })}
-          </section>
-        </>
-      )}
+                        )}
+                      </div>
+                    )}
+                  </div>
+                )
+              })}
+            </CardSection>
+          </>
+        )}
 
-      <a href={`/${slug}`} className="block text-center text-sm text-[var(--brand-primary,#2563eb)] hover:underline">
-        ← Back to storefront
-      </a>
-    </div>
+        <a href={`/${slug}`} className="block text-center text-sm text-brand-primary hover:underline">
+          ← Back to storefront
+        </a>
+      </div>
+    </BrandedShell>
   )
 }

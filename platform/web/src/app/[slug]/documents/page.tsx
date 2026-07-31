@@ -15,12 +15,14 @@ export default async function DocumentsPage({ params }: Props) {
   const supabase = createServiceClient()
   const { data: client } = await supabase
     .from('clients')
-    .select('id, business_name, active, enabled_components')
+    .select('id, business_name, active, enabled_components, client_branding(primary_color, logo_url, tagline, hero_photo_urls)')
     .eq('slug', params.slug)
     .eq('active', true)
     .single()
 
   if (!client || !hasComponent(client.enabled_components, 'document_checklist_intake')) notFound()
+
+  const branding = (client as any).client_branding as { primary_color: string | null; logo_url: string | null; tagline: string | null; hero_photo_urls: string[] | null } | null
 
   const { data: items } = await supabase
     .from('document_checklist_items')
@@ -33,6 +35,10 @@ export default async function DocumentsPage({ params }: Props) {
       clientId={client.id}
       businessName={client.business_name}
       slug={params.slug}
+      logoUrl={branding?.logo_url ?? null}
+      tagline={branding?.tagline ?? null}
+      primaryColor={branding?.primary_color ?? null}
+      heroUrl={branding?.hero_photo_urls?.[0] ?? null}
       initialItems={(items ?? []) as DocumentChecklistItem[]}
     />
   )
