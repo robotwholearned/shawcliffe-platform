@@ -50,6 +50,7 @@ export default function QuoteForm({ clientId, businessName, slug, showVehicleFie
   const [jobLocation, setJobLocation] = useState('')
   const [description, setDescription] = useState('')
   const [urgency, setUrgency] = useState('flexible')
+  const [preferredDate, setPreferredDate] = useState('')
   const [preferredContact, setPreferredContact] = useState('phone')
   const [smsConsent, setSmsConsent] = useState(false)
   const [emailConsent, setEmailConsent] = useState(false)
@@ -170,6 +171,7 @@ export default function QuoteForm({ clientId, businessName, slug, showVehicleFie
         service_category: serviceCategory || null,
         job_location: jobLocation || null,
         urgency,
+        preferred_date: preferredDate || null,
         description: description || null,
         photo_urls: photos.map(p => p.url).filter((url): url is string => !!url),
         preferred_contact_method: preferredContact,
@@ -249,6 +251,11 @@ export default function QuoteForm({ clientId, businessName, slug, showVehicleFie
             <select value={urgency} onChange={e => setUrgency(e.target.value)} className={inputClass}>
               {URGENCY_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
             </select>
+          </div>
+
+          <div>
+            <label className={labelClass}>Preferred date (optional)</label>
+            <input type="date" value={preferredDate} onChange={e => setPreferredDate(e.target.value)} className={inputClass} />
           </div>
 
           {showPhotoUpload && (

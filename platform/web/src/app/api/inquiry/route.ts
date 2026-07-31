@@ -2,7 +2,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createServiceClient } from '@/lib/supabase/server'
 import { normalizePhone } from '@/lib/phone'
 import { hasComponent } from '@/lib/components'
+import { SMS_MONTHLY_ALLOTMENT, getSmsUsageThisMonth } from '@/lib/sms-limits'
 import { Resend } from 'resend'
+import twilio from 'twilio'
 
 const FROM_ADDRESS = 'cassandra@shawcliffedigital.com'
 const CONSENT_TEXT_VERSION = 'v1-inquiry-2026-07-09'
@@ -23,6 +25,7 @@ export async function POST(req: NextRequest) {
     service_category,
     job_location,
     urgency,
+    preferred_date,
     description,
     photo_urls,
     preferred_contact_method,
@@ -61,6 +64,9 @@ export async function POST(req: NextRequest) {
   }
   if (preferred_contact_method && !CONTACT_METHOD_VALUES.includes(preferred_contact_method)) {
     return NextResponse.json({ error: 'Invalid preferred_contact_method' }, { status: 400 })
+  }
+  if (preferred_date && !/^\d{4}-\d{2}-\d{2}$/.test(preferred_date)) {
+    return NextResponse.json({ error: 'Invalid preferred_date' }, { status: 400 })
   }
 
   // Hash IP for CASL/TCPA logging — we never store the raw IP
@@ -181,6 +187,7 @@ export async function POST(req: NextRequest) {
       service_category: service_category || null,
       job_location: job_location || null,
       urgency: urgency || null,
+      preferred_date: preferred_date || null,
       description: description || null,
       photo_urls: photo_urls ?? [],
       preferred_contact_method: preferred_contact_method || null,
@@ -196,7 +203,7 @@ export async function POST(req: NextRequest) {
 
   // Fire-and-forget: the inquiry is already saved, so notification delivery
   // shouldn't block the customer-facing response on two Resend round-trips.
-  sendInquiryEmails(supabase, {
+  sendInquiryNotifications(supabase, {
     clientId: client_id,
     operatorEmail: client.operator_email,
     fromName: getBrandingAppName(client.client_branding) ?? 'Your Local Seller',
@@ -204,9 +211,11 @@ export async function POST(req: NextRequest) {
     customerName: name,
     customerPhone: normalizedPhone,
     customerEmail: email || null,
+    smsConsent: sms_consent ?? false,
     serviceCategory: service_category || null,
     jobLocation: job_location || null,
     urgency: urgency || null,
+    preferredDate: preferred_date || null,
     description: description || null,
     preferredContactMethod: preferred_contact_method || null,
   }).catch((err) => console.error('inquiry notification dispatch failed', err))
@@ -228,7 +237,7 @@ async function hashIp(ip: string): Promise<string> {
   return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('')
 }
 
-async function sendInquiryEmails(
+async function sendInquiryNotifications(
   supabase: ReturnType<typeof createServiceClient>,
   info: {
     clientId: string
@@ -238,9 +247,11 @@ async function sendInquiryEmails(
     customerName: string
     customerPhone: string | null
     customerEmail: string | null
+    smsConsent: boolean
     serviceCategory: string | null
     jobLocation: string | null
     urgency: string | null
+    preferredDate: string | null
     description: string | null
     preferredContactMethod: string | null
   }
@@ -295,7 +306,49 @@ async function sendInquiryEmails(
     }
   }
 
-  await Promise.allSettled([sendOwnerEmail(), sendCustomerEmail()])
+  // Customer confirmation SMS — only if they opted into SMS and gave a phone.
+  // Same subaccount-load → cap-check → send → log pattern as request-review.
+  // Tier 1's SMS allotment is 0, so tier-1 clients fall through to email only.
+  const sendCustomerSms = async () => {
+    if (!info.smsConsent || !info.customerPhone) return
+    try {
+      const { data: twilioAccount } = await supabase
+        .from('twilio_subaccounts')
+        .select('account_sid, auth_token, phone_number, messaging_service_sid')
+        .eq('client_id', info.clientId)
+        .single()
+      if (!twilioAccount) return
+
+      const { data: clientTier } = await supabase.from('clients').select('tier').eq('id', info.clientId).single()
+      const tier = (clientTier?.tier ?? 1) as 1 | 2 | 3
+      const used = await getSmsUsageThisMonth(supabase, info.clientId)
+      if (used >= SMS_MONTHLY_ALLOTMENT[tier]) return
+
+      const body = `Thanks for reaching out to ${info.fromName}! We got your request and will be in touch soon.`.substring(0, 160)
+      const twilioClient = twilio(twilioAccount.account_sid, twilioAccount.auth_token)
+      const msg = await twilioClient.messages.create({
+        body,
+        to: info.customerPhone,
+        ...(twilioAccount.messaging_service_sid
+          ? { messagingServiceSid: twilioAccount.messaging_service_sid }
+          : { from: twilioAccount.phone_number }),
+      })
+
+      await supabase.from('notification_log').insert({
+        client_id: info.clientId,
+        customer_id: info.customerId,
+        channel: 'sms',
+        message_preview: 'Inquiry confirmation',
+        status: msg.status,
+        provider_message_id: msg.sid,
+        twilio_subaccount_sid: twilioAccount.account_sid,
+      })
+    } catch (err) {
+      console.error('inquiry customer confirmation SMS failed', err)
+    }
+  }
+
+  await Promise.allSettled([sendOwnerEmail(), sendCustomerEmail(), sendCustomerSms()])
 }
 
 function escapeHtml(value: string): string {
@@ -314,6 +367,7 @@ function ownerEmailText(info: {
   serviceCategory: string | null
   jobLocation: string | null
   urgency: string | null
+  preferredDate: string | null
   description: string | null
   preferredContactMethod: string | null
 }): string {
@@ -322,6 +376,7 @@ function ownerEmailText(info: {
     info.serviceCategory && `Service: ${info.serviceCategory}`,
     info.jobLocation && `Location: ${info.jobLocation}`,
     info.urgency && `Urgency: ${info.urgency}`,
+    info.preferredDate && `Preferred date: ${info.preferredDate}`,
     info.description && `Details: ${info.description}`,
     info.preferredContactMethod && `Preferred contact: ${info.preferredContactMethod}`,
     info.customerPhone && `Phone: ${info.customerPhone}`,
@@ -336,6 +391,7 @@ function ownerEmailTemplate(info: Parameters<typeof ownerEmailText>[0]): string 
     ['Service', info.serviceCategory],
     ['Location', info.jobLocation],
     ['Urgency', info.urgency],
+    ['Preferred date', info.preferredDate],
     ['Preferred contact', info.preferredContactMethod],
     ['Phone', info.customerPhone],
     ['Email', info.customerEmail],

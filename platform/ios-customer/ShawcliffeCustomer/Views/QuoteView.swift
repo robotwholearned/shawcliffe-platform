@@ -66,6 +66,8 @@ struct QuoteView: View {
     @State private var jobLocation = ""
     @State private var description = ""
     @State private var urgency: Urgency = .flexible
+    @State private var hasPreferredDate = false
+    @State private var preferredDate = Date()
     @State private var preferredContact: PreferredContact = .phone
     @State private var smsConsent = false
     @State private var emailConsent = false
@@ -104,6 +106,12 @@ struct QuoteView: View {
     @State private var error: String?
 
     private static let consentText = "I agree to be contacted about my quote request. Message frequency varies. Reply STOP to unsubscribe. Message & data rates may apply."
+    private static let dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.dateFormat = "yyyy-MM-dd"
+        return formatter
+    }()
 
     var body: some View {
         Group {
@@ -149,6 +157,11 @@ struct QuoteView: View {
                     }
                 }
                 .pickerStyle(.segmented)
+
+                Toggle("I have a preferred date", isOn: $hasPreferredDate)
+                if hasPreferredDate {
+                    DatePicker("Preferred date", selection: $preferredDate, displayedComponents: .date)
+                }
 
                 if showPhotoUpload {
                     PhotosPicker(selection: $photoSelections, maxSelectionCount: 5, matching: .images) {
@@ -492,6 +505,7 @@ struct QuoteView: View {
                     urgency: urgency.rawValue,
                     description: description.isEmpty ? nil : description,
                     preferred_contact_method: preferredContact.rawValue,
+                    preferred_date: hasPreferredDate ? Self.dateFormatter.string(from: preferredDate) : nil,
                     photo_urls: photos.compactMap(\.url),
                     vehicle_make: effectiveVehicleMake,
                     vehicle_model: effectiveVehicleModel,

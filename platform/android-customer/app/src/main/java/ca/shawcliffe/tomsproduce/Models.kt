@@ -130,6 +130,7 @@ data class InquiryRequest(
     val urgency: String?,
     val description: String?,
     val preferred_contact_method: String?,
+    val preferred_date: String? = null,
     val photo_urls: List<String> = emptyList(),
     val vehicle_make: String? = null,
     val vehicle_model: String? = null,

@@ -162,6 +162,7 @@ struct InquiryRequest: Encodable {
     let urgency: String?
     let description: String?
     let preferred_contact_method: String?
+    let preferred_date: String?
     let photo_urls: [String]
     let vehicle_make: String?
     let vehicle_model: String?

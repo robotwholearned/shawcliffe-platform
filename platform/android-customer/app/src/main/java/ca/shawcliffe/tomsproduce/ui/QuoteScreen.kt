@@ -22,6 +22,8 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -30,9 +32,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuAnchorType
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -64,7 +69,10 @@ import coil.compose.AsyncImage
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.net.URLEncoder
+import java.time.Instant
 import java.time.Year
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 
 private val URGENCY_OPTIONS = listOf("asap" to "ASAP", "this_week" to "This week", "this_month" to "This month", "flexible" to "Flexible")
 private val CONTACT_OPTIONS = listOf("phone" to "Phone", "email" to "Email", "sms" to "Text")
@@ -117,6 +125,7 @@ private data class PhotoUpload(
     val error: String? = null,
 )
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun QuoteScreen(
     onDone: () -> Unit,
@@ -134,6 +143,8 @@ fun QuoteScreen(
     var urgency by remember { mutableStateOf(URGENCY_OPTIONS[0].first) }
     var description by remember { mutableStateOf("") }
     var preferredContact by remember { mutableStateOf(CONTACT_OPTIONS[0].first) }
+    var preferredDateMillis by remember { mutableStateOf<Long?>(null) }
+    var showDatePicker by remember { mutableStateOf(false) }
     var smsConsent by remember { mutableStateOf(false) }
     var emailConsent by remember { mutableStateOf(false) }
     var vehicleMake by remember { mutableStateOf("") }
@@ -248,6 +259,22 @@ fun QuoteScreen(
         return
     }
 
+    if (showDatePicker) {
+        val datePickerState = rememberDatePickerState(initialSelectedDateMillis = preferredDateMillis)
+        DatePickerDialog(
+            onDismissRequest = { showDatePicker = false },
+            confirmButton = {
+                TextButton(onClick = {
+                    preferredDateMillis = datePickerState.selectedDateMillis
+                    showDatePicker = false
+                }) { Text("OK") }
+            },
+            dismissButton = { TextButton(onClick = { showDatePicker = false }) { Text("Cancel") } },
+        ) {
+            DatePicker(state = datePickerState)
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -305,6 +332,11 @@ fun QuoteScreen(
                 RadioButton(selected = preferredContact == value, onClick = { preferredContact = value })
                 Text(label)
             }
+        }
+
+        Text("Preferred date (optional)", style = MaterialTheme.typography.titleSmall)
+        OutlinedButton(onClick = { showDatePicker = true }) {
+            Text(preferredDateMillis?.let { formatDate(it) } ?: "Choose a date")
         }
 
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -488,6 +520,7 @@ fun QuoteScreen(
                                 urgency = urgency,
                                 description = description.ifEmpty { null },
                                 preferred_contact_method = preferredContact,
+                                preferred_date = preferredDateMillis?.let { formatIsoDate(it) },
                                 photo_urls = photos.mapNotNull { it.url },
                                 vehicle_make = resolveOrOther(vehicleMake, vehicleMakeOther),
                                 vehicle_model = resolveOrOther(vehicleModel, vehicleModelOther),
@@ -525,3 +558,9 @@ fun QuoteScreen(
         }
     }
 }
+
+private fun formatIsoDate(millis: Long): String =
+    Instant.ofEpochMilli(millis).atZone(ZoneOffset.UTC).format(DateTimeFormatter.ISO_LOCAL_DATE)
+
+private fun formatDate(millis: Long): String =
+    Instant.ofEpochMilli(millis).atZone(ZoneOffset.UTC).format(DateTimeFormatter.ofPattern("MMM d, yyyy"))
