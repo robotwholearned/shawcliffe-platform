@@ -11,6 +11,9 @@ private enum TimePreference: String, CaseIterable, Identifiable {
 struct BookingView: View {
     let businessName: String
     let showPetFields: Bool
+    var primaryColor: Color = Color(hex: nil)
+    var fontDesign: Font.Design = .default
+    var branding: ClientBranding? = nil
 
     @State private var name = ""
     @State private var phone = ""
@@ -49,113 +52,115 @@ struct BookingView: View {
     }()
 
     var body: some View {
-        Group {
+        BrandedScreen(businessName: businessName, branding: branding, primaryColor: primaryColor) {
             if done {
-                ConfirmationView(
+                BrandedSuccessView(
+                    businessName: businessName,
+                    branding: branding,
                     title: "Booking request sent!",
                     message: "\(businessName) will confirm your booking soon."
                 )
             } else {
-                form
+                formCards
             }
         }
         .navigationTitle("Request a Booking")
         .navigationBarTitleDisplayMode(.inline)
+        .tint(primaryColor)
+        .brandedFontDesign(fontDesign)
     }
 
-    private var form: some View {
-        Form {
-            Section("Your details") {
-                TextField("Your name *", text: $name)
-                    .textContentType(.name)
-                TextField("Phone number", text: $phone)
-                    .keyboardType(.phonePad)
-                TextField("Email address", text: $email)
-                    .keyboardType(.emailAddress)
-                    .textInputAutocapitalization(.never)
-                    .autocorrectionDisabled()
+    @ViewBuilder
+    private var formCards: some View {
+        CardSection(title: "Your details", index: 0) {
+            TextField("Your name *", text: $name)
+                .textContentType(.name)
+                .brandedField()
+            TextField("Phone number", text: $phone)
+                .keyboardType(.phonePad)
+                .brandedField()
+            TextField("Email address", text: $email)
+                .keyboardType(.emailAddress)
+                .textInputAutocapitalization(.never)
+                .autocorrectionDisabled()
+                .brandedField()
+        }
+
+        CardSection(title: "The booking", index: 1) {
+            TextField("Service needed (optional)", text: $service)
+                .brandedField()
+
+            Toggle("I have a preferred date", isOn: $hasPreferredDate)
+            if hasPreferredDate {
+                DatePicker("Preferred date", selection: $preferredDate, displayedComponents: .date)
             }
 
-            Section("The booking") {
-                TextField("Service needed (optional)", text: $service)
-
-                Toggle("I have a preferred date", isOn: $hasPreferredDate)
-                if hasPreferredDate {
-                    DatePicker("Preferred date", selection: $preferredDate, displayedComponents: .date)
+            Picker("Preferred time", selection: $timePreference) {
+                ForEach(TimePreference.allCases) { option in
+                    Text(option.label).tag(option)
                 }
+            }
+            .pickerStyle(.segmented)
 
-                Picker("Preferred time", selection: $timePreference) {
-                    ForEach(TimePreference.allCases) { option in
-                        Text(option.label).tag(option)
-                    }
-                }
-                .pickerStyle(.segmented)
+            TextField("Anything else we should know? (optional)", text: $notes, axis: .vertical)
+                .lineLimit(2...4)
+                .brandedField()
+        }
 
-                TextField("Anything else we should know? (optional)", text: $notes, axis: .vertical)
+        if showPetFields {
+            CardSection(title: "Pet (optional)", index: 2) {
+                TextField("Pet name", text: $petName).brandedField()
+                TextField("Breed", text: $petBreed).brandedField()
+                TextField("Size", text: $petSize).brandedField()
+                TextField("Age", text: $petAge).brandedField()
+                TextField("Allergies", text: $petAllergies).brandedField()
+                TextField("Behaviour notes", text: $petBehaviorNotes, axis: .vertical)
                     .lineLimit(2...4)
-            }
+                    .brandedField()
+                TextField("Grooming preferences", text: $petGroomingPreferences).brandedField()
+                TextField("Vaccination info", text: $petVaccinationInfo).brandedField()
+                TextField("Emergency contact", text: $petEmergencyContact).brandedField()
+                TextField("Care instructions", text: $petCareInstructions, axis: .vertical)
+                    .lineLimit(2...4)
+                    .brandedField()
 
-            if showPetFields {
-                Section("Pet (optional)") {
-                    TextField("Pet name", text: $petName)
-                    TextField("Breed", text: $petBreed)
-                    TextField("Size", text: $petSize)
-                    TextField("Age", text: $petAge)
-                    TextField("Allergies", text: $petAllergies)
-                    TextField("Behaviour notes", text: $petBehaviorNotes, axis: .vertical)
-                        .lineLimit(2...4)
-                    TextField("Grooming preferences", text: $petGroomingPreferences)
-                    TextField("Vaccination info", text: $petVaccinationInfo)
-                    TextField("Emergency contact", text: $petEmergencyContact)
-                    TextField("Care instructions", text: $petCareInstructions, axis: .vertical)
-                        .lineLimit(2...4)
+                PhotosPicker(selection: $petPhotoSelection, matching: .images) {
+                    Text(petPhotoURL == nil ? "Add Pet Photo (optional)" : "Change Pet Photo")
+                }
+                .onChange(of: petPhotoSelection) { newItem in
+                    Task { await uploadPetPhoto(newItem) }
+                }
 
-                    PhotosPicker(selection: $petPhotoSelection, matching: .images) {
-                        Text(petPhotoURL == nil ? "Add Pet Photo (optional)" : "Change Pet Photo")
-                    }
-                    .onChange(of: petPhotoSelection) { newItem in
-                        Task { await uploadPetPhoto(newItem) }
-                    }
-
-                    if petPhotoUploading || petPhotoThumbnail != nil {
-                        petPhotoThumbnailView
-                    }
-                    if let petPhotoError {
-                        Text(petPhotoError).foregroundStyle(.red).font(.caption)
-                    }
+                if petPhotoUploading || petPhotoThumbnail != nil {
+                    petPhotoThumbnailView
+                }
+                if let petPhotoError {
+                    Text(petPhotoError).foregroundStyle(.red).font(.caption)
                 }
             }
+        }
 
-            Section {
-                Text(Self.consentText)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                Toggle("Yes, send me text message updates", isOn: $smsConsent)
-                Toggle("Yes, send me email updates", isOn: $emailConsent)
-            }
+        CardSection(index: showPetFields ? 3 : 2) {
+            Text(Self.consentText)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            Toggle("Yes, send me text message updates", isOn: $smsConsent)
+            Toggle("Yes, send me email updates", isOn: $emailConsent)
+        }
 
-            if let error {
-                Section {
-                    Text(error).foregroundStyle(.red).font(.footnote)
-                }
-            }
+        if let error {
+            Text(error)
+                .foregroundStyle(.red)
+                .font(.footnote)
+                .frame(maxWidth: .infinity, alignment: .leading)
+        }
 
-            Section {
-                Button {
-                    Task { await submit() }
-                } label: {
-                    HStack {
-                        Spacer()
-                        if submitting {
-                            ProgressView()
-                        } else {
-                            Text("Request Booking").bold()
-                        }
-                        Spacer()
-                    }
-                }
-                .disabled(submitting || name.trimmingCharacters(in: .whitespaces).isEmpty)
-            }
+        BrandedSubmitButton(
+            title: "Request Booking",
+            loading: submitting,
+            disabled: submitting || name.trimmingCharacters(in: .whitespaces).isEmpty
+        ) {
+            Task { await submit() }
         }
     }
 

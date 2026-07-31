@@ -2,6 +2,9 @@ import SwiftUI
 
 struct SignupView: View {
     let businessName: String
+    var primaryColor: Color = Color(hex: nil)
+    var fontDesign: Font.Design = .default
+    var branding: ClientBranding? = nil
 
     @State private var name = ""
     @State private var phone = ""
@@ -15,63 +18,61 @@ struct SignupView: View {
     private static let consentText = "I agree to receive updates about today's availability, location, and products. Message frequency varies. Reply STOP to unsubscribe. Message & data rates may apply."
 
     var body: some View {
-        Group {
+        BrandedScreen(businessName: businessName, branding: branding, primaryColor: primaryColor) {
             if done {
-                ConfirmationView(
+                BrandedSuccessView(
+                    businessName: businessName,
+                    branding: branding,
                     title: "You're signed up!",
                     message: "We'll send you updates from \(businessName) about today's hours, location, and what's available."
                 )
             } else {
-                form
+                formCards
             }
         }
         .navigationTitle("Stay in the Loop")
         .navigationBarTitleDisplayMode(.inline)
+        .tint(primaryColor)
+        .brandedFontDesign(fontDesign)
     }
 
-    private var form: some View {
-        Form {
-            Section {
-                TextField("Your name *", text: $name)
-                    .textContentType(.name)
-                TextField("Phone number", text: $phone)
-                    .keyboardType(.phonePad)
-                TextField("Email address", text: $email)
-                    .keyboardType(.emailAddress)
-                    .textInputAutocapitalization(.never)
-                    .autocorrectionDisabled()
-            }
+    @ViewBuilder
+    private var formCards: some View {
+        CardSection(title: "Your details", index: 0) {
+            TextField("Your name *", text: $name)
+                .textContentType(.name)
+                .brandedField()
+            TextField("Phone number", text: $phone)
+                .keyboardType(.phonePad)
+                .brandedField()
+            TextField("Email address", text: $email)
+                .keyboardType(.emailAddress)
+                .textInputAutocapitalization(.never)
+                .autocorrectionDisabled()
+                .brandedField()
+        }
 
-            Section {
-                Text(Self.consentText)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                Toggle("Yes, send me text message updates", isOn: $smsConsent)
-                Toggle("Yes, send me email updates", isOn: $emailConsent)
-            }
+        CardSection(index: 1) {
+            Text(Self.consentText)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            Toggle("Yes, send me text message updates", isOn: $smsConsent)
+            Toggle("Yes, send me email updates", isOn: $emailConsent)
+        }
 
-            if let error {
-                Section {
-                    Text(error).foregroundStyle(.red).font(.footnote)
-                }
-            }
+        if let error {
+            Text(error)
+                .foregroundStyle(.red)
+                .font(.footnote)
+                .frame(maxWidth: .infinity, alignment: .leading)
+        }
 
-            Section {
-                Button {
-                    Task { await submit() }
-                } label: {
-                    HStack {
-                        Spacer()
-                        if submitting {
-                            ProgressView()
-                        } else {
-                            Text("Sign Me Up").bold()
-                        }
-                        Spacer()
-                    }
-                }
-                .disabled(submitting || name.trimmingCharacters(in: .whitespaces).isEmpty)
-            }
+        BrandedSubmitButton(
+            title: "Sign Me Up",
+            loading: submitting,
+            disabled: submitting || name.trimmingCharacters(in: .whitespaces).isEmpty
+        ) {
+            Task { await submit() }
         }
     }
 
@@ -115,24 +116,6 @@ struct SignupView: View {
             self.error = error.localizedDescription
         }
         submitting = false
-    }
-}
-
-struct ConfirmationView: View {
-    let title: String
-    let message: String
-
-    var body: some View {
-        VStack(spacing: 12) {
-            Text("✓").font(.system(size: 48))
-            Text(title).font(.title2.bold())
-            Text(message)
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-                .multilineTextAlignment(.center)
-        }
-        .padding(32)
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 

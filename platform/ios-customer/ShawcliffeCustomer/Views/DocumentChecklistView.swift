@@ -7,6 +7,9 @@ private enum UploadState {
 
 struct DocumentChecklistView: View {
     let businessName: String
+    var primaryColor: Color = Color(hex: nil)
+    var fontDesign: Font.Design = .default
+    var branding: ClientBranding? = nil
 
     @State private var items: [DocumentChecklistItem] = []
     @State private var loading = true
@@ -23,33 +26,32 @@ struct DocumentChecklistView: View {
     private static let consentText = "I agree to be contacted about my submission. Message frequency varies. Reply STOP to unsubscribe. Message & data rates may apply."
 
     var body: some View {
-        Form {
+        BrandedScreen(businessName: businessName, branding: branding, primaryColor: primaryColor) {
             if loading {
-                Section {
-                    HStack {
-                        Spacer()
-                        ProgressView()
-                        Spacer()
-                    }
+                CardSection(index: 0) {
+                    HStack { Spacer(); ProgressView(); Spacer() }
                 }
             } else if let loadError {
-                Section {
+                CardSection(index: 0) {
                     Text(loadError).foregroundStyle(.red).font(.footnote)
                 }
             } else if items.isEmpty {
-                Section {
+                CardSection(index: 0) {
                     Text("No checklist items yet.").foregroundStyle(.secondary)
                 }
             } else {
-                Section("Your details") {
+                CardSection(title: "Your details", index: 0) {
                     TextField("Your name *", text: $name)
                         .textContentType(.name)
+                        .brandedField()
                     TextField("Phone number", text: $phone)
                         .keyboardType(.phonePad)
+                        .brandedField()
                     TextField("Email address", text: $email)
                         .keyboardType(.emailAddress)
                         .textInputAutocapitalization(.never)
                         .autocorrectionDisabled()
+                        .brandedField()
                     Text(Self.consentText)
                         .font(.caption)
                         .foregroundStyle(.secondary)
@@ -60,15 +62,20 @@ struct DocumentChecklistView: View {
                     }
                 }
 
-                Section("Checklist") {
+                CardSection(title: "Checklist", index: 1) {
                     ForEach(items) { item in
                         checklistRow(item)
+                        if item.id != items.last?.id {
+                            Divider()
+                        }
                     }
                 }
             }
         }
         .navigationTitle("Documents")
         .navigationBarTitleDisplayMode(.inline)
+        .tint(primaryColor)
+        .brandedFontDesign(fontDesign)
         .task { await load() }
         .fileImporter(
             isPresented: Binding(get: { filePickerItemId != nil }, set: { if !$0 { filePickerItemId = nil } }),
