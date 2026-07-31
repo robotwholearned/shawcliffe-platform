@@ -8,14 +8,9 @@ and seller admin app already serve.
 ## Setup
 
 ```bash
-brew install xcodegen   # one-time
 cd platform/ios-customer
-xcodegen generate
 open ShawcliffeCustomer.xcodeproj
 ```
-
-The `.xcodeproj` is generated from `project.yml` and is gitignored — regenerate
-it after pulling changes to `project.yml` or after adding/removing source files.
 
 ## Architecture
 

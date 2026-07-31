@@ -1,5 +1,5 @@
-# app_identifier is overridden per client build via project.yml's
-# CLIENT_BUNDLE_ID (see Fastfile) — this default matters only for the
+# app_identifier is overridden per client build via CLIENT_BUNDLE_ID, set by
+# set_client_env in the Fastfile — this default matters only for the
 # App Store Connect API calls in the `build`/upload lanes.
 app_identifier(ENV["CLIENT_BUNDLE_ID"] || "ca.shawcliffe.tomsproduce")
 apple_id("cassandra@shawcliffedigital.com")

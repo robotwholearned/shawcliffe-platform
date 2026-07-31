@@ -8,14 +8,9 @@ via the `supabase-swift` SDK (no custom backend).
 ## Setup
 
 ```bash
-brew install xcodegen   # one-time
 cd platform/ios-seller
-xcodegen generate
 open ShawcliffeSeller.xcodeproj
 ```
-
-The `.xcodeproj` is generated from `project.yml` and is gitignored — regenerate
-it after pulling changes to `project.yml` or after adding/removing source files.
 
 Supabase URL + anon key are embedded in `ShawcliffeSeller/SupabaseClient.swift`,
 pointed at the same project as `platform/web/.env.local`. The anon key is
