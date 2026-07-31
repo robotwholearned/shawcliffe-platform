@@ -26,7 +26,7 @@ create policy "staff_or_service_read_documents" on storage.objects
       auth.role() = 'service_role'
       or (
         auth.role() = 'authenticated'
-        and storage.foldername(name)[1]::uuid = (auth.jwt() -> 'app_metadata' ->> 'client_id')::uuid
+        and (storage.foldername(name))[1]::uuid = (auth.jwt() -> 'app_metadata' ->> 'client_id')::uuid
         and (auth.jwt() -> 'app_metadata' ->> 'role') = 'client_staff'
       )
     )
