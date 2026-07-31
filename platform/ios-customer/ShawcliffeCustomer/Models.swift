@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUI
 
 enum FontTheme: String, Codable {
     case modernSans = "modern_sans"
@@ -6,6 +7,16 @@ enum FontTheme: String, Codable {
     case classicSerif = "classic_serif"
     case minimal
     case rustic
+
+    /// SwiftUI only ships 4 native font designs, so themes pair up:
+    /// farmhouse/rustic both read as warmer than the clean modern/minimal pair.
+    var design: Font.Design {
+        switch self {
+        case .modernSans, .minimal: return .default
+        case .classicSerif, .rustic: return .serif
+        case .farmhouse: return .rounded
+        }
+    }
 }
 
 enum DailyStatusValue: String, Codable {
