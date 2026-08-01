@@ -3,7 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
-    alias(libs.plugins.google.services)
+    alias(libs.plugins.google.services) apply false
 }
 
 // Per-client values, overridden by Fastlane via -P Gradle properties (see
@@ -14,6 +14,16 @@ val clientApplicationId = (project.findProperty("clientApplicationId") as String
 val clientAppName = (project.findProperty("clientAppName") as String?) ?: "Tom's Produce"
 val clientId = (project.findProperty("clientId") as String?) ?: "c40569c6-1324-47a9-979f-6d076c4b67fc"
 val clientSlug = (project.findProperty("clientSlug") as String?) ?: "toms-produce"
+
+// google-services.json only registers ca.shawcliffe.tomsproduce — applying the
+// plugin for any other clientApplicationId (e.g. demo-client builds) fails
+// processDebugGoogleServices with "No matching client found". Push is already
+// best-effort/no-op when Firebase isn't configured (see PushManager.
+// requestPermissionAndRegister), so just skip the plugin for those builds
+// rather than registering every demo package in the Firebase project.
+if (clientApplicationId == "ca.shawcliffe.tomsproduce") {
+    apply(plugin = "com.google.gms.google-services")
+}
 
 android {
     namespace = "ca.shawcliffe.tomsproduce"
