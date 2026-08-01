@@ -223,7 +223,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLIENT_APP_NAME = "Tom's Produce";
 				CLIENT_BUNDLE_ID = self.edu.robotwholearned.shawcliffecustomer;
+				CLIENT_ID = "c40569c6-1324-47a9-979f-6d076c4b67fc";
+				CLIENT_SLUG = "toms-produce";
 				CODE_SIGN_ENTITLEMENTS = ShawcliffeCustomer/ShawcliffeCustomer.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
@@ -367,7 +370,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLIENT_APP_NAME = "Tom's Produce";
 				CLIENT_BUNDLE_ID = self.edu.robotwholearned.shawcliffecustomer;
+				CLIENT_ID = "c40569c6-1324-47a9-979f-6d076c4b67fc";
+				CLIENT_SLUG = "toms-produce";
 				CODE_SIGN_ENTITLEMENTS = ShawcliffeCustomer/ShawcliffeCustomer.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
