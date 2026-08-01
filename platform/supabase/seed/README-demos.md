@@ -64,12 +64,20 @@ or those images 404.
 
 ## Imagery
 
-Brand-coloured **SVG placeholders** generated in `seed-demos.mjs` (gradients from
-each client's own primary/secondary/accent colours, with the business/product
-name). Zero network dependency, fully deterministic. Uploaded to the public
-`demo-assets` bucket at stable paths (`<slug>/hero-0.svg`, `<slug>/logo-0.svg`,
-`<slug>/product-<i>.svg`). To use real photos, overwrite the same storage paths
-(or point `products.image_url` / `client_branding.hero_photo_urls` elsewhere).
+- **Hero photos: real, vertical-appropriate photographs** (Unsplash, free-license),
+  one per client, defined in the `HERO_PHOTOS` slug→URL map in `demo-data.mjs` and
+  uploaded to `demo-assets/<slug>/hero-0.jpg`. `client_branding.hero_photo_urls`
+  points at these. Fetch/upload is idempotent — run
+  `node scripts/seed-demo-heroes.mjs` to (re)apply them.
+- **Logos + product thumbnails: brand-coloured SVG placeholders** generated in
+  `seed-demos.mjs` (gradients from each client's own primary/secondary/accent
+  colours). Zero network, fully deterministic. Stable paths
+  `demo-assets/<slug>/logo-0.svg`, `<slug>/product-<i>.svg`.
+
+To change any image, overwrite the same storage path (or repoint
+`products.image_url` / `client_branding.hero_photo_urls`). The `--emit-sql`
+mirror reflects whatever `demo-data.mjs` currently references
+(hero-0.jpg for all 12 today).
 
 ## CURRENT_DATE caveat
 
@@ -79,18 +87,54 @@ day you seed. **Re-run the seed** to refresh the date (upsert keeps one
 always-today row per client). Add a daily cron only if the demos become
 long-lived sales assets.
 
-## Native builds (simulator/emulator only — TODO: filled by iOS/Android lanes)
+## Native builds (simulator/emulator only)
 
 Each client's `apple_bundle_id` / `android_package` are seeded as
 `com.shawcliffe.demo.<name>` (e.g. `com.shawcliffe.demo.salon`). Native demos are
-parameterized single-project builds (no per-client project copies), simulator-only
-until code-signing clears.
+**parameterized single-project builds** (no per-client project copies),
+simulator/emulator-only until code-signing clears. Swap the four values
+(`client_id` / `slug` / bundle / app name) for any of the 12 demo clients.
 
-- **iOS** (representative: `demo-salon`, `demo-maker`):
-  ```
-  TODO: fastlane build_simulator client_id:d0d00000-0000-0000-0000-000000000001 slug:demo-salon bundle_id:com.shawcliffe.demo.salon app_name:"Fern & Fox"
-  ```
-- **Android** (representative: `demo-pet`, `demo-property`):
-  ```
-  TODO: ./gradlew assembleDebug -Pclient_id=… -Pslug=… -Papp_name=…
-  ```
+### iOS (`platform/ios-customer/`)
+
+Verified command (raw `xcodebuild` — runs today, no fastlane needed):
+
+```bash
+cd platform/ios-customer
+xcodebuild -project ShawcliffeCustomer.xcodeproj -scheme ShawcliffeCustomer \
+  -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' build \
+  CLIENT_ID=d0d00000-0000-0000-0000-000000000001 \
+  CLIENT_SLUG=demo-salon \
+  CLIENT_BUNDLE_ID=com.shawcliffe.demo.salon \
+  'CLIENT_APP_NAME=Fern & Fox Hair Studio'
+```
+
+The client values are passed as `xcodebuild KEY=value` build settings (resolved
+into Info.plist via `$(VAR)` placeholders). The Fastlane wrapper forwards the same
+four via `xcargs` (run `bundle install` in `platform/ios-customer` first; not
+exercised in this environment):
+
+```bash
+bundle exec fastlane build_simulator client_id:d0d00000-0000-0000-0000-000000000001 \
+  slug:demo-salon bundle_id:com.shawcliffe.demo.salon app_name:"Fern & Fox Hair Studio"
+```
+
+### Android (`platform/android-customer/`)
+
+Verified command (Gradle properties feed `BuildConfig` / `applicationId` /
+`app_name`):
+
+```bash
+cd platform/android-customer
+./gradlew assembleDebug \
+  -PclientId=d0d00000-0000-0000-0000-000000000001 \
+  -PclientSlug=demo-salon \
+  -PclientApplicationId=com.shawcliffe.demo.salon \
+  -PclientAppName="Fern & Fox Hair Studio"
+```
+
+Firebase/`google-services.json` only registers the real Tom's Produce package, so
+demo builds skip Firebase wiring (push is inert, by design). If a stale Gradle
+config-cache trips the build, append `--no-configuration-cache`. Fastlane wrapper
+(`bundle exec fastlane android build_debug client_id:… slug:… application_id:… app_name:…`)
+forwards the same properties (not exercised in this environment).
