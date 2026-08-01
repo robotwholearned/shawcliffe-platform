@@ -4,6 +4,7 @@ import { createServiceClient } from '@/lib/supabase/server'
 import { clientStatusLabel, clientStatusClass } from '@/lib/client-status'
 import ClientActions from './ClientActions'
 import ComponentToggles from './ComponentToggles'
+import SellerLoginAction from './SellerLoginAction'
 import type { Client } from '@/lib/supabase/types'
 
 interface Props {
@@ -88,6 +89,8 @@ export default async function ClientDetailPage({ params }: Props) {
       <div id="components">
         <ComponentToggles clientId={c.id} initial={c.enabled_components ?? []} />
       </div>
+
+      <SellerLoginAction clientId={c.id} defaultEmail={c.operator_email} />
 
       <ClientActions clientId={c.id} businessName={c.business_name} isActive={c.active} isPaused={c.paused} />
     </div>
