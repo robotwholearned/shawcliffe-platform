@@ -18,8 +18,20 @@ enum Config {
     // the app has no way to resolve a slug to a client_id on its own anyway.
     // Read from the CLIENT_ID/CLIENT_SLUG Info.plist keys baked into the Xcode
     // project; Fastlane overrides them per client build (see ios-customer/fastlane/Fastfile).
-    static let clientId = Bundle.main.requiredInfoValue(for: "CLIENT_ID")
-    static let slug = Bundle.main.requiredInfoValue(for: "CLIENT_SLUG")
+    // In DEBUG, a scheme's environment variables (Edit Scheme → Run → Arguments)
+    // override them, so you can pick a demo client and hit ▶ without a per-client
+    // build. Release builds ignore the env and use the baked-in Info.plist values.
+    static let clientId = debugOverride("CLIENT_ID") ?? Bundle.main.requiredInfoValue(for: "CLIENT_ID")
+    static let slug = debugOverride("CLIENT_SLUG") ?? Bundle.main.requiredInfoValue(for: "CLIENT_SLUG")
+
+    private static func debugOverride(_ key: String) -> String? {
+        #if DEBUG
+        guard let value = ProcessInfo.processInfo.environment[key], !value.isEmpty else { return nil }
+        return value
+        #else
+        return nil
+        #endif
+    }
 }
 
 private extension Bundle {
