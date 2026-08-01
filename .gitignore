@@ -6,3 +6,4 @@ website/node_modules
 platform/android-customer/.kotlin
 platform/ios-customer/ShawcliffeCustomer.xcodeproj/project.xcworkspace/xcuserdata
 platform/ios-seller/ShawcliffeSeller.xcodeproj/project.xcworkspace/xcuserdata
+**/xcuserdata/

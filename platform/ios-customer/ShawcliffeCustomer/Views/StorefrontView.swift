@@ -7,6 +7,10 @@ struct StorefrontView: View {
         Color(hex: viewModel.branding?.primaryColor, default: .blue)
     }
 
+    private var fontDesign: Font.Design {
+        viewModel.branding?.fontTheme.design ?? .default
+    }
+
     private var businessName: String {
         viewModel.branding?.appName ?? "Tom's Produce"
     }
@@ -34,6 +38,7 @@ struct StorefrontView: View {
             }
         }
         .background(Color(.systemGroupedBackground))
+        .brandedFontDesign(fontDesign)
         .overlay {
             if viewModel.isLoading {
                 ProgressView()
@@ -250,7 +255,7 @@ struct StorefrontView: View {
     private var actionButtons: some View {
         VStack(spacing: 12) {
             NavigationLink {
-                SignupView(businessName: businessName)
+                SignupView(businessName: businessName, primaryColor: primaryColor, fontDesign: fontDesign, branding: viewModel.branding)
             } label: {
                 Text("Get Updates")
                     .bold()
@@ -261,7 +266,7 @@ struct StorefrontView: View {
             .tint(primaryColor)
 
             NavigationLink {
-                PreorderView(businessName: businessName, products: viewModel.products)
+                PreorderView(businessName: businessName, products: viewModel.products, primaryColor: primaryColor, fontDesign: fontDesign, branding: viewModel.branding)
             } label: {
                 Text("Reserve an Order →")
                     .font(.subheadline.bold())
@@ -274,7 +279,10 @@ struct StorefrontView: View {
                         businessName: businessName,
                         showPhotoUpload: viewModel.enabledComponents.contains(ComponentKeys.photoFileUpload),
                         showVehicleFields: viewModel.enabledComponents.contains(ComponentKeys.vehicleProfiles),
-                        showPropertyFields: viewModel.enabledComponents.contains(ComponentKeys.propertyProfiles)
+                        showPropertyFields: viewModel.enabledComponents.contains(ComponentKeys.propertyProfiles),
+                        primaryColor: primaryColor,
+                        fontDesign: fontDesign,
+                        branding: viewModel.branding
                     )
                 } label: {
                     Text("Get a Quote").bold().frame(maxWidth: .infinity)
@@ -287,7 +295,10 @@ struct StorefrontView: View {
                 NavigationLink {
                     BookingView(
                         businessName: businessName,
-                        showPetFields: viewModel.enabledComponents.contains(ComponentKeys.petProfiles)
+                        showPetFields: viewModel.enabledComponents.contains(ComponentKeys.petProfiles),
+                        primaryColor: primaryColor,
+                        fontDesign: fontDesign,
+                        branding: viewModel.branding
                     )
                 } label: {
                     Text("Request a Booking").bold().frame(maxWidth: .infinity)
@@ -298,7 +309,7 @@ struct StorefrontView: View {
 
             if viewModel.enabledComponents.contains(ComponentKeys.documentChecklistIntake) {
                 NavigationLink {
-                    DocumentChecklistView(businessName: businessName)
+                    DocumentChecklistView(businessName: businessName, primaryColor: primaryColor, fontDesign: fontDesign, branding: viewModel.branding)
                 } label: {
                     Text("Documents").bold().frame(maxWidth: .infinity)
                 }

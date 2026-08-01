@@ -3,13 +3,8 @@ package ca.shawcliffe.tomsproduce.ui
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -57,9 +52,10 @@ fun PreorderScreen(
     val scope = rememberCoroutineScope()
 
     if (done) {
-        ConfirmationScreen(
+        BrandedSuccess(
             title = "Preorder confirmed!",
             message = "$businessName has your reservation. You'll receive a confirmation shortly.",
+            onBack = onDone,
         )
         return
     }
@@ -67,84 +63,80 @@ fun PreorderScreen(
     val selectedItems = quantities.filterValues { it > 0 }
     val totalQuantity = selectedItems.values.sum()
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-    ) {
-        Text("Reserve Your Order", style = MaterialTheme.typography.headlineSmall)
-
-        Text("What would you like?", style = MaterialTheme.typography.titleSmall)
-        if (products.isEmpty()) {
-            Text("No products available for preorder right now.", color = MaterialTheme.colorScheme.onSurfaceVariant)
-        }
-        products.forEach { product ->
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-                Column {
-                    Text(product.name)
-                    product.price?.let {
-                        Text("$%.2f".format(it), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+    BrandedScaffold(onBack = onDone) {
+        CardSection(title = "Reserve Your Order", eyebrow = "What would you like?", index = 0) {
+            if (products.isEmpty()) {
+                Text("No products available for preorder right now.", color = MaterialTheme.colorScheme.onSurfaceVariant)
+            }
+            products.forEach { product ->
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+                    Column {
+                        Text(product.name)
+                        product.price?.let {
+                            Text("$%.2f".format(it), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        }
                     }
-                }
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    IconButton(onClick = {
-                        val current = quantities[product.id] ?: 0
-                        quantities[product.id] = (current - 1).coerceAtLeast(0)
-                    }) { Icon(Icons.Filled.Remove, contentDescription = "Decrease") }
-                    Text("${quantities[product.id] ?: 0}", modifier = Modifier.padding(horizontal = 8.dp))
-                    IconButton(onClick = {
-                        val current = quantities[product.id] ?: 0
-                        quantities[product.id] = (current + 1).coerceAtMost(99)
-                    }) { Icon(Icons.Filled.Add, contentDescription = "Increase") }
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        IconButton(onClick = {
+                            val current = quantities[product.id] ?: 0
+                            quantities[product.id] = (current - 1).coerceAtLeast(0)
+                        }) { Icon(Icons.Filled.Remove, contentDescription = "Decrease") }
+                        Text("${quantities[product.id] ?: 0}", modifier = Modifier.padding(horizontal = 8.dp))
+                        IconButton(onClick = {
+                            val current = quantities[product.id] ?: 0
+                            quantities[product.id] = (current + 1).coerceAtMost(99)
+                        }) { Icon(Icons.Filled.Add, contentDescription = "Increase") }
+                    }
                 }
             }
         }
 
-        Text("Your details", style = MaterialTheme.typography.titleSmall)
-        OutlinedTextField(value = name, onValueChange = { name = it }, label = { Text("Your name *") }, modifier = Modifier.fillMaxWidth())
-        OutlinedTextField(
-            value = phone,
-            onValueChange = { phone = it },
-            label = { Text("Phone number") },
-            keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = KeyboardType.Phone),
-            modifier = Modifier.fillMaxWidth(),
-        )
-        OutlinedTextField(
-            value = email,
-            onValueChange = { email = it },
-            label = { Text("Email address") },
-            keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = KeyboardType.Email),
-            modifier = Modifier.fillMaxWidth(),
-        )
-        OutlinedTextField(
-            value = notes,
-            onValueChange = { notes = it },
-            label = { Text("Any notes for your order? (optional)") },
-            modifier = Modifier.fillMaxWidth(),
-        )
+        CardSection(eyebrow = "Your details", index = 1) {
+            OutlinedTextField(value = name, onValueChange = { name = it }, label = { Text("Your name *") }, modifier = Modifier.fillMaxWidth())
+            OutlinedTextField(
+                value = phone,
+                onValueChange = { phone = it },
+                label = { Text("Phone number") },
+                keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = KeyboardType.Phone),
+                modifier = Modifier.fillMaxWidth(),
+            )
+            OutlinedTextField(
+                value = email,
+                onValueChange = { email = it },
+                label = { Text("Email address") },
+                keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = KeyboardType.Email),
+                modifier = Modifier.fillMaxWidth(),
+            )
+            OutlinedTextField(
+                value = notes,
+                onValueChange = { notes = it },
+                label = { Text("Any notes for your order? (optional)") },
+                modifier = Modifier.fillMaxWidth(),
+            )
+            error?.let { Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall) }
+        }
 
-        error?.let { Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall) }
-
-        Button(
+        BrandedCta(
+            text = "Reserve $totalQuantity item${if (totalQuantity == 1) "" else "s"}",
+            enabled = !submitting && selectedItems.isNotEmpty() && name.trim().isNotEmpty(),
+            loading = submitting,
             onClick = {
                 error = null
                 if (phone.isEmpty() && email.isEmpty()) {
                     error = "Enter a phone number or email so we can confirm your order."
-                    return@Button
+                    return@BrandedCta
                 }
                 Phone.error(phone)?.let {
                     error = it
-                    return@Button
+                    return@BrandedCta
                 }
                 Email.error(email)?.let {
                     error = it
-                    return@Button
+                    return@BrandedCta
                 }
                 if (selectedItems.isEmpty()) {
                     error = "Select at least one product."
-                    return@Button
+                    return@BrandedCta
                 }
                 submitting = true
                 scope.launch {
@@ -167,14 +159,6 @@ fun PreorderScreen(
                     submitting = false
                 }
             },
-            enabled = !submitting && selectedItems.isNotEmpty() && name.trim().isNotEmpty(),
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            if (submitting) {
-                CircularProgressIndicator(modifier = Modifier.padding(2.dp))
-            } else {
-                Text("Reserve $totalQuantity item${if (totalQuantity == 1) "" else "s"}")
-            }
-        }
+        )
     }
 }

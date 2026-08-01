@@ -3,6 +3,9 @@ import SwiftUI
 struct PreorderView: View {
     let businessName: String
     let products: [Product]
+    var primaryColor: Color = Color(hex: nil)
+    var fontDesign: Font.Design = .default
+    var branding: ClientBranding? = nil
 
     @State private var quantities: [String: Int] = [:]
     @State private var name = ""
@@ -22,86 +25,85 @@ struct PreorderView: View {
     }
 
     var body: some View {
-        Group {
+        BrandedScreen(businessName: businessName, branding: branding, primaryColor: primaryColor) {
             if done {
-                ConfirmationView(
+                BrandedSuccessView(
+                    businessName: businessName,
+                    branding: branding,
                     title: "Preorder confirmed!",
                     message: "\(businessName) has your reservation. You'll receive a confirmation shortly."
                 )
             } else {
-                form
+                formCards
             }
         }
         .navigationTitle("Reserve Your Order")
         .navigationBarTitleDisplayMode(.inline)
+        .tint(primaryColor)
+        .brandedFontDesign(fontDesign)
     }
 
-    private var form: some View {
-        Form {
-            Section("What would you like?") {
-                if products.isEmpty {
-                    Text("No products available for preorder right now.")
-                        .foregroundStyle(.secondary)
-                }
-                ForEach(products) { product in
-                    HStack {
-                        VStack(alignment: .leading) {
-                            Text(product.name)
-                            if let price = product.price {
-                                Text(price, format: .currency(code: "CAD"))
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                            }
+    @ViewBuilder
+    private var formCards: some View {
+        CardSection(title: "What would you like?", index: 0) {
+            if products.isEmpty {
+                Text("No products available for preorder right now.")
+                    .foregroundStyle(.secondary)
+            }
+            ForEach(products) { product in
+                HStack {
+                    VStack(alignment: .leading) {
+                        Text(product.name)
+                        if let price = product.price {
+                            Text(price, format: .currency(code: "CAD"))
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
                         }
-                        Spacer()
-                        Stepper(
-                            "\(quantities[product.id, default: 0])",
-                            value: Binding(
-                                get: { quantities[product.id, default: 0] },
-                                set: { quantities[product.id] = max(0, $0) }
-                            ),
-                            in: 0...99
-                        )
-                        .fixedSize()
                     }
+                    Spacer()
+                    Stepper(
+                        "\(quantities[product.id, default: 0])",
+                        value: Binding(
+                            get: { quantities[product.id, default: 0] },
+                            set: { quantities[product.id] = max(0, $0) }
+                        ),
+                        in: 0...99
+                    )
+                    .fixedSize()
                 }
             }
+        }
 
-            Section("Your details") {
-                TextField("Your name *", text: $name)
-                    .textContentType(.name)
-                TextField("Phone number", text: $phone)
-                    .keyboardType(.phonePad)
-                TextField("Email address", text: $email)
-                    .keyboardType(.emailAddress)
-                    .textInputAutocapitalization(.never)
-                    .autocorrectionDisabled()
-                TextField("Any notes for your order? (optional)", text: $notes, axis: .vertical)
-                    .lineLimit(2...4)
-            }
+        CardSection(title: "Your details", index: 1) {
+            TextField("Your name *", text: $name)
+                .textContentType(.name)
+                .brandedField()
+            TextField("Phone number", text: $phone)
+                .keyboardType(.phonePad)
+                .brandedField()
+            TextField("Email address", text: $email)
+                .keyboardType(.emailAddress)
+                .textInputAutocapitalization(.never)
+                .autocorrectionDisabled()
+                .brandedField()
+            TextField("Any notes for your order? (optional)", text: $notes, axis: .vertical)
+                .lineLimit(2...4)
+                .brandedField()
+        }
 
-            if let error {
-                Section {
-                    Text(error).foregroundStyle(.red).font(.footnote)
-                }
-            }
+        if let error {
+            Text(error)
+                .foregroundStyle(.red)
+                .font(.footnote)
+                .frame(maxWidth: .infinity, alignment: .leading)
+        }
 
-            Section {
-                Button {
-                    Task { await submit() }
-                } label: {
-                    HStack {
-                        Spacer()
-                        if submitting {
-                            ProgressView()
-                        } else {
-                            Text("Reserve \(totalQuantity) item\(totalQuantity == 1 ? "" : "s")").bold()
-                        }
-                        Spacer()
-                    }
-                }
-                .disabled(submitting || selectedItems.isEmpty || name.trimmingCharacters(in: .whitespaces).isEmpty)
-            }
+        BrandedSubmitButton(
+            title: "Reserve \(totalQuantity) item\(totalQuantity == 1 ? "" : "s")",
+            loading: submitting,
+            disabled: submitting || selectedItems.isEmpty || name.trimmingCharacters(in: .whitespaces).isEmpty
+        ) {
+            Task { await submit() }
         }
     }
 

@@ -58,6 +58,9 @@ struct QuoteView: View {
     let showPhotoUpload: Bool
     let showVehicleFields: Bool
     let showPropertyFields: Bool
+    var primaryColor: Color = Color(hex: nil)
+    var fontDesign: Font.Design = .default
+    var branding: ClientBranding? = nil
 
     @State private var name = ""
     @State private var phone = ""
@@ -114,18 +117,22 @@ struct QuoteView: View {
     }()
 
     var body: some View {
-        Group {
+        BrandedScreen(businessName: businessName, branding: branding, primaryColor: primaryColor) {
             if done {
-                ConfirmationView(
+                BrandedSuccessView(
+                    businessName: businessName,
+                    branding: branding,
                     title: "Quote request sent!",
                     message: "\(businessName) will get back to you shortly with a quote."
                 )
             } else {
-                form
+                formCards
             }
         }
         .navigationTitle("Get a Quote")
         .navigationBarTitleDisplayMode(.inline)
+        .tint(primaryColor)
+        .brandedFontDesign(fontDesign)
         .task {
             if showVehicleFields {
                 await loadVehicleMakes()
@@ -133,194 +140,207 @@ struct QuoteView: View {
         }
     }
 
-    private var form: some View {
-        Form {
-            Section("Your details") {
-                TextField("Your name *", text: $name)
-                    .textContentType(.name)
-                TextField("Phone number", text: $phone)
-                    .keyboardType(.phonePad)
-                TextField("Email address", text: $email)
-                    .keyboardType(.emailAddress)
-                    .textInputAutocapitalization(.never)
+    @ViewBuilder
+    private var formCards: some View {
+        CardSection(title: "Your details", index: 0) {
+            TextField("Your name *", text: $name)
+                .textContentType(.name)
+                .brandedField()
+            TextField("Phone number", text: $phone)
+                .keyboardType(.phonePad)
+                .brandedField()
+            TextField("Email address", text: $email)
+                .keyboardType(.emailAddress)
+                .textInputAutocapitalization(.never)
+                .autocorrectionDisabled()
+                .brandedField()
+        }
+
+        CardSection(title: "The job", index: 1) {
+            TextField("Service needed (optional)", text: $serviceCategory)
+                .brandedField()
+            TextField("Job location (optional)", text: $jobLocation)
+                .brandedField()
+            TextField("Describe what you need (optional)", text: $description, axis: .vertical)
+                .lineLimit(2...4)
+                .brandedField()
+            Picker("Urgency", selection: $urgency) {
+                ForEach(Urgency.allCases) { option in
+                    Text(option.label).tag(option)
+                }
+            }
+            .pickerStyle(.segmented)
+
+            Toggle("I have a preferred date", isOn: $hasPreferredDate)
+            if hasPreferredDate {
+                DatePicker("Preferred date", selection: $preferredDate, displayedComponents: .date)
+            }
+
+            if showPhotoUpload {
+                PhotosPicker(selection: $photoSelections, maxSelectionCount: 5, matching: .images) {
+                    Text("Add Photos (\(photos.count)/5)")
+                }
+                .disabled(photos.count >= 5)
+                .onChange(of: photoSelections) { newSelections in
+                    Task { await addPhotos(newSelections) }
+                }
+
+                if !photos.isEmpty {
+                    ScrollView(.horizontal) {
+                        HStack(spacing: 8) {
+                            ForEach(photos) { photo in
+                                photoThumbnail(photo)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if showVehicleFields {
+            CardSection(title: "Vehicle (optional)", index: 2) {
+                Picker("Make", selection: $selectedMake) {
+                    ForEach(vehicleMakes, id: \.self) { make in
+                        Text(make).tag(make)
+                    }
+                    Text("Other").tag(otherOption)
+                }
+                .pickerStyle(.menu)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .onChange(of: selectedMake) { newMake in
+                    selectedModel = otherOption
+                    vehicleModelOther = ""
+                    vehicleModels = []
+                    if newMake != otherOption {
+                        Task { await loadVehicleModels(for: newMake) }
+                    }
+                }
+                if selectedMake == otherOption {
+                    TextField("Make", text: $vehicleMakeOther).brandedField()
+                }
+
+                Picker("Model", selection: $selectedModel) {
+                    ForEach(vehicleModels, id: \.self) { model in
+                        Text(model).tag(model)
+                    }
+                    Text("Other").tag(otherOption)
+                }
+                .pickerStyle(.menu)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                if selectedModel == otherOption {
+                    TextField("Model", text: $vehicleModelOther).brandedField()
+                }
+
+                Picker("Color", selection: $selectedColor) {
+                    ForEach(vehicleColors, id: \.self) { color in
+                        Text(color).tag(color)
+                    }
+                }
+                .pickerStyle(.menu)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                if selectedColor == otherOption {
+                    TextField("Color", text: $vehicleColorOther).brandedField()
+                }
+
+                TextField("Year", text: $vehicleYear)
+                    .keyboardType(.numberPad)
+                    .brandedField()
+                TextField("License plate", text: $vehiclePlate)
+                    .brandedField()
+                TextField("VIN", text: $vehicleVin)
+                    .textInputAutocapitalization(.characters)
                     .autocorrectionDisabled()
-            }
-
-            Section("The job") {
-                TextField("Service needed (optional)", text: $serviceCategory)
-                TextField("Job location (optional)", text: $jobLocation)
-                TextField("Describe what you need (optional)", text: $description, axis: .vertical)
+                    .brandedField()
+                TextField("Mileage/hours", text: $vehicleMileage)
+                    .keyboardType(.numberPad)
+                    .brandedField()
+                TextField("Issue notes", text: $vehicleNotes, axis: .vertical)
                     .lineLimit(2...4)
-                Picker("Urgency", selection: $urgency) {
-                    ForEach(Urgency.allCases) { option in
-                        Text(option.label).tag(option)
-                    }
-                }
-                .pickerStyle(.segmented)
+                    .brandedField()
+            }
+        }
 
-                Toggle("I have a preferred date", isOn: $hasPreferredDate)
-                if hasPreferredDate {
-                    DatePicker("Preferred date", selection: $preferredDate, displayedComponents: .date)
-                }
-
-                if showPhotoUpload {
-                    PhotosPicker(selection: $photoSelections, maxSelectionCount: 5, matching: .images) {
-                        Text("Add Photos (\(photos.count)/5)")
-                    }
-                    .disabled(photos.count >= 5)
-                    .onChange(of: photoSelections) { newSelections in
-                        Task { await addPhotos(newSelections) }
-                    }
-
-                    if !photos.isEmpty {
-                        ScrollView(.horizontal) {
-                            HStack(spacing: 8) {
-                                ForEach(photos) { photo in
-                                    photoThumbnail(photo)
-                                }
-                            }
+        if showPropertyFields {
+            CardSection(title: "Property (optional)", index: 3) {
+                TextField("Address", text: $propertyAddress)
+                    .brandedField()
+                    .onChange(of: propertyAddress) { newValue in
+                        if suppressNextAddressSearch {
+                            suppressNextAddressSearch = false
+                            return
+                        }
+                        addressVerified = false
+                        addressPlaceId = nil
+                        addressSearchTask?.cancel()
+                        let trimmed = newValue.trimmingCharacters(in: .whitespaces)
+                        guard trimmed.count >= 3 else {
+                            addressSuggestions = []
+                            return
+                        }
+                        addressSearchTask = Task {
+                            try? await Task.sleep(nanoseconds: 400_000_000)
+                            guard !Task.isCancelled else { return }
+                            await fetchAddressSuggestions(newValue)
                         }
                     }
+                ForEach(addressSuggestions) { suggestion in
+                    Button {
+                        Task { await selectAddressSuggestion(suggestion) }
+                    } label: {
+                        Text(suggestion.description)
+                            .font(.footnote)
+                            .foregroundStyle(.primary)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                }
+                TextField("Gate code", text: $propertyGateCode).brandedField()
+                TextField("Parking instructions", text: $propertyParkingInstructions).brandedField()
+                TextField("Pets on site", text: $propertyPetsOnSite).brandedField()
+                TextField("Access notes", text: $propertyAccessNotes, axis: .vertical)
+                    .lineLimit(2...4)
+                    .brandedField()
+                TextField("Preferred service day", text: $propertyPreferredServiceDay).brandedField()
+                TextField("Lawn size", text: $propertyLawnSize).brandedField()
+                TextField("Snow removal areas", text: $propertySnowRemovalAreas).brandedField()
+                TextField("Cleaning instructions", text: $propertyCleaningInstructions, axis: .vertical)
+                    .lineLimit(2...4)
+                    .brandedField()
+                TextField("Safety notes", text: $propertySafetyNotes, axis: .vertical)
+                    .lineLimit(2...4)
+                    .brandedField()
+            }
+        }
+
+        CardSection(title: "How should we reach you?", index: 4) {
+            Picker("Preferred contact method", selection: $preferredContact) {
+                ForEach(PreferredContact.allCases) { option in
+                    Text(option.label).tag(option)
                 }
             }
+            .pickerStyle(.segmented)
+        }
 
-            if showVehicleFields {
-                Section("Vehicle (optional)") {
-                    Picker("Make", selection: $selectedMake) {
-                        ForEach(vehicleMakes, id: \.self) { make in
-                            Text(make).tag(make)
-                        }
-                        Text("Other").tag(otherOption)
-                    }
-                    .onChange(of: selectedMake) { newMake in
-                        selectedModel = otherOption
-                        vehicleModelOther = ""
-                        vehicleModels = []
-                        if newMake != otherOption {
-                            Task { await loadVehicleModels(for: newMake) }
-                        }
-                    }
-                    if selectedMake == otherOption {
-                        TextField("Make", text: $vehicleMakeOther)
-                    }
+        CardSection(index: 5) {
+            Text(Self.consentText)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            Toggle("Yes, send me text message updates", isOn: $smsConsent)
+            Toggle("Yes, send me email updates", isOn: $emailConsent)
+        }
 
-                    Picker("Model", selection: $selectedModel) {
-                        ForEach(vehicleModels, id: \.self) { model in
-                            Text(model).tag(model)
-                        }
-                        Text("Other").tag(otherOption)
-                    }
-                    if selectedModel == otherOption {
-                        TextField("Model", text: $vehicleModelOther)
-                    }
+        if let error {
+            Text(error)
+                .foregroundStyle(.red)
+                .font(.footnote)
+                .frame(maxWidth: .infinity, alignment: .leading)
+        }
 
-                    Picker("Color", selection: $selectedColor) {
-                        ForEach(vehicleColors, id: \.self) { color in
-                            Text(color).tag(color)
-                        }
-                    }
-                    if selectedColor == otherOption {
-                        TextField("Color", text: $vehicleColorOther)
-                    }
-
-                    TextField("Year", text: $vehicleYear)
-                        .keyboardType(.numberPad)
-                    TextField("License plate", text: $vehiclePlate)
-                    TextField("VIN", text: $vehicleVin)
-                        .textInputAutocapitalization(.characters)
-                        .autocorrectionDisabled()
-                    TextField("Mileage/hours", text: $vehicleMileage)
-                        .keyboardType(.numberPad)
-                    TextField("Issue notes", text: $vehicleNotes, axis: .vertical)
-                        .lineLimit(2...4)
-                }
-            }
-
-            if showPropertyFields {
-                Section("Property (optional)") {
-                    TextField("Address", text: $propertyAddress)
-                        .onChange(of: propertyAddress) { newValue in
-                            if suppressNextAddressSearch {
-                                suppressNextAddressSearch = false
-                                return
-                            }
-                            addressVerified = false
-                            addressPlaceId = nil
-                            addressSearchTask?.cancel()
-                            let trimmed = newValue.trimmingCharacters(in: .whitespaces)
-                            guard trimmed.count >= 3 else {
-                                addressSuggestions = []
-                                return
-                            }
-                            addressSearchTask = Task {
-                                try? await Task.sleep(nanoseconds: 400_000_000)
-                                guard !Task.isCancelled else { return }
-                                await fetchAddressSuggestions(newValue)
-                            }
-                        }
-                    ForEach(addressSuggestions) { suggestion in
-                        Button {
-                            Task { await selectAddressSuggestion(suggestion) }
-                        } label: {
-                            Text(suggestion.description)
-                                .font(.footnote)
-                                .foregroundStyle(.primary)
-                        }
-                    }
-                    TextField("Gate code", text: $propertyGateCode)
-                    TextField("Parking instructions", text: $propertyParkingInstructions)
-                    TextField("Pets on site", text: $propertyPetsOnSite)
-                    TextField("Access notes", text: $propertyAccessNotes, axis: .vertical)
-                        .lineLimit(2...4)
-                    TextField("Preferred service day", text: $propertyPreferredServiceDay)
-                    TextField("Lawn size", text: $propertyLawnSize)
-                    TextField("Snow removal areas", text: $propertySnowRemovalAreas)
-                    TextField("Cleaning instructions", text: $propertyCleaningInstructions, axis: .vertical)
-                        .lineLimit(2...4)
-                    TextField("Safety notes", text: $propertySafetyNotes, axis: .vertical)
-                        .lineLimit(2...4)
-                }
-            }
-
-            Section("How should we reach you?") {
-                Picker("Preferred contact method", selection: $preferredContact) {
-                    ForEach(PreferredContact.allCases) { option in
-                        Text(option.label).tag(option)
-                    }
-                }
-                .pickerStyle(.segmented)
-            }
-
-            Section {
-                Text(Self.consentText)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                Toggle("Yes, send me text message updates", isOn: $smsConsent)
-                Toggle("Yes, send me email updates", isOn: $emailConsent)
-            }
-
-            if let error {
-                Section {
-                    Text(error).foregroundStyle(.red).font(.footnote)
-                }
-            }
-
-            Section {
-                Button {
-                    Task { await submit() }
-                } label: {
-                    HStack {
-                        Spacer()
-                        if submitting {
-                            ProgressView()
-                        } else {
-                            Text("Request Quote").bold()
-                        }
-                        Spacer()
-                    }
-                }
-                .disabled(submitting || name.trimmingCharacters(in: .whitespaces).isEmpty)
-            }
+        BrandedSubmitButton(
+            title: "Request Quote",
+            loading: submitting,
+            disabled: submitting || name.trimmingCharacters(in: .whitespaces).isEmpty
+        ) {
+            Task { await submit() }
         }
     }
 

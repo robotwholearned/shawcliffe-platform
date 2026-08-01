@@ -5,13 +5,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -132,80 +127,78 @@ fun DocumentChecklistScreen(onDone: () -> Unit) {
         filePickerLauncher.launch(arrayOf("image/*", "application/pdf"))
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-    ) {
-        Text("Documents", style = MaterialTheme.typography.headlineSmall)
-
+    BrandedScaffold(onBack = onDone) {
         if (loading) {
-            CircularProgressIndicator()
+            CardSection(title = "Documents", index = 0) {
+                CircularProgressIndicator()
+            }
         } else if (loadError != null) {
-            Text(loadError!!, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
+            CardSection(title = "Documents", index = 0) {
+                Text(loadError!!, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
+            }
         } else if (items.isEmpty()) {
-            Text("No checklist items yet.", color = MaterialTheme.colorScheme.onSurfaceVariant)
+            CardSection(title = "Documents", index = 0) {
+                Text("No checklist items yet.", color = MaterialTheme.colorScheme.onSurfaceVariant)
+            }
         } else {
-            OutlinedTextField(value = name, onValueChange = { name = it }, label = { Text("Your name *") }, modifier = Modifier.fillMaxWidth())
-            OutlinedTextField(
-                value = phone,
-                onValueChange = { phone = it },
-                label = { Text("Phone number") },
-                keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = KeyboardType.Phone),
-                modifier = Modifier.fillMaxWidth(),
-            )
-            OutlinedTextField(
-                value = email,
-                onValueChange = { email = it },
-                label = { Text("Email address") },
-                keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = KeyboardType.Email),
-                modifier = Modifier.fillMaxWidth(),
-            )
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Checkbox(checked = smsConsent, onCheckedChange = { smsConsent = it })
-                Text("Yes, send me text message updates")
+            CardSection(title = "Documents", eyebrow = "Your details", index = 0) {
+                OutlinedTextField(value = name, onValueChange = { name = it }, label = { Text("Your name *") }, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(
+                    value = phone,
+                    onValueChange = { phone = it },
+                    label = { Text("Phone number") },
+                    keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = KeyboardType.Phone),
+                    modifier = Modifier.fillMaxWidth(),
+                )
+                OutlinedTextField(
+                    value = email,
+                    onValueChange = { email = it },
+                    label = { Text("Email address") },
+                    keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = KeyboardType.Email),
+                    modifier = Modifier.fillMaxWidth(),
+                )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Checkbox(checked = smsConsent, onCheckedChange = { smsConsent = it })
+                    Text("Yes, send me text message updates")
+                }
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Checkbox(checked = emailConsent, onCheckedChange = { emailConsent = it })
+                    Text("Yes, send me email updates")
+                }
+                contactError?.let { Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall) }
             }
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Checkbox(checked = emailConsent, onCheckedChange = { emailConsent = it })
-                Text("Yes, send me email updates")
-            }
-            contactError?.let { Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall) }
 
-            items.forEach { item ->
-                Card(modifier = Modifier.fillMaxWidth()) {
-                    Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                            Text(item.title, style = MaterialTheme.typography.titleSmall)
-                            Text(
-                                if (item.required) "Required" else "Optional",
-                                style = MaterialTheme.typography.labelSmall,
-                                color = if (item.required) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                        }
-                        item.description?.takeIf { it.isNotEmpty() }?.let {
-                            Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                        }
-                        if (item.needsUpload) {
-                            when (val state = uploadStates[item.id]) {
-                                UploadState.Uploaded -> Text("Uploaded ✓", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary)
-                                UploadState.Uploading -> Row {
-                                    CircularProgressIndicator(modifier = Modifier.padding(end = 8.dp))
-                                    Text("Uploading…", style = MaterialTheme.typography.labelSmall)
-                                }
-                                is UploadState.Failed -> Column {
-                                    Text(state.message, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.labelSmall)
-                                    TextButton(onClick = { startUpload(item) }) { Text("Try Again") }
-                                }
-                                else -> TextButton(onClick = { startUpload(item) }) { Text("Upload") }
+            items.forEachIndexed { index, item ->
+                CardSection(eyebrow = "Checklist", index = index + 1) {
+                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                        Text(item.title, style = MaterialTheme.typography.titleSmall)
+                        Text(
+                            if (item.required) "Required" else "Optional",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = if (item.required) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                    item.description?.takeIf { it.isNotEmpty() }?.let {
+                        Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
+                    if (item.needsUpload) {
+                        when (val state = uploadStates[item.id]) {
+                            UploadState.Uploaded -> Text("Uploaded ✓", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary)
+                            UploadState.Uploading -> Row {
+                                CircularProgressIndicator(modifier = Modifier.padding(end = 8.dp))
+                                Text("Uploading…", style = MaterialTheme.typography.labelSmall)
                             }
+                            is UploadState.Failed -> Column {
+                                Text(state.message, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.labelSmall)
+                                TextButton(onClick = { startUpload(item) }) { Text("Try Again") }
+                            }
+                            else -> TextButton(onClick = { startUpload(item) }) { Text("Upload") }
                         }
                     }
                 }
             }
         }
 
-        Button(onClick = onDone, modifier = Modifier.fillMaxWidth()) { Text("Done") }
+        BrandedCta(text = "Done", onClick = onDone)
     }
 }
