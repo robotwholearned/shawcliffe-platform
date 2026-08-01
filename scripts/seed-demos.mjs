@@ -16,7 +16,7 @@ import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
 import {
   CLIENTS, DEFAULT_COMPONENTS, BUCKET, CONSENT_VERSION, CONSENT_IP_HASH,
-  uid, clientId, imageUrl,
+  uid, clientId, imageUrl, HERO_PHOTOS,
 } from './demo-data.mjs'
 
 const HERE = dirname(fileURLToPath(import.meta.url))
@@ -76,7 +76,12 @@ function materialize(client, url, ctx) {
   })
 
   const b = client.branding
-  const heroUrl = imageUrl(url, client.slug, 'hero', 0)
+  // Real curated photo (uploaded by seed-demo-heroes.mjs) if this client has
+  // one, else the generated SVG placeholder — keeps a full reseed from
+  // reverting hero_photo_urls back to the placeholder (see HERO_PHOTOS).
+  const heroUrl = HERO_PHOTOS[client.slug]
+    ? imageUrl(url, client.slug, 'hero', 0, 'jpg')
+    : imageUrl(url, client.slug, 'hero', 0)
   push('client_branding', {
     client_id: cid, primary_color: b.primary_color, secondary_color: b.secondary_color,
     accent_color: b.accent_color, font_theme: b.font_theme,

@@ -12,7 +12,8 @@
 //
 // Images are brand-coloured SVG placeholders generated + uploaded to the public
 // Storage bucket `demo-assets` by the seeder (zero network dependency, always
-// deterministic). Swap in real photos by overwriting the same storage paths.
+// deterministic). Hero images are upgraded to real curated photos — see
+// HERO_PHOTOS below and scripts/seed-demo-heroes.mjs. Logos/products stay SVG.
 
 // ─── UUID + image helpers (deterministic) ────────────────────────────────────
 
@@ -36,11 +37,34 @@ export function clientId(clientIdx) {
 }
 
 // Public Storage URL for a generated image. `base` is NEXT_PUBLIC_SUPABASE_URL.
-export function imageUrl(base, slug, kind, n = 0) {
-  return `${base.replace(/\/$/, '')}/storage/v1/object/public/demo-assets/${slug}/${kind}-${n}.svg`
+export function imageUrl(base, slug, kind, n = 0, ext = 'svg') {
+  return `${base.replace(/\/$/, '')}/storage/v1/object/public/demo-assets/${slug}/${kind}-${n}.${ext}`
 }
 
 export const BUCKET = 'demo-assets'
+
+// Curated real hero photos (Unsplash direct CDN links, free license), one per
+// client — swapped in for the generated SVG hero placeholder for visual polish.
+// Downloaded + uploaded to `${slug}/hero-0.jpg` in Storage by
+// scripts/seed-demo-heroes.mjs; seed-demos.mjs's materialize() points
+// client_branding.hero_photo_urls at that jpg whenever a client has an entry
+// here, so a fresh full reseed keeps the real photo instead of reverting to the
+// SVG (single source of truth — no drift). A client with no entry (or whose
+// download fails) simply keeps the SVG placeholder.
+export const HERO_PHOTOS = {
+  'demo-salon': 'https://images.unsplash.com/photo-1562322140-8baeececf3df?w=1600&q=80&auto=format&fit=crop',
+  'demo-trades': 'https://images.unsplash.com/photo-1676210133055-eab6ef033ce3?w=1600&q=80&auto=format&fit=crop',
+  'demo-maker': 'https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=1600&q=80&auto=format&fit=crop',
+  'demo-popup': 'https://images.unsplash.com/photo-1519378058457-4c29a0a2efac?w=1600&q=80&auto=format&fit=crop',
+  'demo-pet': 'https://images.unsplash.com/photo-1591946614720-90a587da4a36?w=1600&q=80&auto=format&fit=crop',
+  'demo-vehicle': 'https://images.unsplash.com/photo-1601362840469-51e4d8d58785?w=1600&q=80&auto=format&fit=crop',
+  'demo-creative': 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=1600&q=80&auto=format&fit=crop',
+  'demo-education': 'https://images.unsplash.com/photo-1465847899084-d164df4dedc6?w=1600&q=80&auto=format&fit=crop',
+  'demo-health': 'https://images.unsplash.com/photo-1600334129128-685c5582fd35?w=1600&q=80&auto=format&fit=crop',
+  'demo-retail': 'https://images.unsplash.com/photo-1567016432779-094069958ea5?w=1600&q=80&auto=format&fit=crop',
+  'demo-pro': 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=1600&q=80&auto=format&fit=crop',
+  'demo-property': 'https://images.unsplash.com/photo-1779636489740-6077a4198be6?w=1600&q=80&auto=format&fit=crop',
+}
 
 // Synthetic consent values (documented: not real user consent).
 export const CONSENT_VERSION = 'demo-consent-v1'
