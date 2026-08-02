@@ -153,11 +153,20 @@ node scripts/gen-ios-demo-list.mjs   # writes ShawcliffeCustomer/DemoClients.gen
 1. **Create the App Store Connect app record** for bundle id `ca.shawcliffe.demo`
    (App Store Connect → Apps → +, pick the `ca.shawcliffe.demo` identifier;
    register the App ID in the Developer portal first if it doesn't exist).
-2. **Sign in with the Apple account for signing + upload** — either add the
-   Apple ID in **Xcode → Settings → Accounts** (team `M5SD2YQ3QM`), or, for CI,
-   generate an **App Store Connect API key** and point Fastlane at it
-   (`api_key`/`APP_STORE_CONNECT_API_KEY`). The `demo_testflight` lane uses
-   automatic signing (`CODE_SIGN_STYLE=Automatic`, `DEVELOPMENT_TEAM=M5SD2YQ3QM`).
+2. **Give Fastlane an App Store Connect API key** (used for both signing and
+   upload; the `demo_testflight` lane reads it via `app_store_connect_api_key`).
+   In App Store Connect → **Users and Access → Integrations → App Store Connect
+   API**, create a key (Admin or App Manager role) and note its **Key ID** and
+   the page's **Issuer ID**; download the **`AuthKey_<KeyID>.p8`** (one-time).
+   Then, in `platform/ios-customer/`:
+   ```bash
+   cp fastlane/.env.example fastlane/.env       # .env is gitignored
+   # put the .p8 next to it, e.g. fastlane/AuthKey_2X9R4HXF34.p8
+   # edit fastlane/.env → ASC_KEY_ID, ASC_ISSUER_ID, ASC_KEY_FILEPATH
+   ```
+   `.env` and `*.p8` are gitignored — the key never gets committed. The lane uses
+   automatic signing (`CODE_SIGN_STYLE=Automatic`, `DEVELOPMENT_TEAM=M5SD2YQ3QM`),
+   and the API key lets it create/download the distribution profile headlessly.
 
 ### Build + upload
 

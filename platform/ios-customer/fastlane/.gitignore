@@ -1,0 +1,8 @@
+# Secrets — never commit
+.env
+*.p8
+
+# fastlane run artifacts
+report.xml
+Preview.html
+test_output/

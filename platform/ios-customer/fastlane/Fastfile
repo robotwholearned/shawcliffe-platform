@@ -59,13 +59,24 @@ platform :ios do
        "credentials for signing + upload (Xcode Accounts, or an App Store " \
        "Connect API key for CI). Does NOT affect Tom's or the per-client builds."
   lane :demo_testflight do
+    # App Store Connect API key from env (see fastlane/.env, gitignored).
+    # Fastlane auto-loads fastlane/.env; copy fastlane/.env.example to set these.
+    key = app_store_connect_api_key(
+      key_id: ENV.fetch("ASC_KEY_ID"),
+      issuer_id: ENV.fetch("ASC_ISSUER_ID"),
+      key_filepath: ENV.fetch("ASC_KEY_FILEPATH"),
+      duration: 1200,
+      in_house: false,
+    )
     build_app(
       project: "ShawcliffeCustomer.xcodeproj",
       scheme: "ShawcliffeCustomer",
       export_method: "app-store",
       output_name: "shawcliffe-demos.ipa",
+      # api_key lets gym do automatic signing headlessly (-allowProvisioningUpdates).
+      api_key: key,
       xcargs: "CLIENT_BUNDLE_ID=ca.shawcliffe.demo CLIENT_APP_NAME='Shawcliffe Demos' DEMO_MODE=YES DEVELOPMENT_TEAM=M5SD2YQ3QM CODE_SIGN_STYLE=Automatic"
     )
-    upload_to_testflight(skip_waiting_for_build_processing: true)
+    upload_to_testflight(api_key: key, skip_waiting_for_build_processing: true)
   end
 end
