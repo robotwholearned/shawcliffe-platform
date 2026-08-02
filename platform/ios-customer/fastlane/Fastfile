@@ -51,4 +51,21 @@ platform :ios do
       xcargs: settings.map { |k, v| "#{k}=#{v.shellescape}" }.join(" ")
     )
   end
+
+  desc "Build + upload the single 'Shawcliffe Demos' app to TestFlight (bundle " \
+       "id ca.shawcliffe.demo, DEMO_MODE=YES → in-app picker of all demo " \
+       "businesses). Prerequisites (see platform/supabase/seed/README-demos.md): " \
+       "an App Store Connect app record for ca.shawcliffe.demo, and Apple " \
+       "credentials for signing + upload (Xcode Accounts, or an App Store " \
+       "Connect API key for CI). Does NOT affect Tom's or the per-client builds."
+  lane :demo_testflight do
+    build_app(
+      project: "ShawcliffeCustomer.xcodeproj",
+      scheme: "ShawcliffeCustomer",
+      export_method: "app-store",
+      output_name: "shawcliffe-demos.ipa",
+      xcargs: "CLIENT_BUNDLE_ID=ca.shawcliffe.demo CLIENT_APP_NAME='Shawcliffe Demos' DEMO_MODE=YES DEVELOPMENT_TEAM=M5SD2YQ3QM CODE_SIGN_STYLE=Automatic"
+    )
+    upload_to_testflight(skip_waiting_for_build_processing: true)
+  end
 end

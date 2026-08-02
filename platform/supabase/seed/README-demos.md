@@ -126,6 +126,53 @@ bundle exec fastlane build_simulator client_id:d0d00000-0000-0000-0000-000000000
   slug:demo-salon bundle_id:com.shawcliffe.demo.salon app_name:"Fern & Fox Hair Studio"
 ```
 
+## TestFlight (sales team demo app)
+
+For putting the demos on a real device via TestFlight, there's **one app, not
+twelve**: a single "Shawcliffe Demos" build (bundle id **`ca.shawcliffe.demo`**)
+that ships with `DEMO_MODE=YES`. On launch it shows an **in-app picker of all 12
+demo businesses** — tap one to open that storefront, tap back ("‹ Shawcliffe
+Demos") to switch to another, anytime. No per-client builds, one TestFlight
+upload for the whole sales team.
+
+`DEMO_MODE` is a build setting that defaults to **`NO`** in both Debug and
+Release, so **every other build is completely unchanged**: Tom's Produce, the 12
+per-client `demo-*` schemes, and the raw `xcodebuild` commands above all still
+produce single-client apps. Only the `demo_testflight` lane (and the "Shawcliffe
+Demos" Xcode scheme, for running the picker locally) turn it on.
+
+The client list the picker shows is generated from `demo-data.mjs`. Regenerate +
+commit it after changing the clients:
+
+```bash
+node scripts/gen-ios-demo-list.mjs   # writes ShawcliffeCustomer/DemoClients.generated.swift
+```
+
+### Prerequisites (one-time, done by you — needs the Apple account)
+
+1. **Create the App Store Connect app record** for bundle id `ca.shawcliffe.demo`
+   (App Store Connect → Apps → +, pick the `ca.shawcliffe.demo` identifier;
+   register the App ID in the Developer portal first if it doesn't exist).
+2. **Sign in with the Apple account for signing + upload** — either add the
+   Apple ID in **Xcode → Settings → Accounts** (team `M5SD2YQ3QM`), or, for CI,
+   generate an **App Store Connect API key** and point Fastlane at it
+   (`api_key`/`APP_STORE_CONNECT_API_KEY`). The `demo_testflight` lane uses
+   automatic signing (`CODE_SIGN_STYLE=Automatic`, `DEVELOPMENT_TEAM=M5SD2YQ3QM`).
+
+### Build + upload
+
+```bash
+cd platform/ios-customer
+bundle install                       # first time only, installs fastlane
+bundle exec fastlane demo_testflight
+```
+
+That archives with `CLIENT_BUNDLE_ID=ca.shawcliffe.demo`,
+`CLIENT_APP_NAME='Shawcliffe Demos'`, `DEMO_MODE=YES`, then
+`upload_to_testflight` (skips waiting for processing). Signing and the upload
+need your Apple credentials from the prerequisites above; the lane will fail at
+the signing/upload step without them.
+
 ### Android (`platform/android-customer/`)
 
 Verified command (Gradle properties feed `BuildConfig` / `applicationId` /
