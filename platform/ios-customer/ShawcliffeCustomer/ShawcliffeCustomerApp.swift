@@ -6,8 +6,14 @@ struct ShawcliffeCustomerApp: App {
 
     var body: some Scene {
         WindowGroup {
-            NavigationStack {
-                StorefrontView()
+            Group {
+                if Config.isDemo {
+                    DemoPickerView()
+                } else {
+                    NavigationStack {
+                        StorefrontView()
+                    }
+                }
             }
             .task {
                 // Re-registers silently if already authorized; only prompts

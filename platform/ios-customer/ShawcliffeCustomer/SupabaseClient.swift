@@ -21,8 +21,30 @@ enum Config {
     // In DEBUG, a scheme's environment variables (Edit Scheme → Run → Arguments)
     // override them, so you can pick a demo client and hit ▶ without a per-client
     // build. Release builds ignore the env and use the baked-in Info.plist values.
-    static let clientId = debugOverride("CLIENT_ID") ?? Bundle.main.requiredInfoValue(for: "CLIENT_ID")
-    static let slug = debugOverride("CLIENT_SLUG") ?? Bundle.main.requiredInfoValue(for: "CLIENT_SLUG")
+    // ponytail: demo-only mutable globals. `var` (not `let`) so the demo picker
+    // can switch clients at runtime; production builds set them once at launch
+    // from the baked-in Info.plist values and never touch them again.
+    static var clientId = debugOverride("CLIENT_ID") ?? Bundle.main.requiredInfoValue(for: "CLIENT_ID")
+    static var slug = debugOverride("CLIENT_SLUG") ?? Bundle.main.requiredInfoValue(for: "CLIENT_SLUG")
+
+    // Demo mode shows an in-app picker of all demo businesses instead of a single
+    // baked-in storefront. DEBUG env `DEMO_MODE` (truthy) or the Info.plist
+    // DEMO_MODE key == "YES" (set via the $(DEMO_MODE) build setting, YES only in
+    // the TestFlight demo archive). Off → unchanged single-client behaviour.
+    static var isDemo: Bool = {
+        if let env = debugOverride("DEMO_MODE"),
+           ["1", "yes", "true"].contains(env.lowercased()) {
+            return true
+        }
+        return (Bundle.main.object(forInfoDictionaryKey: "DEMO_MODE") as? String) == "YES"
+    }()
+
+    /// Demo picker taps this to switch the active client. Call on the main thread.
+    // ponytail: mutates the globals above — fine, demo-only, single-user device.
+    static func selectDemoClient(id: String, slug: String) {
+        clientId = id
+        self.slug = slug
+    }
 
     private static func debugOverride(_ key: String) -> String? {
         #if DEBUG

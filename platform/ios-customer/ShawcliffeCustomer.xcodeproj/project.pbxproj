@@ -27,6 +27,8 @@
 		C3027874C4D5E9FEE0736111 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6A517702394EA89A4AADE5C /* AppDelegate.swift */; };
 		C7CE25710A72DDFBC8C52F21 /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = 01ED7D37E3074DDF379AC302 /* Supabase */; };
 		CE7D2432FDCAE7C95E70D7F5 /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F4CE782D6DED35466B90BEF /* APIClient.swift */; };
+		AAAA1111BBBB2222CCCC3334 /* DemoPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA1111BBBB2222CCCC3333 /* DemoPickerView.swift */; };
+		DDDD4444EEEE5555FFFF6667 /* DemoClients.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDDD4444EEEE5555FFFF6666 /* DemoClients.generated.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -46,6 +48,8 @@
 		B99A3EC0F53C3829D02D9B14 /* Phone.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Phone.swift; sourceTree = "<group>"; };
 		C765B87171FF445E9712FFF2 /* Email.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Email.swift; sourceTree = "<group>"; };
 		C9A7C93AA3D2797F2FDD1BE2 /* Color+Hex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Hex.swift"; sourceTree = "<group>"; };
+		AAAA1111BBBB2222CCCC3333 /* DemoPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoPickerView.swift; sourceTree = "<group>"; };
+		DDDD4444EEEE5555FFFF6666 /* DemoClients.generated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoClients.generated.swift; sourceTree = "<group>"; };
 		D6206C85DB05724969F27DDD /* QuoteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuoteView.swift; sourceTree = "<group>"; };
 		E1602460658ABD7D4E8167DB /* ShawcliffeCustomer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ShawcliffeCustomer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E230998251C75F05B6FA8BA9 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -96,6 +100,8 @@
 				E230998251C75F05B6FA8BA9 /* Assets.xcassets */,
 				C9A7C93AA3D2797F2FDD1BE2 /* Color+Hex.swift */,
 				6663F8863021C904F7364F98 /* ComponentKeys.swift */,
+				DDDD4444EEEE5555FFFF6666 /* DemoClients.generated.swift */,
+				AAAA1111BBBB2222CCCC3333 /* DemoPickerView.swift */,
 				2430EB6AD23A15726F02C9D7 /* Info.plist */,
 				82E24AD0FF7B5F1020E953AE /* Models.swift */,
 				C765B87171FF445E9712FFF2 /* Email.swift */,
@@ -196,6 +202,8 @@
 			files = (
 				CE7D2432FDCAE7C95E70D7F5 /* APIClient.swift in Sources */,
 				C3027874C4D5E9FEE0736111 /* AppDelegate.swift in Sources */,
+				AAAA1111BBBB2222CCCC3334 /* DemoPickerView.swift in Sources */,
+				DDDD4444EEEE5555FFFF6667 /* DemoClients.generated.swift in Sources */,
 				5356625688F268E20658CAA3 /* BookingView.swift in Sources */,
 				9D0F48824D501333D8DE77E1 /* DocumentChecklistView.swift in Sources */,
 				9358440EF9E1089ADC5CA5D5 /* Color+Hex.swift in Sources */,
@@ -231,6 +239,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEMO_MODE = NO;
 				DEVELOPMENT_TEAM = M5SD2YQ3QM;
 				INFOPLIST_FILE = ShawcliffeCustomer/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -378,6 +387,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEMO_MODE = NO;
 				DEVELOPMENT_TEAM = M5SD2YQ3QM;
 				INFOPLIST_FILE = ShawcliffeCustomer/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (

@@ -24,6 +24,8 @@
 	<string>$(CLIENT_ID)</string>
 	<key>CLIENT_SLUG</key>
 	<string>$(CLIENT_SLUG)</string>
+	<key>DEMO_MODE</key>
+	<string>$(DEMO_MODE)</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
