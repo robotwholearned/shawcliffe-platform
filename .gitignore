@@ -7,3 +7,6 @@ platform/android-customer/.kotlin
 platform/ios-customer/ShawcliffeCustomer.xcodeproj/project.xcworkspace/xcuserdata
 platform/ios-seller/ShawcliffeSeller.xcodeproj/project.xcworkspace/xcuserdata
 **/xcuserdata/
+
+# Offline logo preview output (scripts/seed-demos.mjs --emit-logos)
+scripts/.logo-preview/

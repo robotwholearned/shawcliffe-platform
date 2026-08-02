@@ -24,6 +24,7 @@ const WEB_DIR = join(HERE, '..', 'platform', 'web')
 const SQL_OUT = join(HERE, '..', 'platform', 'supabase', 'seed', 'demo_clients.sql')
 
 const EMIT_SQL = process.argv.includes('--emit-sql')
+const EMIT_LOGOS = process.argv.includes('--emit-logos')
 
 // ─── env ─────────────────────────────────────────────────────────────────────
 
@@ -249,12 +250,56 @@ function productSvg(c, name, i) {
 </svg>`
 }
 
+// One emblem per vertical — a clean white glyph on the brand gradient. Drawn in
+// a local 0..100 box (translated to 78,78 = centre 128) so all 12 share a
+// consistent weight/position. Unknown verticals fall back to a monogram.
+function glyphFor(vertical, b) {
+  const accent = b.accent_color
+  const primary = b.primary_color
+  const stroke = 'fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"'
+  switch (vertical) {
+    case 'personal_care_appointment': // scissors
+      return `<g ${stroke}><circle cx="20" cy="26" r="11"/><circle cx="20" cy="74" r="11"/><line x1="29" y1="32" x2="84" y2="72"/><line x1="29" y1="68" x2="84" y2="28"/></g><circle cx="47" cy="50" r="4" fill="#fff"/>`
+    case 'home_service_trades': // water droplet
+      return `<path d="M50 12 C50 12 78 44 78 64 a28 28 0 0 1 -56 0 C22 44 50 12 50 12 Z" fill="#fff"/><path d="M38 62 a12 12 0 0 0 8 11" ${stroke} stroke-width="6" opacity="0.55"/>`
+    case 'food_producers_specialty_makers': // flame
+      return `<path d="M52 10 c10 16 20 24 20 42 a22 22 0 0 1 -44 0 c0 -11 6 -17 11 -23 c1 8 5 11 8 13 c-3 -13 2 -24 5 -32 Z" fill="#fff"/><path d="M50 84 a12 12 0 0 0 12 -18 c-3 8 -7 11 -12 12 c-5 -1 -9 -4 -12 -12 a12 12 0 0 0 12 18 Z" fill="${accent}"/>`
+    case 'mobile_popup_sellers': // flower
+      return `<g fill="#fff"><circle cx="50" cy="28" r="13"/><circle cx="28" cy="48" r="13"/><circle cx="72" cy="48" r="13"/><circle cx="38" cy="72" r="13"/><circle cx="62" cy="72" r="13"/></g><circle cx="50" cy="52" r="12" fill="${accent}"/>`
+    case 'pet_animal_services': // paw
+      return `<g fill="#fff"><ellipse cx="32" cy="42" rx="8" ry="11"/><ellipse cx="52" cy="32" rx="8" ry="12"/><ellipse cx="72" cy="42" rx="8" ry="11"/><path d="M52 50 c14 0 24 12 24 22 c0 10 -11 14 -24 14 c-13 0 -24 -4 -24 -14 c0 -10 10 -22 24 -22 Z"/></g>`
+    case 'vehicle_equipment_services': // car
+      return `<path d="M24 58 l7 -17 a9 9 0 0 1 8 -5 h22 a9 9 0 0 1 8 5 l7 17 Z" fill="#fff"/><rect x="18" y="56" width="64" height="16" rx="7" fill="#fff"/><circle cx="34" cy="76" r="8" fill="#fff"/><circle cx="66" cy="76" r="8" fill="#fff"/><circle cx="34" cy="76" r="3.6" fill="${primary}"/><circle cx="66" cy="76" r="3.6" fill="${primary}"/>`
+    case 'creative_event_services': // camera
+      return `<rect x="14" y="34" width="72" height="48" rx="11" fill="#fff"/><path d="M36 34 l6 -9 h16 l6 9 Z" fill="#fff"/><circle cx="50" cy="58" r="16" fill="${primary}"/><circle cx="50" cy="58" r="8" fill="#fff"/><circle cx="74" cy="45" r="3.4" fill="${primary}"/>`
+    case 'education_coaching_instruction': // music note
+      return `<g fill="#fff"><ellipse cx="38" cy="72" rx="14" ry="10"/><rect x="49" y="20" width="7" height="53"/><path d="M56 20 c13 3 19 11 19 22 c-4 -9 -11 -13 -19 -13 Z"/></g>`
+    case 'health_adjacent_professionals': // lotus
+      return `<g fill="#fff"><path d="M50 18 c9 13 9 33 0 48 c-9 -15 -9 -35 0 -48 Z"/><path d="M50 66 C36 60 24 46 22 30 c15 4 27 17 28 34 Z"/><path d="M50 66 C64 60 76 46 78 30 c-15 4 -27 17 -28 34 Z"/></g><path d="M26 62 c14 12 34 12 48 0" ${stroke} opacity="0.6"/>`
+    case 'local_retail_boutique': // shopping bag
+      return `<path d="M26 40 h48 l4 44 a6 6 0 0 1 -6 6 H28 a6 6 0 0 1 -6 -6 Z" fill="#fff"/><path d="M38 40 v-6 a12 12 0 0 1 24 0 v6" ${stroke}/>`
+    case 'professional_local_services': // bar chart
+      return `<g fill="#fff"><rect x="24" y="52" width="14" height="30" rx="3"/><rect x="43" y="38" width="14" height="44" rx="3"/><rect x="62" y="24" width="14" height="58" rx="3"/></g><line x1="20" y1="86" x2="82" y2="86" ${stroke} stroke-width="6"/>`
+    case 'home_property_maintenance': // grass blades
+      return `<g fill="#fff"><path d="M50 86 C34 74 26 58 24 40 c16 8 24 26 26 46 Z"/><path d="M50 86 C48 62 48 44 53 26 c6 18 4 40 -3 60 Z"/><path d="M50 86 C66 74 74 58 76 40 c-16 8 -24 26 -26 46 Z"/></g>`
+    default: { // monogram fallback
+      const mono = String(b.app_name || '').replace(/[^A-Za-z ]/g, '').split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]).join('').toUpperCase()
+      return `<text x="50" y="50" dy="0.35em" text-anchor="middle" font-family="Georgia, serif" font-size="52" fill="#fff">${xml(mono)}</text>`
+    }
+  }
+}
+
 function logoSvg(c) {
   const b = c.branding
-  const mono = c.business_name.replace(/[^A-Za-z ]/g, '').split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]).join('').toUpperCase()
   return `<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
-<rect width="256" height="256" rx="48" fill="${b.primary_color}"/>
-<text x="128" y="128" dy="0.36em" text-anchor="middle" font-family="Georgia, serif" font-size="120" fill="#ffffff">${xml(mono)}</text>
+<defs>
+<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${b.primary_color}"/><stop offset="1" stop-color="${b.secondary_color}"/></linearGradient>
+<radialGradient id="gl" cx="0.5" cy="0.4" r="0.65"><stop offset="0" stop-color="#ffffff" stop-opacity="0.20"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></radialGradient>
+</defs>
+<rect width="256" height="256" rx="56" fill="url(#bg)"/>
+<rect width="256" height="256" rx="56" fill="url(#gl)"/>
+<circle cx="128" cy="122" r="76" fill="${b.accent_color}" opacity="0.16"/>
+<g transform="translate(78,78)">${glyphFor(c.vertical, b)}</g>
 </svg>`
 }
 
@@ -374,7 +419,13 @@ async function apply(env) {
 // ─── main ────────────────────────────────────────────────────────────────────
 
 const env = loadEnv()
-if (EMIT_SQL) {
+if (EMIT_LOGOS) {
+  // Offline: write each client's logo SVG to ./scripts/.logo-preview/<slug>.svg
+  const dir = join(HERE, '.logo-preview')
+  mkdirSync(dir, { recursive: true })
+  for (const c of CLIENTS) writeFileSync(join(dir, `${c.slug}.svg`), logoSvg(c))
+  console.log(`Wrote ${CLIENTS.length} logo SVGs to ${dir}`)
+} else if (EMIT_SQL) {
   emitSql(env.NEXT_PUBLIC_SUPABASE_URL || 'https://YOUR-PROJECT.supabase.co')
 } else {
   apply(env).catch((e) => { console.error('SEED FAILED:', e.message); process.exit(1) })
