@@ -13,13 +13,13 @@
             buildForProfiling = "YES"
             buildForArchiving = "YES"
             buildForAnalyzing = "YES">
-      <BuildableReference
-         BuildableIdentifier = "primary"
-         BlueprintIdentifier = "C35CAAB37E8F37B569494FED"
-         BuildableName = "ShawcliffeCustomer.app"
-         BlueprintName = "ShawcliffeCustomer"
-         ReferencedContainer = "container:ShawcliffeCustomer.xcodeproj">
-      </BuildableReference>
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "C35CAAB37E8F37B569494FED"
+               BuildableName = "ShawcliffeCustomer.app"
+               BlueprintName = "ShawcliffeCustomer"
+               ReferencedContainer = "container:ShawcliffeCustomer.xcodeproj">
+            </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
@@ -42,17 +42,25 @@
       allowLocationSimulation = "YES">
       <BuildableProductRunnable
          runnableDebuggingMode = "0">
-      <BuildableReference
-         BuildableIdentifier = "primary"
-         BlueprintIdentifier = "C35CAAB37E8F37B569494FED"
-         BuildableName = "ShawcliffeCustomer.app"
-         BlueprintName = "ShawcliffeCustomer"
-         ReferencedContainer = "container:ShawcliffeCustomer.xcodeproj">
-      </BuildableReference>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "C35CAAB37E8F37B569494FED"
+            BuildableName = "ShawcliffeCustomer.app"
+            BlueprintName = "ShawcliffeCustomer"
+            ReferencedContainer = "container:ShawcliffeCustomer.xcodeproj">
+         </BuildableReference>
       </BuildableProductRunnable>
       <EnvironmentVariables>
-         <EnvironmentVariable key = "CLIENT_ID" value = "d0d00000-0000-0000-0000-000000000002" isEnabled = "YES"></EnvironmentVariable>
-         <EnvironmentVariable key = "CLIENT_SLUG" value = "demo-trades" isEnabled = "YES"></EnvironmentVariable>
+         <EnvironmentVariable
+            key = "CLIENT_ID"
+            value = "d0d00000-0000-0000-0000-000000000002"
+            isEnabled = "YES">
+         </EnvironmentVariable>
+         <EnvironmentVariable
+            key = "CLIENT_SLUG"
+            value = "demo-trades"
+            isEnabled = "YES">
+         </EnvironmentVariable>
       </EnvironmentVariables>
    </LaunchAction>
    <ProfileAction
@@ -63,13 +71,13 @@
       debugDocumentVersioning = "YES">
       <BuildableProductRunnable
          runnableDebuggingMode = "0">
-      <BuildableReference
-         BuildableIdentifier = "primary"
-         BlueprintIdentifier = "C35CAAB37E8F37B569494FED"
-         BuildableName = "ShawcliffeCustomer.app"
-         BlueprintName = "ShawcliffeCustomer"
-         ReferencedContainer = "container:ShawcliffeCustomer.xcodeproj">
-      </BuildableReference>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "C35CAAB37E8F37B569494FED"
+            BuildableName = "ShawcliffeCustomer.app"
+            BlueprintName = "ShawcliffeCustomer"
+            ReferencedContainer = "container:ShawcliffeCustomer.xcodeproj">
+         </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
    <AnalyzeAction
