@@ -32,9 +32,20 @@ struct DemoPickerView: View {
             }
             .navigationTitle("Shawcliffe Demos")
             // ponytail: one fresh StorefrontView per push; slug value is unused —
-            // the client is already selected in the tap handler above.
+            // the client is already selected in the tap handler above. Custom back
+            // button ("Businesses") lives here so shared StorefrontView is untouched.
             .navigationDestination(for: String.self) { _ in
                 StorefrontView()
+                    .navigationBarBackButtonHidden(true)
+                    .toolbar {
+                        ToolbarItem(placement: .navigationBarLeading) {
+                            Button {
+                                if !path.isEmpty { path.removeLast() }
+                            } label: {
+                                Label("Businesses", systemImage: "chevron.backward")
+                            }
+                        }
+                    }
             }
         }
     }

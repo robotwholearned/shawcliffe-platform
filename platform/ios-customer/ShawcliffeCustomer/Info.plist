@@ -26,6 +26,8 @@
 	<string>$(CLIENT_SLUG)</string>
 	<key>DEMO_MODE</key>
 	<string>$(DEMO_MODE)</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
