@@ -68,13 +68,14 @@ platform :ios do
       duration: 1200,
       in_house: false,
     )
+    # gym picks up the API key set by app_store_connect_api_key above and passes
+    # -allowProvisioningUpdates + auth to xcodebuild, so automatic signing works
+    # headlessly. (build_app has no api_key param — it reads it from lane context.)
     build_app(
       project: "ShawcliffeCustomer.xcodeproj",
       scheme: "ShawcliffeCustomer",
       export_method: "app-store",
       output_name: "shawcliffe-demos.ipa",
-      # api_key lets gym do automatic signing headlessly (-allowProvisioningUpdates).
-      api_key: key,
       xcargs: "CLIENT_BUNDLE_ID=ca.shawcliffe.demo CLIENT_APP_NAME='Shawcliffe Demos' DEMO_MODE=YES DEVELOPMENT_TEAM=M5SD2YQ3QM CODE_SIGN_STYLE=Automatic"
     )
     upload_to_testflight(api_key: key, skip_waiting_for_build_processing: true)
