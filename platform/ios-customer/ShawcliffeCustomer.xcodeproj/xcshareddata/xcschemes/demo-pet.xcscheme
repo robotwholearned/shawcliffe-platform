@@ -17,7 +17,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "C35CAAB37E8F37B569494FED"
                BuildableName = "ShawcliffeCustomer.app"
-               BlueprintName = "ShawcliffeCustomer"
+               BlueprintName = "ShawcliffeDemo"
                ReferencedContainer = "container:ShawcliffeCustomer.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -46,7 +46,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "C35CAAB37E8F37B569494FED"
             BuildableName = "ShawcliffeCustomer.app"
-            BlueprintName = "ShawcliffeCustomer"
+            BlueprintName = "ShawcliffeDemo"
             ReferencedContainer = "container:ShawcliffeCustomer.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -75,7 +75,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "C35CAAB37E8F37B569494FED"
             BuildableName = "ShawcliffeCustomer.app"
-            BlueprintName = "ShawcliffeCustomer"
+            BlueprintName = "ShawcliffeDemo"
             ReferencedContainer = "container:ShawcliffeCustomer.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
