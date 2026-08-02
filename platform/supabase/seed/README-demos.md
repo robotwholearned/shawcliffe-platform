@@ -109,6 +109,13 @@ xcodebuild -project ShawcliffeCustomer.xcodeproj -scheme ShawcliffeCustomer \
   'CLIENT_APP_NAME=Fern & Fox Hair Studio'
 ```
 
+**Run a demo from Xcode (no CLI):** open `ShawcliffeCustomer.xcodeproj` and pick a
+`demo-*` scheme from the toolbar dropdown, then hit ▶ — one shared scheme per demo
+sets `CLIENT_ID`/`CLIENT_SLUG` as Run env vars, which a DEBUG build reads (see
+`SupabaseClient.swift`). The `ShawcliffeCustomer` scheme runs the default client.
+Regenerate the schemes after changing the client list:
+`node scripts/gen-ios-schemes.mjs`.
+
 The client values are passed as `xcodebuild KEY=value` build settings (resolved
 into Info.plist via `$(VAR)` placeholders). The Fastlane wrapper forwards the same
 four via `xcargs` (run `bundle install` in `platform/ios-customer` first; not
