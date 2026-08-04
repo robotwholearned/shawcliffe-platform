@@ -226,15 +226,17 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLIENT_APP_NAME = "Tom's Produce";
+				"CLIENT_APP_NAME[sdk=iphoneos*]" = "Shawcliffe Demos";
 				CLIENT_BUNDLE_ID = ca.shawcliffe.tomsproduce;
 				CLIENT_ID = "c40569c6-1324-47a9-979f-6d076c4b67fc";
 				CLIENT_SLUG = "toms-produce";
 				CODE_SIGN_ENTITLEMENTS = ShawcliffeCustomer/ShawcliffeCustomer.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 2;
 				DEMO_MODE = NO;
-				DEVELOPMENT_TEAM = "";
+				"DEMO_MODE[sdk=iphoneos*]" = YES;
+				DEVELOPMENT_TEAM = M5SD2YQ3QM;
 				INFOPLIST_FILE = ShawcliffeCustomer/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -376,15 +378,17 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLIENT_APP_NAME = "Tom's Produce";
+				"CLIENT_APP_NAME[sdk=iphoneos*]" = "Shawcliffe Demos";
 				CLIENT_BUNDLE_ID = ca.shawcliffe.tomsproduce;
 				CLIENT_ID = "c40569c6-1324-47a9-979f-6d076c4b67fc";
 				CLIENT_SLUG = "toms-produce";
 				CODE_SIGN_ENTITLEMENTS = ShawcliffeCustomer/ShawcliffeCustomer.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 2;
 				DEMO_MODE = NO;
-				DEVELOPMENT_TEAM = "";
+				"DEMO_MODE[sdk=iphoneos*]" = YES;
+				DEVELOPMENT_TEAM = M5SD2YQ3QM;
 				INFOPLIST_FILE = ShawcliffeCustomer/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
