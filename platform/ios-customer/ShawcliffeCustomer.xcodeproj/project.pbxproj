@@ -233,7 +233,7 @@
 				CODE_SIGN_ENTITLEMENTS = ShawcliffeCustomer/ShawcliffeCustomer.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 4;
 				DEMO_MODE = NO;
 				"DEMO_MODE[sdk=iphoneos*]" = YES;
 				DEVELOPMENT_TEAM = M5SD2YQ3QM;
@@ -385,7 +385,7 @@
 				CODE_SIGN_ENTITLEMENTS = ShawcliffeCustomer/ShawcliffeCustomer.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 4;
 				DEMO_MODE = NO;
 				"DEMO_MODE[sdk=iphoneos*]" = YES;
 				DEVELOPMENT_TEAM = M5SD2YQ3QM;
