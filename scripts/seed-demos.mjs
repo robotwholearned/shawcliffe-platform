@@ -261,7 +261,7 @@ function glyphFor(vertical, b) {
     case 'personal_care_appointment': // scissors
       return `<g ${stroke}><circle cx="20" cy="26" r="11"/><circle cx="20" cy="74" r="11"/><line x1="29" y1="32" x2="84" y2="72"/><line x1="29" y1="68" x2="84" y2="28"/></g><circle cx="47" cy="50" r="4" fill="#fff"/>`
     case 'home_service_trades': // water droplet
-      return `<path d="M50 12 C50 12 78 44 78 64 a28 28 0 0 1 -56 0 C22 44 50 12 50 12 Z" fill="#fff"/><path d="M38 62 a12 12 0 0 0 8 11" ${stroke} stroke-width="6" opacity="0.55"/>`
+      return `<path d="M50 12 C50 12 78 44 78 64 a28 28 0 0 1 -56 0 C22 44 50 12 50 12 Z" fill="#fff"/><path d="M38 62 a12 12 0 0 0 8 11" ${stroke} opacity="0.55"/>`
     case 'food_producers_specialty_makers': // flame
       return `<path d="M52 10 c10 16 20 24 20 42 a22 22 0 0 1 -44 0 c0 -11 6 -17 11 -23 c1 8 5 11 8 13 c-3 -13 2 -24 5 -32 Z" fill="#fff"/><path d="M50 84 a12 12 0 0 0 12 -18 c-3 8 -7 11 -12 12 c-5 -1 -9 -4 -12 -12 a12 12 0 0 0 12 18 Z" fill="${accent}"/>`
     case 'mobile_popup_sellers': // flower
@@ -279,7 +279,7 @@ function glyphFor(vertical, b) {
     case 'local_retail_boutique': // shopping bag
       return `<path d="M26 40 h48 l4 44 a6 6 0 0 1 -6 6 H28 a6 6 0 0 1 -6 -6 Z" fill="#fff"/><path d="M38 40 v-6 a12 12 0 0 1 24 0 v6" ${stroke}/>`
     case 'professional_local_services': // bar chart
-      return `<g fill="#fff"><rect x="24" y="52" width="14" height="30" rx="3"/><rect x="43" y="38" width="14" height="44" rx="3"/><rect x="62" y="24" width="14" height="58" rx="3"/></g><line x1="20" y1="86" x2="82" y2="86" ${stroke} stroke-width="6"/>`
+      return `<g fill="#fff"><rect x="24" y="52" width="14" height="30" rx="3"/><rect x="43" y="38" width="14" height="44" rx="3"/><rect x="62" y="24" width="14" height="58" rx="3"/></g><line x1="20" y1="86" x2="82" y2="86" ${stroke}/>`
     case 'home_property_maintenance': // grass blades
       return `<g fill="#fff"><path d="M50 86 C34 74 26 58 24 40 c16 8 24 26 26 46 Z"/><path d="M50 86 C48 62 48 44 53 26 c6 18 4 40 -3 60 Z"/><path d="M50 86 C66 74 74 58 76 40 c-16 8 -24 26 -26 46 Z"/></g>`
     default: { // monogram fallback
