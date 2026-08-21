@@ -40,6 +40,13 @@ func brandMediaURL(_ path: String?) -> URL? {
     return URL(string: path, relativeTo: Config.apiBaseURL)
 }
 
+/// Demo builds bundle a per-business emblem as `brandlogo-<slug>` in the asset
+/// catalog (iOS can't render the SVG logo_url). Returns it when present so the
+/// picker + storefront show the real logo; real clients fall back to logo_url.
+func bundledBrandLogo(slug: String) -> Image? {
+    UIImage(named: "brandlogo-\(slug)").map(Image.init(uiImage:))
+}
+
 // MARK: - Shell
 
 struct BrandedScreen<Content: View>: View {
@@ -121,7 +128,11 @@ private struct BrandedHeader: View {
 
     @ViewBuilder
     private var logoTile: some View {
-        if let logoUrl = brandMediaURL(branding?.logoUrl) {
+        if let logo = bundledBrandLogo(slug: Config.slug) {
+            logo.resizable().aspectRatio(contentMode: .fit)
+                .frame(width: 56, height: 56)
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+        } else if let logoUrl = brandMediaURL(branding?.logoUrl) {
             AsyncImage(url: logoUrl) { image in
                 image.resizable().aspectRatio(contentMode: .fit)
             } placeholder: {
@@ -280,7 +291,11 @@ struct BrandedSuccessView: View {
 
     @ViewBuilder
     private var logoChip: some View {
-        if let logoUrl = brandMediaURL(branding?.logoUrl) {
+        if let logo = bundledBrandLogo(slug: Config.slug) {
+            logo.resizable().aspectRatio(contentMode: .fit)
+                .frame(width: 64, height: 64)
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+        } else if let logoUrl = brandMediaURL(branding?.logoUrl) {
             AsyncImage(url: logoUrl) { image in
                 image.resizable().aspectRatio(contentMode: .fit)
             } placeholder: {

@@ -15,9 +15,15 @@ struct DemoPickerView: View {
                     path.append(client.slug)
                 } label: {
                     HStack(spacing: 12) {
-                        RoundedRectangle(cornerRadius: 6)
-                            .fill(Color(hex: client.primaryColorHex))
-                            .frame(width: 28, height: 28)
+                        if let logo = bundledBrandLogo(slug: client.slug) {
+                            logo.resizable().aspectRatio(contentMode: .fit)
+                                .frame(width: 44, height: 44)
+                                .clipShape(RoundedRectangle(cornerRadius: 10))
+                        } else {
+                            RoundedRectangle(cornerRadius: 10)
+                                .fill(Color(hex: client.primaryColorHex))
+                                .frame(width: 44, height: 44)
+                        }
                         VStack(alignment: .leading, spacing: 2) {
                             Text(client.businessName)
                                 .font(.headline)
