@@ -67,5 +67,11 @@ private extension Bundle {
 
 let supabase = SupabaseClient(
     supabaseURL: Config.supabaseURL,
-    supabaseKey: Config.supabaseAnonKey
+    supabaseKey: Config.supabaseAnonKey,
+    // Opt into supabase-swift's fixed initial-session behaviour (PR #822) to
+    // silence the deprecation warning on launch. This app is anon-only (no login),
+    // so it has no bearing on behaviour — it just quiets the console notice.
+    options: SupabaseClientOptions(
+        auth: SupabaseClientOptions.AuthOptions(emitLocalSessionAsInitialSession: true)
+    )
 )
