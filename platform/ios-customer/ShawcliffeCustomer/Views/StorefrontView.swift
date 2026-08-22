@@ -104,10 +104,8 @@ struct StorefrontView: View {
 
     @ViewBuilder
     private var logoTile: some View {
-        if let logo = bundledBrandLogo(slug: Config.slug) {
-            logo.resizable().aspectRatio(contentMode: .fit)
-                .frame(width: 56, height: 56)
-                .clipShape(RoundedRectangle(cornerRadius: 12))
+        if let emblem = demoEmblem(slug: Config.slug, size: 56) {
+            emblem
         } else if let logoUrl = mediaURL(viewModel.branding?.logoUrl) {
             AsyncImage(url: logoUrl) { image in
                 image.resizable().aspectRatio(contentMode: .fit)

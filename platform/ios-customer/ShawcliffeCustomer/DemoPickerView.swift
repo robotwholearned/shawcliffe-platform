@@ -15,10 +15,8 @@ struct DemoPickerView: View {
                     path.append(client.slug)
                 } label: {
                     HStack(spacing: 12) {
-                        if let logo = bundledBrandLogo(slug: client.slug) {
-                            logo.resizable().aspectRatio(contentMode: .fit)
-                                .frame(width: 44, height: 44)
-                                .clipShape(RoundedRectangle(cornerRadius: 10))
+                        if let emblem = demoEmblem(slug: client.slug, size: 44) {
+                            emblem
                         } else {
                             RoundedRectangle(cornerRadius: 10)
                                 .fill(Color(hex: client.primaryColorHex))

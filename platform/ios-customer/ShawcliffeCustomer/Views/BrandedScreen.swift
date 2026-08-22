@@ -40,11 +40,55 @@ func brandMediaURL(_ path: String?) -> URL? {
     return URL(string: path, relativeTo: Config.apiBaseURL)
 }
 
-/// Demo builds bundle a per-business emblem as `brandlogo-<slug>` in the asset
-/// catalog (iOS can't render the SVG logo_url). Returns it when present so the
-/// picker + storefront show the real logo; real clients fall back to logo_url.
-func bundledBrandLogo(slug: String) -> Image? {
-    UIImage(named: "brandlogo-\(slug)").map(Image.init(uiImage:))
+// Demo businesses have no real logo_url iOS can render (it's an SVG), so the demo
+// builds draw a native emblem instead: a brand-gradient rounded square + an SF
+// Symbol for the vertical. Native (not a bundled PNG) so it's crisp at any size
+// and reads correctly on both the white picker rows and the dark storefront band —
+// the earlier rasterized PNGs baked in an opaque white background that showed as a
+// box on the dark header. Real clients still fall back to their logo_url.
+struct DemoEmblem: View {
+    let slug: String
+    var size: CGFloat = 56
+
+    struct Spec { let primary: String; let secondary: String; let symbol: String }
+
+    // Keyed by the generated demo slug; colours mirror scripts/demo-data.mjs branding,
+    // symbols mirror scripts/seed-demos.mjs glyphFor(vertical).
+    static let table: [String: Spec] = [
+        "demo-salon":    .init(primary: "#6b3f5b", secondary: "#b98ba5", symbol: "scissors"),
+        "demo-trades":   .init(primary: "#1d4e89", secondary: "#3b82c4", symbol: "drop.fill"),
+        "demo-maker":    .init(primary: "#9c2b1b", secondary: "#d64525", symbol: "flame.fill"),
+        "demo-popup":    .init(primary: "#b14a7a", secondary: "#e79bbf", symbol: "camera.macro"),
+        "demo-pet":      .init(primary: "#0f766e", secondary: "#3aa99f", symbol: "pawprint.fill"),
+        "demo-vehicle":  .init(primary: "#1f2933", secondary: "#52606d", symbol: "car.fill"),
+        "demo-creative": .init(primary: "#2b2b2b", secondary: "#6b6b6b", symbol: "camera.fill"),
+        "demo-education":.init(primary: "#1e3a5f", secondary: "#3f6791", symbol: "music.note"),
+        "demo-health":   .init(primary: "#4a6b57", secondary: "#7fa08c", symbol: "leaf.fill"),
+        "demo-retail":   .init(primary: "#b4552d", secondary: "#d98a5f", symbol: "bag.fill"),
+        "demo-pro":      .init(primary: "#12433a", secondary: "#2f7d6b", symbol: "chart.bar.fill"),
+        "demo-property": .init(primary: "#2f5d34", secondary: "#4f8a4f", symbol: "tree.fill"),
+    ]
+
+    var body: some View {
+        if let spec = DemoEmblem.table[slug] {
+            RoundedRectangle(cornerRadius: size * 0.22, style: .continuous)
+                .fill(LinearGradient(
+                    colors: [Color(hex: spec.primary), Color(hex: spec.secondary)],
+                    startPoint: .topLeading, endPoint: .bottomTrailing))
+                .overlay {
+                    Circle().fill(.white.opacity(0.14)).padding(size * 0.16)
+                    Image(systemName: spec.symbol)
+                        .font(.system(size: size * 0.4, weight: .semibold))
+                        .foregroundStyle(.white)
+                }
+                .frame(width: size, height: size)
+        }
+    }
+}
+
+/// Native emblem for demo clients (nil for real clients, which use logo_url).
+func demoEmblem(slug: String, size: CGFloat) -> DemoEmblem? {
+    DemoEmblem.table[slug] == nil ? nil : DemoEmblem(slug: slug, size: size)
 }
 
 // MARK: - Shell
@@ -128,10 +172,8 @@ private struct BrandedHeader: View {
 
     @ViewBuilder
     private var logoTile: some View {
-        if let logo = bundledBrandLogo(slug: Config.slug) {
-            logo.resizable().aspectRatio(contentMode: .fit)
-                .frame(width: 56, height: 56)
-                .clipShape(RoundedRectangle(cornerRadius: 12))
+        if let emblem = demoEmblem(slug: Config.slug, size: 56) {
+            emblem
         } else if let logoUrl = brandMediaURL(branding?.logoUrl) {
             AsyncImage(url: logoUrl) { image in
                 image.resizable().aspectRatio(contentMode: .fit)
@@ -291,10 +333,8 @@ struct BrandedSuccessView: View {
 
     @ViewBuilder
     private var logoChip: some View {
-        if let logo = bundledBrandLogo(slug: Config.slug) {
-            logo.resizable().aspectRatio(contentMode: .fit)
-                .frame(width: 64, height: 64)
-                .clipShape(RoundedRectangle(cornerRadius: 12))
+        if let emblem = demoEmblem(slug: Config.slug, size: 64) {
+            emblem
         } else if let logoUrl = brandMediaURL(branding?.logoUrl) {
             AsyncImage(url: logoUrl) { image in
                 image.resizable().aspectRatio(contentMode: .fit)
