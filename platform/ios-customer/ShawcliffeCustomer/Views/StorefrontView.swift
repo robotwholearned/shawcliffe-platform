@@ -12,7 +12,7 @@ struct StorefrontView: View {
     }
 
     private var businessName: String {
-        viewModel.branding?.appName ?? "Tom's Produce"
+        viewModel.branding?.appName ?? ""
     }
 
     /// Resolves possibly-relative media paths (e.g. "/demo/x.png") against the platform base URL.
@@ -24,26 +24,28 @@ struct StorefrontView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: 0) {
-                headerBand
-                VStack(alignment: .leading, spacing: 20) {
-                    errorBanner
-                    statusCard
-                    productsSection
-                    actionButtons
+            // Until the first fetch lands we have no brand/name/products — show a
+            // redacted skeleton in the real layout instead of flashing the default
+            // (blue header, empty name, no products) placeholder.
+            if viewModel.isLoading {
+                loadingSkeleton
+            } else {
+                VStack(spacing: 0) {
+                    headerBand
+                    VStack(alignment: .leading, spacing: 20) {
+                        errorBanner
+                        statusCard
+                        productsSection
+                        actionButtons
+                    }
+                    .padding(.horizontal)
+                    .offset(y: -32)
+                    .padding(.bottom, -32)
                 }
-                .padding(.horizontal)
-                .offset(y: -32)
-                .padding(.bottom, -32)
             }
         }
         .background(Color(.systemGroupedBackground))
         .brandedFontDesign(fontDesign)
-        .overlay {
-            if viewModel.isLoading {
-                ProgressView()
-            }
-        }
         .task {
             await viewModel.start()
         }
@@ -122,6 +124,49 @@ struct StorefrontView: View {
                 .frame(width: 56, height: 56)
                 .background(.white.opacity(0.15), in: RoundedRectangle(cornerRadius: 12))
         }
+    }
+
+    // MARK: Loading skeleton
+
+    private var loadingSkeleton: some View {
+        VStack(spacing: 0) {
+            HStack(spacing: 14) {
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(Color(.systemGray5))
+                    .frame(width: 56, height: 56)
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("Business name").font(.title2.bold())
+                    Text("A short tagline goes here").font(.subheadline)
+                }
+                Spacer(minLength: 0)
+            }
+            .padding(.horizontal)
+            .padding(.top, 12)
+            .padding(.bottom, 56)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(Color(.systemGray4).ignoresSafeArea(edges: .top))
+
+            VStack(spacing: 0) {
+                ForEach(0..<5) { index in
+                    HStack(spacing: 12) {
+                        RoundedRectangle(cornerRadius: 10)
+                            .fill(Color(.systemGray5))
+                            .frame(width: 40, height: 40)
+                        Text("Product name").font(.subheadline.weight(.semibold))
+                        Spacer()
+                        Text("$00.00").font(.subheadline.weight(.semibold))
+                    }
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 10)
+                    if index < 4 { Divider().padding(.leading, 60) }
+                }
+            }
+            .background(Color(.systemBackground), in: RoundedRectangle(cornerRadius: 16))
+            .shadow(color: .black.opacity(0.06), radius: 4, y: 1)
+            .padding(.horizontal)
+            .offset(y: -32)
+        }
+        .redacted(reason: .placeholder)
     }
 
     // MARK: Status card
